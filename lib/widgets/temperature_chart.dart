@@ -34,7 +34,7 @@ class TemperatureChart extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 200, // Altura do gráfico
+            height: 200, 
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(show: true),
@@ -44,9 +44,8 @@ class TemperatureChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 30,
-                      interval: 5, // Intervalo entre os valores do eixo X
+                      interval: 5,
                       getTitlesWidget: (value, meta) {
-                        // Exibe o valor do eixo X (tempo)
                         return Text(
                           '${value.toInt()}s',
                           style: const TextStyle(
@@ -61,9 +60,8 @@ class TemperatureChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 40,
-                      interval: 10, // Intervalo entre os valores do eixo Y
+                      interval: 10, 
                       getTitlesWidget: (value, meta) {
-                        // Exibe o valor do eixo Y (temperatura)
                         return Text(
                           '${value.toInt()}°C',
                           style: const TextStyle(

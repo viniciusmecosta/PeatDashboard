@@ -22,27 +22,24 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _openGoogleMaps, // Abre o Google Maps ao clicar no mapa
+      onTap: _openGoogleMaps,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12), // Borda arredondada diretamente no mapa
+        borderRadius: BorderRadius.circular(12),
         child: SizedBox(
-          height: 170, // Altura do mapa
+          height: 170,
           child: IgnorePointer(
-            // Bloqueia todas as interações de toque no mapa
             child: FlutterMap(
               options: MapOptions(
                 center: location,
                 zoom: 16.0,
-                interactiveFlags: InteractiveFlag.none, // Desabilita todas as interações
+                interactiveFlags: InteractiveFlag.none,
               ),
               nonRotatedChildren: [
-                // TileLayer com mais detalhes (estilo escuro personalizado)
                 TileLayer(
                   urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                   subdomains: ['a', 'b', 'c'],
                   userAgentPackageName: 'com.example.app',
                 ),
-                // Marcador no mapa
                 MarkerLayer(
                   markers: [
                     Marker(

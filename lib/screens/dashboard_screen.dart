@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+
+import 'package:peatdashboard/services/api_service.dart';
 import 'package:peatdashboard/widgets/info_card.dart';
 import 'package:peatdashboard/widgets/map_widget.dart';
 import 'package:peatdashboard/widgets/metric_card.dart';
@@ -13,12 +15,40 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final LatLng _location = const LatLng(-3.7442, -38.5361);
+  SensorData temperature = SensorData(id: 0, date: "0", value: 0);
+  SensorData humidity = SensorData(id: 0, date: "0", value: 0);
+  SensorData capacity = SensorData(id: 0, date: "0", value: 0);
+  bool isLoading = true;
 
-  final List<double> _temperatureData = List.generate(20, (index) => 20 + index * 1.5);
-  final List<double> _humidityData = List.generate(20, (index) => 40 + index * 2.0);
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final tempHumiData = await ApiService.fetchTemperatureAndHumidity();
+    final capData = await ApiService.fetchCapacity();
+
+    setState(() {
+      temperature = tempHumiData["temperature"]!;
+      humidity = tempHumiData["humidity"]!;
+      capacity = capData;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        backgroundColor: Color(0xFF090909),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     final bool isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -36,7 +66,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         centerTitle: !isLargeScreen,
-        actions: [],
       ),
       body: SafeArea(
         top: false,
@@ -45,7 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const InfoCard(), // Placed here just below the logo and above Metric Cards
+              const InfoCard(),
               const SizedBox(height: 16),
               if (isLargeScreen)
                 Row(
@@ -53,8 +82,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Expanded(
                       child: MetricCard(
                         title: 'Capacidade',
-                        value: '10%',
-                        subtitle: '11:30 20/10/2024',
+                        value: '${capacity.value.toInt()}%',
+                        subtitle: capacity.date,
                         chartColor: const Color(0xFF8B5CF6),
                       ),
                     ),
@@ -62,8 +91,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Expanded(
                       child: MetricCard(
                         title: 'Temperatura',
-                        value: '30°',
-                        subtitle: '11:30 20/10/2024',
+                        value: '${temperature.value.toInt()}°C',
+                        subtitle: temperature.date,
                         chartColor: const Color(0xFF8B5CF6),
                       ),
                     ),
@@ -71,17 +100,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Expanded(
                       child: MetricCard(
                         title: 'Umidade',
-                        value: '40%',
-                        subtitle: '11:30 20/10/2024',
-                        chartColor: const Color(0xFF8B5CF6),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: MetricCard(
-                        title: 'Pressão',
-                        value: '1013 hPa',
-                        subtitle: '11:30 20/10/2024',
+                        value: '${humidity.value.toInt()}%',
+                        subtitle: humidity.date,
                         chartColor: const Color(0xFF8B5CF6),
                       ),
                     ),
@@ -95,8 +115,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(
                           child: MetricCard(
                             title: 'Capacidade',
-                            value: '10%',
-                            subtitle: '11:30 20/10/2024',
+                            value: '${capacity.value.toInt()}%',
+                            subtitle: capacity.date,
                             chartColor: const Color(0xFF8B5CF6),
                           ),
                         ),
@@ -104,8 +124,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(
                           child: MetricCard(
                             title: 'Temperatura',
-                            value: '30°',
-                            subtitle: '11:30 20/10/2024',
+                            value: '${temperature.value.toInt()}°C',
+                            subtitle: temperature.date,
                             chartColor: const Color(0xFF8B5CF6),
                           ),
                         ),
@@ -117,17 +137,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Expanded(
                           child: MetricCard(
                             title: 'Umidade',
-                            value: '40%',
-                            subtitle: '11:30 20/10/2024',
-                            chartColor: const Color(0xFF8B5CF6),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: MetricCard(
-                            title: 'Pressão',
-                            value: '1013 hPa',
-                            subtitle: '11:30 20/10/2024',
+                            value: '${humidity.value.toInt()}%',
+                            subtitle: humidity.date,
                             chartColor: const Color(0xFF8B5CF6),
                           ),
                         ),
@@ -137,43 +148,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               const SizedBox(height: 16),
               MapWidget(location: _location),
-
-              const SizedBox(height: 16),
-
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF18181B),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.withOpacity(0.1),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.food_bank_sharp,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Peat',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
