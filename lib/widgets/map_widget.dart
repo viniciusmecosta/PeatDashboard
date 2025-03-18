@@ -8,12 +8,18 @@ class MapWidget extends StatelessWidget {
 
   const MapWidget({super.key, required this.location});
 
-  void _openGoogleMaps() async {
-    final Uri url = Uri.parse(
+  Future<void> _openGoogleMaps() async {
+    final Uri googleMapsUrl = Uri.parse(
       'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}',
     );
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
+    final Uri googleMapsAppUrl = Uri.parse(
+      'geo:${location.latitude},${location.longitude}?q=${location.latitude},${location.longitude}',
+    );
+
+    if (await canLaunchUrl(googleMapsAppUrl)) {
+      await launchUrl(googleMapsAppUrl);
+    } else if (await canLaunchUrl(googleMapsUrl)) {
+      await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
     } else {
       throw 'Não foi possível abrir o Google Maps.';
     }
@@ -27,33 +33,45 @@ class MapWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: SizedBox(
           height: 170,
-          child: IgnorePointer(
-            child: FlutterMap(
-              options: MapOptions(
-                center: location,
-                zoom: 16.0,
-                interactiveFlags: InteractiveFlag.none,
-              ),
-              nonRotatedChildren: [
-                TileLayer(
-                  urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  subdomains: ['a', 'b', 'c'],
-                  userAgentPackageName: 'com.example.app',
-                ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: location,
-                      builder: (ctx) => const Icon(
-                        Icons.location_pin,
-                        color: Colors.red,
-                        size: 40,
-                      ),
+          child: Stack(
+            children: [
+              IgnorePointer(
+                child: FlutterMap(
+                  options: MapOptions(
+                    center: location,
+                    zoom: 16.0,
+                    interactiveFlags: InteractiveFlag.none,
+                  ),
+                  nonRotatedChildren: [
+                    TileLayer(
+                      urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      subdomains: ['a', 'b', 'c'],
+                      userAgentPackageName: 'com.example.app',
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: location,
+                          builder: (ctx) => const Icon(
+                            Icons.location_pin,
+                            color: Colors.red,
+                            size: 40,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              Positioned.fill(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _openGoogleMaps,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
