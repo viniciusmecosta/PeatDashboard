@@ -45,13 +45,13 @@ class ApiService {
             return {
               "temperature": SensorData(
                 id: latest["count"],
-                date: _validateDate(latest["data"]),
+                date: _validateDate(latest["date"]),
                 temperature: latest["temp"].toDouble(),
                 humidity: latest["humi"].toDouble(),
               ),
               "humidity": SensorData(
                 id: latest["count"],
-                date: _validateDate(latest["data"]),
+                date: _validateDate(latest["date"]),
                 temperature: latest["temp"].toDouble(),
                 humidity: latest["humi"].toDouble(),
               ),
@@ -87,7 +87,7 @@ class ApiService {
         // Map all items to SensorData objects
         List<SensorData> sensorDataList = data.map((item) => SensorData(
           id: item["count"],
-          date: _validateDate(item["data"]),
+          date: _validateDate(item["date"]),
           temperature: item["temp"].toDouble(),
           humidity: item["humi"].toDouble(),
         )).toList();
@@ -103,7 +103,7 @@ class ApiService {
 
   static Future<SensorLevel> fetchCapacity() async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl/distance/last/1"));
+      final response = await http.get(Uri.parse("$baseUrl/level/last/1"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
@@ -115,7 +115,7 @@ class ApiService {
           if (latest != null) {
             return SensorLevel(
               id: latest["count"],
-              date: _validateDate(latest["data"]),
+              date: _validateDate(latest["date"]),
               capacity: latest["level"].toDouble(),
             );
           }
