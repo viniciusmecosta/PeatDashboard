@@ -18,39 +18,48 @@ class InfoCard extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center, // Align items vertically in the center
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Aprendendo a usar o Peat',
+          // Column with text
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'APRENDENDO A USAR O PEAT',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                ),
-              ),
-              SizedBox(
-                height: 40,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: IconButton(
-                    onPressed: () {
-                    },
-                    icon: const Icon(Icons.arrow_circle_right_outlined, color: Colors.white),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Siga as instruções para utilizar o comedouro da maneira correta.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
+                const SizedBox(height: 4),
+                Text(
+                  'Siga as instruções para utilizar o comedouro da maneira correta.',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
+              ],
+            ),
+          ),
+          // No space between text and image
+          Image.asset(
+            'assets/comedouro_icon.png',
+            width: 80, // Adjust the width for better alignment
+            height: 80, // Adjust the height for better alignment
+          ),
+          const SizedBox(width: 16), // Space between the image and the icon
+          // Increased size of the icon button
+          IconButton(
+            onPressed: () {
+              // Action when clicked
+            },
+            icon: const Icon(
+              Icons.arrow_circle_right_rounded,
+              color: Colors.white,
+              size: 40, // Increased size of the icon button
+            ),
           ),
         ],
       ),

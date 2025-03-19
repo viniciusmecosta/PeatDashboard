@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-
+import 'package:peatdashboard/screens/temperature_chart_screen.dart';
 import 'package:peatdashboard/services/api_service.dart';
 import 'package:peatdashboard/widgets/info_card.dart';
 import 'package:peatdashboard/widgets/map_widget.dart';
 import 'package:peatdashboard/widgets/metric_card.dart';
+import 'package:peatdashboard/screens/metric_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -27,15 +28,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadData() async {
-    final tempHumiData = await ApiService.fetchTemperatureAndHumidity();
-    final capData = await ApiService.fetchCapacity();
+    try {
+      final tempHumiData = await ApiService.fetchTemperatureAndHumidity();
+      final capData = await ApiService.fetchCapacity();
 
-    setState(() {
-      temperature = tempHumiData["temperature"]!;
-      humidity = tempHumiData["humidity"]!;
-      capacity = capData;
-      isLoading = false;
-    });
+      setState(() {
+        temperature = tempHumiData["temperature"] ?? SensorData(id: 0, date: "0", value: 0);
+        humidity = tempHumiData["humidity"] ?? SensorData(id: 0, date: "0", value: 0);
+        capacity = capData ?? SensorData(id: 0, date: "0", value: 0);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        temperature = SensorData(id: 0, date: "0", value: 0);
+        humidity = SensorData(id: 0, date: "0", value: 0);
+        capacity = SensorData(id: 0, date: "0", value: 0);
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -80,29 +90,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: MetricCard(
-                        title: 'Capacidade',
-                        value: '${capacity.value.toInt()}%',
-                        subtitle: capacity.date,
-                        chartColor: const Color(0xFF8B5CF6),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MetricDetailScreen(
+                                title: 'Capacidade',
+                                value: '${capacity.value.toInt()}%',
+                                subtitle: capacity.date,
+                              ),
+                            ),
+                          );
+                        },
+                        child: MetricCard(
+                          title: 'Capacidade',
+                          value: '${capacity.value.toInt()}%',
+                          subtitle: capacity.date,
+                          chartColor: const Color(0xFF8B5CF6),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: MetricCard(
-                        title: 'Temperatura',
-                        value: '${temperature.value.toInt()}°C',
-                        subtitle: temperature.date,
-                        chartColor: const Color(0xFF8B5CF6),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TemperatureChartScreen(), // Navigate to the chart screen
+                            ),
+                          );
+                        },
+                        child: MetricCard(
+                          title: 'Temperatura',
+                          value: '${temperature.value.toInt()}°C',
+                          subtitle: temperature.date,
+                          chartColor: const Color(0xFF8B5CF6),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: MetricCard(
-                        title: 'Umidade',
-                        value: '${humidity.value.toInt()}%',
-                        subtitle: humidity.date,
-                        chartColor: const Color(0xFF8B5CF6),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MetricDetailScreen(
+                                title: 'Umidade',
+                                value: '${humidity.value.toInt()}%',
+                                subtitle: humidity.date,
+                              ),
+                            ),
+                          );
+                        },
+                        child: MetricCard(
+                          title: 'Umidade',
+                          value: '${humidity.value.toInt()}%',
+                          subtitle: humidity.date,
+                          chartColor: const Color(0xFF8B5CF6),
+                        ),
                       ),
                     ),
                   ],
@@ -113,20 +161,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: MetricCard(
-                            title: 'Capacidade',
-                            value: '${capacity.value.toInt()}%',
-                            subtitle: capacity.date,
-                            chartColor: const Color(0xFF8B5CF6),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MetricDetailScreen(
+                                    title: 'Capacidade',
+                                    value: '${capacity.value.toInt()}%',
+                                    subtitle: capacity.date,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: MetricCard(
+                              title: 'Capacidade',
+                              value: '${capacity.value.toInt()}%',
+                              subtitle: capacity.date,
+                              chartColor: const Color(0xFF8B5CF6),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: MetricCard(
-                            title: 'Temperatura',
-                            value: '${temperature.value.toInt()}°C',
-                            subtitle: temperature.date,
-                            chartColor: const Color(0xFF8B5CF6),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TemperatureChartScreen(), // Navigate to the chart screen
+                                ),
+                              );
+                            },
+                            child: MetricCard(
+                              title: 'Temperatura',
+                              value: '${temperature.value.toInt()}°C',
+                              subtitle: temperature.date,
+                              chartColor: const Color(0xFF8B5CF6),
+                            ),
                           ),
                         ),
                       ],
@@ -135,11 +207,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Row(
                       children: [
                         Expanded(
-                          child: MetricCard(
-                            title: 'Umidade',
-                            value: '${humidity.value.toInt()}%',
-                            subtitle: humidity.date,
-                            chartColor: const Color(0xFF8B5CF6),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MetricDetailScreen(
+                                    title: 'Umidade',
+                                    value: '${humidity.value.toInt()}%',
+                                    subtitle: humidity.date,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: MetricCard(
+                              title: 'Umidade',
+                              value: '${humidity.value.toInt()}%',
+                              subtitle: humidity.date,
+                              chartColor: const Color(0xFF8B5CF6),
+                            ),
                           ),
                         ),
                       ],

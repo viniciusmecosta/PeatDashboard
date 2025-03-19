@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MetricCard extends StatelessWidget {
   final String title;
@@ -14,8 +15,21 @@ class MetricCard extends StatelessWidget {
     required this.chartColor,
   });
 
+  String formatDate(String dateString) {
+    try {
+      final DateTime dateTime = DateTime.parse(dateString);
+      final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm');
+      return formatter.format(dateTime);
+    } catch (e) {
+      // Handle invalid date format
+      return 'Invalid date format'; // or return a default value like 'N/A'
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final formattedDate = formatDate(subtitle);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -53,7 +67,7 @@ class MetricCard extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           Text(
-            subtitle,
+            formattedDate,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: const Color(0xFF10B981),
             ),
