@@ -18,11 +18,10 @@ class MetricCard extends StatelessWidget {
   String formatDate(String dateString) {
     try {
       final DateTime dateTime = DateTime.parse(dateString);
-      final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm');
+      final DateFormat formatter = DateFormat('HH:mm dd/MM/yyyy');
       return formatter.format(dateTime);
     } catch (e) {
-      // Handle invalid date format
-      return 'Invalid date format'; // or return a default value like 'N/A'
+      return 'Invalid date format';
     }
   }
 

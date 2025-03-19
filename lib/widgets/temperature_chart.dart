@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart'; // Import intl package
-
+import 'package:intl/intl.dart';
 import '../services/api_service.dart';
 
 class TemperatureChart extends StatelessWidget {
@@ -11,15 +10,15 @@ class TemperatureChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Extract temperature values from sensorDataList
-    List<double> temperatureData = sensorDataList.map((e) => e.value).toList();
+    List<double> temperatureData = sensorDataList.map((e) => e.temperature).toList();
     List<String> dates = sensorDataList.map((e) => e.date).toList();
 
-    // Create DateFormat for displaying time only
-    DateFormat dateFormat = DateFormat('HH:mm'); // Format for time only
+    DateFormat dateFormat = DateFormat('HH:mm');
+
+    double lastTemperature = temperatureData.isNotEmpty ? temperatureData.last : 0.0;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add padding to the sides
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -40,20 +39,49 @@ class TemperatureChart extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Temperatura ao longo do tempo',
-              style: Theme.of(context).textTheme.titleLarge,
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Peat IFCE - Bloco Central',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                '${lastTemperature.toStringAsFixed(1)}°C',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Padding extra
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: SizedBox(
-                height: 250, // Set a fixed height for the chart
+                height: 250,
                 child: temperatureData.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : LineChart(
                   LineChartData(
-                    gridData: FlGridData(show: true),
+                    gridData: FlGridData(
+                      show: true,
+                      horizontalInterval: 5,
+                      drawVerticalLine: false,
+                    ),
                     titlesData: FlTitlesData(
                       show: true,
                       bottomTitles: AxisTitles(
@@ -62,18 +90,16 @@ class TemperatureChart extends StatelessWidget {
                           reservedSize: 30,
                           interval: 1,
                           getTitlesWidget: (value, meta) {
-                            // Format the time for each point (only time)
                             String formattedTime = dateFormat.format(
                               DateTime.parse(dates[value.toInt()]),
                             );
-
                             return Padding(
-                              padding: const EdgeInsets.only(top: 10.0), // Space below the hours
+                              padding: const EdgeInsets.only(top: 10.0),
                               child: Text(
                                 formattedTime,
                                 style: const TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 10,  // Slightly larger font size
+                                  fontSize: 10,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -85,15 +111,18 @@ class TemperatureChart extends StatelessWidget {
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 40,
-                          interval: 10,
+                          interval: 5,
                           getTitlesWidget: (value, meta) {
-                            return Text(
-                              '${value.toInt()}°C',
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            );
+                            if (value % 5 == 0 && value <= 40) {
+                              return Text(
+                                '${value.toInt()}°C',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
                           },
                         ),
                       ),
@@ -111,14 +140,27 @@ class TemperatureChart extends StatelessWidget {
                           return FlSpot(entry.key.toDouble(), entry.value);
                         }).toList(),
                         isCurved: true,
-                        color: const Color(0xFF8B5CF6),
+                        color: const Color(0xFF298F5E),
                         barWidth: 3,
                         belowBarData: BarAreaData(
                           show: true,
-                          color: const Color(0xFF8B5CF6).withOpacity(0.2),
+                          color: const Color(0xFF298F5E).withOpacity(0.2),
                         ),
                       ),
                     ],
+                    lineTouchData: LineTouchData(
+                      touchTooltipData: LineTouchTooltipData(
+                        getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
+                          return touchedBarSpots.map((barSpot) {
+                            final temperature = temperatureData[barSpot.x.toInt()];
+                            return LineTooltipItem(
+                              '${temperature.toStringAsFixed(1)}°C',
+                              const TextStyle(color: Colors.white),
+                            );
+                          }).toList();
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),

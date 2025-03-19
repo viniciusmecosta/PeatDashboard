@@ -24,9 +24,8 @@ class _TemperatureChartScreenState extends State<TemperatureChartScreen> {
 
     setState(() {
       sensorDataList = data;
-      temperatureData = sensorDataList.map((e) => e.value).toList();
+      temperatureData = sensorDataList.map((e) => e.temperature).toList();
     });
-
   }
 
   @override
@@ -36,16 +35,22 @@ class _TemperatureChartScreenState extends State<TemperatureChartScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF090909),
         elevation: 0,
-        title: const Text('Gráfico de Temperatura'),
+        title: const Text('Temperatura'),
       ),
       body: SafeArea(
         child: temperatureData.isEmpty
             ? const Center(child: CircularProgressIndicator())
-            : Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            height: 350,
-            child: TemperatureChart(sensorDataList: sensorDataList),
+            : SingleChildScrollView(  // Allow scrolling if needed
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity, // Ensure full width
+                  child: TemperatureChart(sensorDataList: sensorDataList),
+                ),
+              ],
+            ),
           ),
         ),
       ),

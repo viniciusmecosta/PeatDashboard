@@ -4,9 +4,27 @@ import 'package:http/http.dart' as http;
 class SensorData {
   final int id;
   final String date;
-  final double value;
+  final double temperature;
+  final double humidity;
 
-  SensorData({required this.id, required this.date, required this.value});
+  SensorData({
+    required this.id,
+    required this.date,
+    required this.temperature,
+    required this.humidity,
+  });
+}
+
+class SensorLevel {
+  final int id;
+  final String date;
+  final double capacity;
+
+  SensorLevel({
+    required this.id,
+    required this.date,
+    required this.capacity,
+  });
 }
 
 class ApiService {
@@ -28,12 +46,14 @@ class ApiService {
               "temperature": SensorData(
                 id: latest["count"],
                 date: _validateDate(latest["data"]),
-                value: latest["temp"].toDouble(),
+                temperature: latest["temp"].toDouble(),
+                humidity: latest["humi"].toDouble(),
               ),
               "humidity": SensorData(
                 id: latest["count"],
                 date: _validateDate(latest["data"]),
-                value: latest["humi"].toDouble(),
+                temperature: latest["temp"].toDouble(),
+                humidity: latest["humi"].toDouble(),
               ),
             };
           }
@@ -43,12 +63,45 @@ class ApiService {
       print("Error fetching temperature/humidity: $e");
     }
     return {
-      "temperature": SensorData(id: 0, date: "0", value: 0),
-      "humidity": SensorData(id: 0, date: "0", value: 0),
+      "temperature": SensorData(
+        id: 0,
+        date: "0",
+        temperature: 0,
+        humidity: 0,
+      ),
+      "humidity": SensorData(
+        id: 0,
+        date: "0",
+        temperature: 0,
+        humidity: 0,
+      ),
     };
   }
 
-  static Future<SensorData> fetchCapacity() async {
+  static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
+    try {
+      final response = await http.get(Uri.parse("$baseUrl/temperature/last/$n"));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        // Map all items to SensorData objects
+        List<SensorData> sensorDataList = data.map((item) => SensorData(
+          id: item["count"],
+          date: _validateDate(item["data"]),
+          temperature: item["temp"].toDouble(),
+          humidity: item["humi"].toDouble(),
+        )).toList();
+
+        // Reverse the list to have the most recent data first
+        return sensorDataList.reversed.toList();
+      }
+    } catch (e) {
+      print("Error fetching temperature/humidity list: $e");
+    }
+    return [];
+  }
+
+  static Future<SensorLevel> fetchCapacity() async {
     try {
       final response = await http.get(Uri.parse("$baseUrl/distance/last/1"));
       if (response.statusCode == 200) {
@@ -60,10 +113,10 @@ class ApiService {
           );
 
           if (latest != null) {
-            return SensorData(
+            return SensorLevel(
               id: latest["count"],
               date: _validateDate(latest["data"]),
-              value: latest["level"].toDouble(),
+              capacity: latest["level"].toDouble(),
             );
           }
         }
@@ -71,53 +124,11 @@ class ApiService {
     } catch (e) {
       print("Error fetching capacity: $e");
     }
-    return SensorData(id: 0, date: "0", value: 0);
-  }
-
-  static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
-    try {
-      final response = await http.get(Uri.parse("$baseUrl/temperature/last/$n"));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-
-        // Directly map all items to SensorData and reverse the list
-        List<SensorData> sensorDataList = data.map((item) => SensorData(
-          id: item["count"],
-          date: _validateDate(item["data"]),
-          value: item["temp"].toDouble(),
-        )).toList();
-
-        // Reverse the list to have the most recent data first
-        return sensorDataList.reversed.toList();  // Now most recent data is first
-      }
-    } catch (e) {
-      print("Error fetching temperature/humidity list: $e");
-    }
-    return [];
-  }
-
-
-
-  static Future<List<SensorData>> fetchCapacityList(int n) async {
-    try {
-      final response = await http.get(Uri.parse("$baseUrl/distance/last/$n"));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        if (data.isNotEmpty) {
-          return data
-              .where((item) => item["count"] == 0)
-              .map((item) => SensorData(
-            id: item["count"],
-            date: _validateDate(item["data"]),
-            value: item["level"].toDouble(),
-          ))
-              .toList();
-        }
-      }
-    } catch (e) {
-      print("Error fetching capacity list: $e");
-    }
-    return [];
+    return SensorLevel(
+      id: 0,
+      date: "0",
+      capacity: 0,
+    );
   }
 
   static String _validateDate(String date) {

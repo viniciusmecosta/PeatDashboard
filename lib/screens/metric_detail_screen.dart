@@ -50,7 +50,7 @@ class MetricDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Additional Information:',
+                '',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -58,7 +58,7 @@ class MetricDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Detailed analysis or graphs can go here.',
+                '',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.white70,
                 ),
