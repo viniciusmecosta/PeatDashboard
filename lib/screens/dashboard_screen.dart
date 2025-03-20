@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:peatdashboard/screens/capacity_chart_screen.dart';
+import 'package:peatdashboard/screens/temperature_avg_chart_screen.dart';
 import 'package:peatdashboard/screens/temperature_chart_screen.dart';
 import 'package:peatdashboard/screens/humidity_chart_screen.dart'; // Added humidity chart screen
 import 'package:peatdashboard/services/api_service.dart';
@@ -163,11 +165,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => MetricDetailScreen(
-                                    title: 'Volume de Ração',
-                                    value: '${capacity.capacity.toInt()}%',
-                                    subtitle: capacity.date,
-                                  ),
+                                  builder: (context) => CapacityChartScreen()
                                 ),
                               );
                             },
@@ -186,7 +184,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => TemperatureChartScreen(),
+                                  builder: (context) => TemperatureAvgChartScreen(),
                                 ),
                               );
                             },

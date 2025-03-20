@@ -80,19 +80,19 @@ class ApiService {
 
   static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl/temperature/last/$n"));
+      final response = await http.get(
+          Uri.parse("$baseUrl/temperature/last/$n"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
 
-        // Map all items to SensorData objects
-        List<SensorData> sensorDataList = data.map((item) => SensorData(
-          id: item["count"],
-          date: _validateDate(item["date"]),
-          temperature: item["temp"].toDouble(),
-          humidity: item["humi"].toDouble(),
-        )).toList();
+        List<SensorData> sensorDataList = data.map((item) =>
+            SensorData(
+              id: item["count"],
+              date: _validateDate(item["date"]),
+              temperature: item["temp"].toDouble(),
+              humidity: item["humi"].toDouble(),
+            )).toList();
 
-        // Reverse the list to have the most recent data first
         return sensorDataList.reversed.toList();
       }
     } catch (e) {
@@ -131,10 +131,65 @@ class ApiService {
     );
   }
 
+  static Future<List<SensorData>> fetchLastNAverageTemperatures(int n) async {
+    try {
+      final response = await http.get(
+          Uri.parse("$baseUrl/temperature/last_n_avg/$n"));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        return data.map((item) =>
+            SensorData(
+              id: item["count"] ?? 0,
+              date: (item["date"] != null && item["date"] is String)
+                  ? item["date"]
+                  : "00/00",
+              temperature: (item["temp"] != null)
+                  ? item["temp"].toDouble()
+                  : 0.0,
+              humidity: (item["humi"] != null) ? item["humi"].toDouble() : 0.0,
+            ))
+            .toList()
+            .reversed
+            .toList();
+      }
+    } catch (e) {
+      print("Error fetching last N average temperatures: $e");
+    }
+    return [];
+  }
+
   static String _validateDate(String date) {
     if (date.isEmpty || !RegExp(r"^\d{4}-\d{2}-\d{2}").hasMatch(date)) {
       return "0";
     }
     return date;
+  }
+
+  static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
+    try {
+      final response = await http.get(
+          Uri.parse("$baseUrl/level/last_n_avg/$n"));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        return data.map((item) =>
+          SensorLevel(
+            id: item["count"] ?? 0,
+            date: (item["date"] != null && item["date"] is String)
+                ? item["date"]
+                : "00/00",
+            capacity: (item["level"] != null)
+                ? item["level"].toDouble()
+                : 0.0,
+          ))
+            .toList()
+            .reversed
+            .toList();
+      }
+    } catch (e) {
+      print("Error fetching last N average temperatures: $e");
+    }
+    return [];
   }
 }
