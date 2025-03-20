@@ -32,7 +32,7 @@ class ApiService {
 
   static Future<Map<String, SensorData>> fetchTemperatureAndHumidity() async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl/temperature/last/1"));
+      final response = await http.get(Uri.parse("$baseUrl/app/temperature/last/1"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
@@ -81,7 +81,7 @@ class ApiService {
   static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
     try {
       final response = await http.get(
-          Uri.parse("$baseUrl/temperature/last/$n"));
+          Uri.parse("$baseUrl/app/temperature/last/$n"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
 
@@ -103,7 +103,7 @@ class ApiService {
 
   static Future<SensorLevel> fetchCapacity() async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl/level/last/1"));
+      final response = await http.get(Uri.parse("$baseUrl/app/level/last/1"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         if (data.isNotEmpty) {
@@ -134,7 +134,7 @@ class ApiService {
   static Future<List<SensorData>> fetchLastNAverageTemperatures(int n) async {
     try {
       final response = await http.get(
-          Uri.parse("$baseUrl/temperature/last_n_avg/$n"));
+          Uri.parse("$baseUrl/app/temperature/avg/$n"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
 
@@ -169,7 +169,7 @@ class ApiService {
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
     try {
       final response = await http.get(
-          Uri.parse("$baseUrl/level/last_n_avg/$n"));
+          Uri.parse("$baseUrl/app/level/avg/$n"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
 
