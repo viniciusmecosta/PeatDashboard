@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:peatdashboard/screens/capacity_chart_screen.dart';
-import 'package:peatdashboard/screens/temperature_avg_chart_screen.dart';
 import 'package:peatdashboard/screens/temperature_chart_screen.dart';
-import 'package:peatdashboard/screens/humidity_chart_screen.dart'; // Added humidity chart screen
+import 'package:peatdashboard/screens/humidity_chart_screen.dart';
 import 'package:peatdashboard/services/api_service.dart';
 import 'package:peatdashboard/widgets/info_card.dart';
 import 'package:peatdashboard/widgets/map_widget.dart';
@@ -184,7 +183,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => TemperatureAvgChartScreen(),
+                                  builder: (context) => TemperatureChartScreen(),
                                 ),
                               );
                             },

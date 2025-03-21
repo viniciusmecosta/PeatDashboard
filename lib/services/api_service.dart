@@ -81,19 +81,21 @@ class ApiService {
   static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
     try {
       final response = await http.get(
-          Uri.parse("$baseUrl/app/temperature/last/$n"));
+          Uri.parse("$baseUrl/app/temperature/avg/$n"));
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
 
         List<SensorData> sensorDataList = data.map((item) =>
             SensorData(
               id: item["count"],
-              date: _validateDate(item["date"]),
+              date: item["date"],
               temperature: item["temp"].toDouble(),
               humidity: item["humi"].toDouble(),
-            )).toList();
+            )).toList()
+            .reversed
+            .toList();
 
-        return sensorDataList.reversed.toList();
+        return sensorDataList;
       }
     } catch (e) {
       print("Error fetching temperature/humidity list: $e");
@@ -166,30 +168,49 @@ class ApiService {
     return date;
   }
 
-  static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
-    try {
-      final response = await http.get(
-          Uri.parse("$baseUrl/app/level/avg/$n"));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
+static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
+  try {
+    final response = await http.get(Uri.parse("$baseUrl/app/level/avg/$n"));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
 
-        return data.map((item) =>
-          SensorLevel(
-            id: item["count"] ?? 0,
-            date: (item["date"] != null && item["date"] is String)
-                ? item["date"]
-                : "00/00",
-            capacity: (item["level"] != null)
-                ? item["level"].toDouble()
-                : 0.0,
-          ))
-            .toList()
+      return data.map((item) {
+
+        return SensorLevel(
+          id: item["count"] ?? 0,
+          date: item["date"],
+          capacity: (item["level"] != null) ? item["level"].toDouble() : 0.0,
+        );
+      }).toList().reversed.toList();
+    }
+  } catch (e) {
+    print("Error fetching last N average temperatures: $e");
+  }
+  return [];
+}
+
+  static Future<List<SensorData>> fetchTemperatureAndHumidityByDate(String date) async {
+  try {
+    final response = await http.get(Uri.parse("$baseUrl/app/temperature/date/$date"));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      List<SensorData> sensorDataList = data.map((item) =>
+          SensorData(
+            id: item["count"],
+            date: item["date"],
+            temperature: item["temp"].toDouble(),
+            humidity: item["humi"].toDouble(),
+          )).toList()
             .reversed
             .toList();
-      }
-    } catch (e) {
-      print("Error fetching last N average temperatures: $e");
+
+      return sensorDataList;
     }
-    return [];
+  } catch (e) {
+    print("Error fetching temperature/humidity by date: $e");
   }
+  return [];
+}
+
 }

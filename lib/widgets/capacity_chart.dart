@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
 
 import '../services/api_service.dart';
 
@@ -13,8 +12,6 @@ class CapacityChart extends StatelessWidget {
   Widget build(BuildContext context) {
     List<double> capacityData = sensorLevelList.map((e) => e.capacity).toList();
     List<String> dates = sensorLevelList.map((e) => e.date).toList();
-
-    DateFormat dateFormat = DateFormat('dd/MM');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
