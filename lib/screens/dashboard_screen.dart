@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:peatdashboard/models/sensor_data.dart';
+import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/screens/capacity_chart_screen.dart';
 import 'package:peatdashboard/screens/temperature_chart_screen.dart';
 import 'package:peatdashboard/screens/humidity_chart_screen.dart';

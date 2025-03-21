@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:peatdashboard/models/sensor_level.dart';
 
-import '../services/api_service.dart';
 
 class CapacityChart extends StatelessWidget {
   final List<SensorLevel> sensorLevelList;

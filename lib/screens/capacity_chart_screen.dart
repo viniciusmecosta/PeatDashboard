@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peatdashboard/models/sensor_level.dart';
 import '../services/api_service.dart';
 import '../widgets/capacity_chart.dart';
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peatdashboard/models/sensor_data.dart';
 import '../services/api_service.dart';
 import '../widgets/humidity_chart.dart';
 import 'package:intl/intl.dart';
