@@ -92,26 +92,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MetricDetailScreen(
-                                title: 'Capacidade',
-                                value: '${capacity.capacity.toInt()}%',
-                                subtitle: capacity.date,
-                              ),
+                            child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CapacityChartScreen()
+                                ),
+                              );
+                            },
+                            child: MetricCard(
+                              title: 'Volume de Ração',
+                              value: '${capacity.capacity.toInt()}%',
+                              subtitle: capacity.date,
+                              chartColor: const Color(0xFF8B5CF6),
                             ),
-                          );
-                        },
-                        child: MetricCard(
-                          title: 'Capacidade',
-                          value: '${capacity.capacity.toInt()}%',
-                          subtitle: capacity.date,
-                          chartColor: const Color(0xFF8B5CF6),
-                        ),
-                      ),
+                          ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(

@@ -33,7 +33,7 @@ class _CapacityChartScreenState extends State<CapacityChartScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF090909),
         elevation: 0,
-        title: Text('Últimos ${n.toString()} Dias'),
+        title: Text('Volume de Ração'),
       ),
       body: SafeArea(
         child: sensorLevelList.isEmpty
