@@ -1,15 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/material.dart';
 import 'package:peatdashboard/screens/dashboard_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    print("Erro ao carregar .env: $e");
-  }
+  await dotenv.load(fileName: '.env').catchError((e) {
+    print('Erro ao carregar .env: $e');
+  });
   runApp(const MyApp());
 }
 
@@ -22,10 +20,7 @@ class MyApp extends StatelessWidget {
       title: 'Peat',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF8B5CF6),
-          brightness: Brightness.light,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8B5CF6), brightness: Brightness.light),
         useMaterial3: true,
         textTheme: GoogleFonts.interTextTheme(),
       ),

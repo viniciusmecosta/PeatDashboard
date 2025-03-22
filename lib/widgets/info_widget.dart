@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-class InfoCard extends StatelessWidget {
-  const InfoCard({super.key});
+class InfoWidget extends StatelessWidget {
+  const InfoWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bool isLargeScreen = MediaQuery.of(context).size.width > 600;
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Container(
-      width: isLargeScreen ? MediaQuery.of(context).size.width * 1 : double.infinity, // Responsivo
+      width: isLargeScreen ? MediaQuery.of(context).size.width * 1 : double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -19,9 +19,8 @@ class InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center, // Align items vertically in the center
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Column with text
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,23 +42,13 @@ class InfoCard extends StatelessWidget {
               ],
             ),
           ),
-          // No space between text and image
-          Image.asset(
-            'assets/comedouro_icon.png',
-            width: 80, // Adjust the width for better alignment
-            height: 80, // Adjust the height for better alignment
-          ),
-          const SizedBox(width: 16), // Space between the image and the icon
-          // Increased size of the icon button
+          Image.asset('assets/comedouro_icon.png', width: 80, height: 80),
+          const SizedBox(width: 16),
           IconButton(
             onPressed: () {
               // Action when clicked
             },
-            icon: const Icon(
-              Icons.arrow_circle_right_rounded,
-              color: Colors.white,
-              size: 40, // Increased size of the icon button
-            ),
+            icon: const Icon(Icons.arrow_circle_right_rounded, color: Colors.white, size: 40),
           ),
         ],
       ),

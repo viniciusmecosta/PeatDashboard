@@ -9,17 +9,13 @@ class MapWidget extends StatelessWidget {
   const MapWidget({super.key, required this.location});
 
   Future<void> _openGoogleMaps() async {
-    final Uri googleMapsUrl = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}',
-    );
-    final Uri googleMapsAppUrl = Uri.parse(
-      'geo:${location.latitude},${location.longitude}?q=${location.latitude},${location.longitude}',
-    );
+    final googleMapsAppUrl = Uri.parse('geo:${location.latitude},${location.longitude}?q=${location.latitude},${location.longitude}');
+    final googleMapsWebUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}');
 
     if (await canLaunchUrl(googleMapsAppUrl)) {
       await launchUrl(googleMapsAppUrl);
-    } else if (await canLaunchUrl(googleMapsUrl)) {
-      await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+    } else if (await canLaunchUrl(googleMapsWebUrl)) {
+      await launchUrl(googleMapsWebUrl, mode: LaunchMode.externalApplication);
     } else {
       throw 'Não foi possível abrir o Google Maps.';
     }
@@ -45,18 +41,14 @@ class MapWidget extends StatelessWidget {
                   nonRotatedChildren: [
                     TileLayer(
                       urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      subdomains: ['a', 'b', 'c'],
+                      subdomains: const ['a', 'b', 'c'],
                       userAgentPackageName: 'com.example.app',
                     ),
                     MarkerLayer(
                       markers: [
                         Marker(
                           point: location,
-                          builder: (ctx) => const Icon(
-                            Icons.location_pin,
-                            color: Colors.red,
-                            size: 40,
-                          ),
+                          builder: (ctx) => const Icon(Icons.location_pin, color: Colors.red, size: 40),
                         ),
                       ],
                     ),
@@ -66,9 +58,7 @@ class MapWidget extends StatelessWidget {
               Positioned.fill(
                 child: Material(
                   color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _openGoogleMaps,
-                  ),
+                  child: InkWell(onTap: _openGoogleMaps),
                 ),
               ),
             ],
