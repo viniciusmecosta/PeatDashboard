@@ -33,10 +33,10 @@ class _HumidityScreenState extends State<HumidityScreen> {
       case "Ontem":
         await _fetchDataByDate(DateTime.now().subtract(const Duration(days: 1)));
         break;
-      case "Média 10 dias":
-        await _fetchAverageData(10);
+      case "Últimos 7 dias":
+        await _fetchAverageData(7);
         break;
-      case "Média 31 dias":
+      case "Últimos 31 dias":
         await _fetchAverageData(31);
         break;
     }
@@ -64,11 +64,11 @@ class _HumidityScreenState extends State<HumidityScreen> {
   }
 
   List<String> _getAvailablePeriods(BuildContext context) {
-    final periods = ["Hoje", "Ontem", "Média 10 dias"];
+    final periods = ["Hoje", "Ontem", "Últimos 7 dias"];
     if (MediaQuery.of(context).size.width > 800) {
-      periods.add("Média 31 dias");
-    } else if (_selectedPeriod == "Média 31 dias") {
-      _selectedPeriod = "Média 10 dias";
+      periods.add("Últimos 31 dias");
+    } else if (_selectedPeriod == "Últimos 31 dias") {
+      _selectedPeriod = "Últimos 7 dias";
       _fetchDataForSelectedPeriod();
     }
     return periods;

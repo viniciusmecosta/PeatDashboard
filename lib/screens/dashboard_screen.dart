@@ -53,7 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildMetricCards(BuildContext context, bool isLargeScreen) {
-    final cardColor = isLargeScreen ? const Color(0xFF8B5CF6) : const Color(0xFF10B981);
+    final cardColor = const Color(0xFF10B981);
 
     final capacityCard = GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CapacityScreen())),

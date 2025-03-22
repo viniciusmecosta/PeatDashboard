@@ -96,11 +96,13 @@ class ApiService {
   }
 
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
-    return _fetchListData("app/level/avg/$n", (json) => SensorLevel(
+    final response = await http.get(Uri.parse("$baseUrl/app/level/avg/$n"));
+    final data = jsonDecode(response.body);
+    return (data is List) ? data.map((json) => SensorLevel(
       id: json["count"] ?? 0,
       date: json["date"] ?? "0",
       capacity: (json["level"] ?? 0).toDouble(),
-    ));
+    )).toList().reversed.toList() : [];
   }
 
   static Future<List<SensorData>> fetchTemperatureAndHumidityByDate(String date) async {
