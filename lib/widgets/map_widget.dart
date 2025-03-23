@@ -23,6 +23,16 @@ class MapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
+    final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
+    final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
+
+    final tileUrl = isDarkMode
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
     return GestureDetector(
       onTap: _openGoogleMaps,
       child: ClipRRect(
@@ -40,7 +50,7 @@ class MapWidget extends StatelessWidget {
                   ),
                   nonRotatedChildren: [
                     TileLayer(
-                      urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      urlTemplate: tileUrl,
                       subdomains: const ['a', 'b', 'c'],
                       userAgentPackageName: 'com.example.app',
                     ),

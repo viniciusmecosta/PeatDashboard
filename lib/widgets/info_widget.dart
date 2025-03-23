@@ -46,7 +46,6 @@ class InfoWidget extends StatelessWidget {
           const SizedBox(width: 16),
           IconButton(
             onPressed: () {
-              // Action when clicked
             },
             icon: const Icon(Icons.arrow_circle_right_rounded, color: Colors.white, size: 40),
           ),

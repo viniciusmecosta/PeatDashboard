@@ -26,17 +26,22 @@ class MetricWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final formattedDate = _formatDate(subtitle);
 
     return Container(
       padding: const EdgeInsets.all(16),
       height: 150,
       decoration: BoxDecoration(
-        color: const Color(0xFF18181B),
+        color: theme.cardColor, // Usa a cor padrão de cards do tema
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -45,13 +50,13 @@ class MetricWidget extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: chartColor,
               shadows: [Shadow(color: chartColor.withOpacity(0.5), blurRadius: 10, offset: const Offset(0, 2))],
@@ -61,7 +66,7 @@ class MetricWidget extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             formattedDate,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.withOpacity(0.7)),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7)),
             textAlign: TextAlign.center,
           ),
         ],

@@ -20,24 +20,24 @@ class MyApp extends StatelessWidget {
       title: 'Peat',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8B5CF6), brightness: Brightness.light),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF298F5E), brightness: Brightness.light),
         useMaterial3: true,
         textTheme: GoogleFonts.interTextTheme(),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF8B5CF6),
+          seedColor: const Color(0xFF298F5E),
           brightness: Brightness.dark,
           surface: const Color(0xFF09090B),
           background: const Color(0xFF09090B),
-          primary: const Color(0xFF8B5CF6),
+          primary: const Color(0xFF298F5E),
         ),
         scaffoldBackgroundColor: const Color(0xFF090909),
         cardColor: const Color(0xFF18181B),
         useMaterial3: true,
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
       ),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.system,
       home: const DashboardScreen(),
     );
   }

@@ -24,58 +24,65 @@ class TemperatureWidget extends StatelessWidget {
     final maxTemperature = temperatureData.reduce((a, b) => a > b ? a : b);
     final upperLimit = ((maxTemperature / 20).ceil() * 20).toDouble();
 
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
+    final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
+    final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
+    final textColor = isDarkMode ? Colors.white : Colors.black; // Adjust text color based on the theme
+    final iconColor = isDarkMode ? Colors.white : Colors.black; // Adjust icon color based on the theme
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF18181B),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          border: Border.all(color: borderColor),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(color: shadowColor, blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildChartTitle(context),
+            _buildChartTitle(context, textColor, iconColor),
             const SizedBox(height: 16),
-            _buildCurrentTemperature(context, lastTemperature),
+            _buildCurrentTemperature(context, lastTemperature, textColor),
             const SizedBox(height: 16),
-            _buildLineChart(temperatureData, dates, upperLimit),
+            _buildLineChart(temperatureData, dates, upperLimit, textColor),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChartTitle(BuildContext context) {
+  Widget _buildChartTitle(BuildContext context, Color textColor, Color iconColor) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.location_on, color: Colors.white, size: 20),
+          Icon(Icons.location_on, color: iconColor, size: 20), // Adjusted icon color
           const SizedBox(width: 8),
           Text(
             'Peat IFCE - Bloco Central',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCurrentTemperature(BuildContext context, double lastTemperature) {
+  Widget _buildCurrentTemperature(BuildContext context, double lastTemperature, Color textColor) {
     return Center(
       child: Text(
         '${lastTemperature.toStringAsFixed(1)}°C',
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white, fontSize: 24),
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor, fontSize: 24),
       ),
     );
   }
 
-  Widget _buildLineChart(List<double> temperatureData, List<String> dates, double upperLimit) {
+  Widget _buildLineChart(List<double> temperatureData, List<String> dates, double upperLimit, Color textColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SizedBox(
@@ -94,7 +101,7 @@ class TemperatureWidget extends StatelessWidget {
                   interval: 1,
                   getTitlesWidget: (value, meta) => Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(dates[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10), textAlign: TextAlign.center),
+                    child: Text(dates[value.toInt()], style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 10), textAlign: TextAlign.center),
                   ),
                 ),
               ),
@@ -104,7 +111,7 @@ class TemperatureWidget extends StatelessWidget {
                   reservedSize: 40,
                   interval: 20,
                   getTitlesWidget: (value, meta) => (value % 20 == 0)
-                      ? Text('${value.toInt()}°C', style: const TextStyle(color: Colors.grey, fontSize: 12))
+                      ? Text('${value.toInt()}°C', style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 12))
                       : const SizedBox.shrink(),
                 ),
               ),
@@ -126,8 +133,8 @@ class TemperatureWidget extends StatelessWidget {
               touchTooltipData: LineTouchTooltipData(
                 getTooltipItems: (List<LineBarSpot> touchedBarSpots) => touchedBarSpots
                     .map((barSpot) => LineTooltipItem(
-                  '${temperatureData[barSpot.x.toInt()].toStringAsFixed(1)}%',
-                  const TextStyle(color: Colors.white),
+                  '${temperatureData[barSpot.x.toInt()].toStringAsFixed(1)}°C',
+                  TextStyle(color: textColor),
                 ))
                     .toList(),
               ),

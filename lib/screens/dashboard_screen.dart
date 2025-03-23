@@ -14,72 +14,52 @@ class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  _DashboardScreenState createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingObserver {
-  final LatLng _location = const LatLng(-3.7442, -38.5361);
-  SensorData _temperature = SensorData(id: 0, date: "0", temperature: 0, humidity: 0);
-  SensorData _humidity = SensorData(id: 0, date: "0", temperature: 0, humidity: 0);
-  SensorLevel _capacity = SensorLevel(id: 0, date: "0", capacity: 0);
+class _DashboardScreenState extends State<DashboardScreen> {
+  // Estado local para armazenar os dados
+  Map<String, dynamic> _data = {};
   bool _isLoading = true;
+
+  final LatLng _location = const LatLng(-3.7442, -38.5361);
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _loadData();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _loadData();
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _loadData();
+    _loadData(); // Carrega os dados apenas uma vez
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
     try {
       final tempHumiData = await ApiService.fetchTemperatureAndHumidity();
       final capData = await ApiService.fetchCapacity();
-
-      if (mounted) {
-        setState(() {
-          _temperature = tempHumiData["temperature"] ?? _temperature;
-          _humidity = tempHumiData["humidity"] ?? _humidity;
-          _capacity = capData ?? _capacity;
-          _isLoading = false;
-        });
-      }
+      setState(() {
+        _data = {
+          "temperature": tempHumiData["temperature"],
+          "humidity": tempHumiData["humidity"],
+          "capacity": capData,
+        };
+        _isLoading = false; // Dados carregados, atualiza a tela
+      });
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao carregar dados: ${e.toString()}')),
+      );
     }
   }
 
-  Widget _buildMetricCards(BuildContext context, bool isLargeScreen) {
-    final cardColor = const Color(0xFF10B981);
+  Widget _buildMetricCards(
+      BuildContext context, bool isLargeScreen, SensorData temperature, SensorData humidity, SensorLevel capacity) {
+    final cardColor = Theme.of(context).colorScheme.primary;
 
     final capacityCard = GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CapacityScreen())),
       child: MetricWidget(
         title: 'Volume de Ração',
-        value: '${_capacity.capacity.toInt()}%',
-        subtitle: _capacity.date,
+        value: '${capacity.capacity.toInt()}%',
+        subtitle: capacity.date,
         chartColor: cardColor,
       ),
     );
@@ -88,8 +68,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TemperatureScreen())),
       child: MetricWidget(
         title: 'Temperatura',
-        value: '${_temperature.temperature.toInt()}°C',
-        subtitle: _temperature.date,
+        value: '${temperature.temperature.toInt()}°C',
+        subtitle: temperature.date,
         chartColor: cardColor,
       ),
     );
@@ -98,8 +78,8 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HumidityScreen())),
       child: MetricWidget(
         title: 'Umidade',
-        value: '${_humidity.humidity.toInt()}%',
-        subtitle: _humidity.date,
+        value: '${humidity.humidity.toInt()}%',
+        subtitle: humidity.date,
         chartColor: cardColor,
       ),
     );
@@ -125,38 +105,40 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: Color(0xFF090909),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    final theme = Theme.of(context);
 
-    final isLargeScreen = MediaQuery.of(context).size.width > 600;
-
+    // Carrega o conteúdo normalmente, sem afetar os dados
     return Scaffold(
-      backgroundColor: const Color(0xFF090909),
+      backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF090909),
+        backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         toolbarHeight: 100,
         title: Container(
           padding: const EdgeInsets.only(top: 20),
-          alignment: isLargeScreen ? Alignment.centerLeft : Alignment.center,
+          alignment: MediaQuery.of(context).size.width > 600 ? Alignment.centerLeft : Alignment.center,
           child: Image.asset('assets/logo.png', height: 130),
         ),
-        centerTitle: !isLargeScreen,
+        centerTitle: MediaQuery.of(context).size.width <= 600,
       ),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator()) // Exibe indicador de carregamento
+            : SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const InfoWidget(),
               const SizedBox(height: 16),
-              _buildMetricCards(context, isLargeScreen),
+              _buildMetricCards(
+                context,
+                MediaQuery.of(context).size.width > 600,
+                _data["temperature"],
+                _data["humidity"],
+                _data["capacity"],
+              ),
               const SizedBox(height: 16),
               MapWidget(location: _location),
             ],

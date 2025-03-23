@@ -26,19 +26,24 @@ class _CapacityScreenState extends State<CapacityScreen> {
   Future<void> _fetchDataForSelectedPeriod() async {
     setState(() => _isLoading = true);
 
-    switch (_selectedPeriod) {
-      case "Hoje":
-        await _fetchDataByDate(DateTime.now());
-        break;
-      case "Ontem":
-        await _fetchDataByDate(DateTime.now().subtract(const Duration(days: 1)));
-        break;
-      case "Últimos 7 dias":
-        await _fetchAverageData(7);
-        break;
-      case "Últimos 31 dias":
-        await _fetchAverageData(31);
-        break;
+    try {
+      switch (_selectedPeriod) {
+        case "Hoje":
+          await _fetchDataByDate(DateTime.now());
+          break;
+        case "Ontem":
+          await _fetchDataByDate(DateTime.now().subtract(const Duration(days: 1)));
+          break;
+        case "Últimos 7 dias":
+          await _fetchAverageData(7);
+          break;
+        case "Últimos 31 dias":
+          await _fetchAverageData(31);
+          break;
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar dados')));
     }
   }
 
@@ -76,12 +81,20 @@ class _CapacityScreenState extends State<CapacityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final dropdownColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF090909),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF090909),
+        backgroundColor: backgroundColor,
         elevation: 0,
-        title: const Text('Volume de Ração'),
+        title: Text(
+          'Volume de Ração',
+          style: TextStyle(color: textColor),
+        ),
       ),
       body: SafeArea(
         child: _isLoading
@@ -92,15 +105,23 @@ class _CapacityScreenState extends State<CapacityScreen> {
             children: [
               DropdownButton<String>(
                 value: _selectedPeriod,
-                dropdownColor: const Color(0xFF18181B),
-                style: const TextStyle(color: Colors.white),
-                items: _getAvailablePeriods(context).map((period) => DropdownMenuItem(
-                  value: period,
-                  child: Text(period),
-                )).toList(),
+                dropdownColor: dropdownColor,
+                style: TextStyle(color: textColor),
+                items: _getAvailablePeriods(context).map((period) {
+                  return DropdownMenuItem(
+                    value: period,
+                    child: Text(
+                      period,
+                      style: TextStyle(color: textColor),
+                    ),
+                  );
+                }).toList(),
                 onChanged: (newValue) {
                   if (newValue != null) {
-                    setState(() => _selectedPeriod = newValue);
+                    setState(() {
+                      _selectedPeriod = newValue;
+                      _isLoading = true;
+                    });
                     _fetchDataForSelectedPeriod();
                   }
                 },

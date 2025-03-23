@@ -9,11 +9,17 @@ class HumidityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
+    final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
+
     if (sensorDataList.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           "Nenhum dado disponível no gráfico",
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(color: textColor, fontSize: 16),
         ),
       );
     }
@@ -29,53 +35,53 @@ class HumidityWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF18181B),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.withOpacity(0.1), width: 1),
+          border: Border.all(color: borderColor, width: 1),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(color: shadowColor, blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildChartTitle(context),
+            _buildChartTitle(context, textColor),
             const SizedBox(height: 16),
-            _buildCurrentHumidity(context, lastHumidity),
+            _buildCurrentHumidity(context, lastHumidity, textColor),
             const SizedBox(height: 16),
-            _buildLineChart(humidityData, dates, upperLimit),
+            _buildLineChart(humidityData, dates, upperLimit, textColor),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChartTitle(BuildContext context) {
+  Widget _buildChartTitle(BuildContext context, Color textColor) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.location_on, color: Colors.white, size: 20),
+          Icon(Icons.location_on, color: textColor, size: 20),
           const SizedBox(width: 8),
           Text(
             'Peat IFCE - Bloco Central',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCurrentHumidity(BuildContext context, double lastHumidity) {
+  Widget _buildCurrentHumidity(BuildContext context, double lastHumidity, Color textColor) {
     return Center(
       child: Text(
         '${lastHumidity.toStringAsFixed(1)}%',
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white, fontSize: 24),
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor, fontSize: 24),
       ),
     );
   }
 
-  Widget _buildLineChart(List<double> humidityData, List<String> dates, double upperLimit) {
+  Widget _buildLineChart(List<double> humidityData, List<String> dates, double upperLimit, Color textColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SizedBox(
@@ -94,7 +100,7 @@ class HumidityWidget extends StatelessWidget {
                   interval: 1,
                   getTitlesWidget: (value, meta) => Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(dates[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10), textAlign: TextAlign.center),
+                    child: Text(dates[value.toInt()], style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 10), textAlign: TextAlign.center),
                   ),
                 ),
               ),
@@ -104,7 +110,7 @@ class HumidityWidget extends StatelessWidget {
                   reservedSize: 40,
                   interval: 20,
                   getTitlesWidget: (value, meta) => (value % 20 == 0)
-                      ? Text('${value.toInt()}%', style: const TextStyle(color: Colors.grey, fontSize: 12))
+                      ? Text('${value.toInt()}%', style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 12))
                       : const SizedBox.shrink(),
                 ),
               ),
@@ -127,7 +133,7 @@ class HumidityWidget extends StatelessWidget {
                 getTooltipItems: (List<LineBarSpot> touchedBarSpots) => touchedBarSpots
                     .map((barSpot) => LineTooltipItem(
                   '${humidityData[barSpot.x.toInt()].toStringAsFixed(1)}%',
-                  const TextStyle(color: Colors.white),
+                  TextStyle(color: textColor),
                 ))
                     .toList(),
               ),
