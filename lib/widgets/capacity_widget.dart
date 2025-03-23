@@ -10,7 +10,12 @@ class CapacityWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (sensorLevelList.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: Text(
+          "Nenhum dado disponível no gráfico",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      );
     }
 
     final levelData = sensorLevelList.map((e) => e.capacity).toList();
@@ -89,7 +94,11 @@ class CapacityWidget extends StatelessWidget {
                   interval: 1,
                   getTitlesWidget: (value, meta) => Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(dates[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 10), textAlign: TextAlign.center),
+                    child: Text(
+                      dates[value.toInt()],
+                      style: const TextStyle(color: Colors.grey, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
@@ -120,7 +129,10 @@ class CapacityWidget extends StatelessWidget {
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
                 getTooltipItems: (List<LineBarSpot> touchedBarSpots) => touchedBarSpots
-                    .map((barSpot) => LineTooltipItem('${levelData[barSpot.x.toInt()].toStringAsFixed(1)}%', const TextStyle(color: Colors.white)))
+                    .map((barSpot) => LineTooltipItem(
+                  '${levelData[barSpot.x.toInt()].toStringAsFixed(1)}%',
+                  const TextStyle(color: Colors.white),
+                ))
                     .toList(),
               ),
             ),

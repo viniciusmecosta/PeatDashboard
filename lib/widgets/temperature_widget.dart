@@ -10,7 +10,12 @@ class TemperatureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (sensorDataList.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: Text(
+          "Nenhum dado disponível no gráfico",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      );
     }
 
     final temperatureData = sensorDataList.map((e) => e.temperature).toList();
@@ -120,7 +125,10 @@ class TemperatureWidget extends StatelessWidget {
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
                 getTooltipItems: (List<LineBarSpot> touchedBarSpots) => touchedBarSpots
-                    .map((barSpot) => LineTooltipItem('${temperatureData[barSpot.x.toInt()].toStringAsFixed(1)}°C', const TextStyle(color: Colors.white)))
+                    .map((barSpot) => LineTooltipItem(
+                  '${temperatureData[barSpot.x.toInt()].toStringAsFixed(1)}%',
+                  const TextStyle(color: Colors.white),
+                ))
                     .toList(),
               ),
             ),

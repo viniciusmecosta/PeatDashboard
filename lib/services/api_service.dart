@@ -86,7 +86,7 @@ class ApiService {
     }
   }
 
-  static Future<List<SensorData>> fetchLastNAverageTemperatures(int n) async {
+  static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {
     return _fetchListData("app/temperature/avg/$n", (json) => SensorData(
       id: json["count"] ?? 0,
       date: json["date"] ?? "00/00",
@@ -106,19 +106,22 @@ class ApiService {
   }
 
   static Future<List<SensorData>> fetchTemperatureAndHumidityByDate(String date) async {
-    return _fetchListData("app/temperature/date/$date", (json) => SensorData(
+    final data = await _fetchListData("app/temperature/date/$date", (json) => SensorData(
       id: json["count"] ?? 0,
       date: json["date"] ?? "0",
       temperature: (json["temp"] ?? 0).toDouble(),
       humidity: (json["humi"] ?? 0).toDouble(),
     ));
+    return data.isEmpty ? [] : data;
   }
 
   static Future<List<SensorLevel>> fetchCapacityByDate(String date) async {
-    return _fetchListData("app/level/date/$date", (json) => SensorLevel(
+    final data = await _fetchListData("app/level/date/$date", (json) => SensorLevel(
       id: json["count"] ?? 0,
       date: json["date"] ?? "0",
       capacity: (json["level"] ?? 0).toDouble(),
     ));
+    return data.isEmpty ? [] : data;
   }
+
 }
