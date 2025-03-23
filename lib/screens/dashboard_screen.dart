@@ -114,11 +114,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
-        toolbarHeight: 100,
+        toolbarHeight: 80,
         title: Container(
           padding: const EdgeInsets.only(top: 20),
           alignment: isMobile ? Alignment.center : Alignment.centerLeft,
-          child: Image.asset('assets/logo.png', height: 130),
+          child: Image.asset('assets/logo.png', height: 115),
         ),
         centerTitle: isMobile,
       ),

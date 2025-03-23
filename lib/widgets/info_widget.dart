@@ -9,8 +9,8 @@ class InfoWidget extends StatelessWidget {
 
     return Container(
       width: isLargeScreen ? MediaQuery.of(context).size.width * 1 : double.infinity,
-      height: isLargeScreen ? 150 : 150,
-      padding: const EdgeInsets.all(16),
+      height: isLargeScreen ? 120 : 120,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF7CDBAD), Color(0xFF20B86F)],
@@ -21,9 +21,11 @@ class InfoWidget extends StatelessWidget {
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -33,7 +35,7 @@ class InfoWidget extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   'Siga as instruções para utilizar o comedouro da maneira correta.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -43,11 +45,14 @@ class InfoWidget extends StatelessWidget {
               ],
             ),
           ),
-          Image.asset('assets/comedouro_icon.png', width: 80, height: 80),
-          const SizedBox(width: 16),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.arrow_circle_right_rounded, color: Colors.white, size: 40),
+          Row(
+            children: [
+              Image.asset('assets/comedouro_icon.png', width: 60, height: 75),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.arrow_circle_right_rounded, color: Colors.white, size: 36),
+              ),
+            ],
           ),
         ],
       ),

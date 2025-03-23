@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:peatdashboard/screens/dashboard_screen.dart';
 
 Future<void> main() async {
@@ -8,7 +7,6 @@ Future<void> main() async {
   await dotenv.load(fileName: 'assets/.env');
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF298F5E), brightness: Brightness.light),
         useMaterial3: true,
-        textTheme: GoogleFonts.interTextTheme(),
+        fontFamily: 'SFProDisplay',
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -34,7 +32,8 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF090909),
         cardColor: const Color(0xFF18181B),
         useMaterial3: true,
-        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        fontFamily: 'SFProDisplay',
+
       ),
       themeMode: ThemeMode.system,
       home: const DashboardScreen(),

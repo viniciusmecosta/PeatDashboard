@@ -75,8 +75,6 @@ class MetricCapacityWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 1),
-
           Flexible(
             flex: 3,
             child: SizedBox(
@@ -106,9 +104,6 @@ class MetricCapacityWidget extends StatelessWidget {
               ),
             ),
           ),
-
-          const SizedBox(height: 1),
-
           Flexible(
             child: Text(
               formattedDate,

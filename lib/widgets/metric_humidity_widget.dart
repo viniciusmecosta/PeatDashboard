@@ -82,7 +82,6 @@ class MetricHumidityWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 1),
           Flexible(
             flex: 3,
             child: SizedBox(
@@ -115,7 +114,6 @@ class MetricHumidityWidget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 1),
           Flexible(
             child: Text(
               formattedDate,

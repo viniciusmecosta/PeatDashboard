@@ -33,6 +33,7 @@ class MetricTemperatureWidget extends StatelessWidget {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -82,7 +83,6 @@ class MetricTemperatureWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 1),
           Flexible(
             flex: 3,
             child: SizedBox(
@@ -115,7 +115,6 @@ class MetricTemperatureWidget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 1),
           Flexible(
             child: Text(
               formattedDate,
