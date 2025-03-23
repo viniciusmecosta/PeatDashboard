@@ -8,7 +8,9 @@ import 'package:peatdashboard/screens/temperature_screen.dart';
 import 'package:peatdashboard/services/api_service.dart';
 import 'package:peatdashboard/widgets/info_widget.dart';
 import 'package:peatdashboard/widgets/map_widget.dart';
-import 'package:peatdashboard/widgets/metric_widget.dart';
+import 'package:peatdashboard/widgets/metric_capacity_widget.dart';
+import '../widgets/metric_humidity_widget.dart';
+import '../widgets/metric_temperature_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -18,7 +20,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  // Estado local para armazenar os dados
   Map<String, dynamic> _data = {};
   bool _isLoading = true;
 
@@ -27,7 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData(); // Carrega os dados apenas uma vez
+    _loadData();
   }
 
   Future<void> _loadData() async {
@@ -40,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           "humidity": tempHumiData["humidity"],
           "capacity": capData,
         };
-        _isLoading = false; // Dados carregados, atualiza a tela
+        _isLoading = false;
       });
     } catch (e) {
       setState(() => _isLoading = false);
@@ -56,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     final capacityCard = GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CapacityScreen())),
-      child: MetricWidget(
+      child: MetricCapacityWidget(
         title: 'Volume de Ração',
         value: '${capacity.capacity.toInt()}%',
         subtitle: capacity.date,
@@ -66,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     final temperatureCard = GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TemperatureScreen())),
-      child: MetricWidget(
+      child: MetricTemperatureWidget(
         title: 'Temperatura',
         value: '${temperature.temperature.toInt()}°C',
         subtitle: temperature.date,
@@ -76,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     final humidityCard = GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HumidityScreen())),
-      child: MetricWidget(
+      child: MetricHumidityWidget(
         title: 'Umidade',
         value: '${humidity.humidity.toInt()}%',
         subtitle: humidity.date,
@@ -106,8 +107,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isMobile = MediaQuery.of(context).size.width <= 600;
 
-    // Carrega o conteúdo normalmente, sem afetar os dados
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       appBar: AppBar(
@@ -116,32 +117,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
         toolbarHeight: 100,
         title: Container(
           padding: const EdgeInsets.only(top: 20),
-          alignment: MediaQuery.of(context).size.width > 600 ? Alignment.centerLeft : Alignment.center,
+          alignment: isMobile ? Alignment.center : Alignment.centerLeft,
           child: Image.asset('assets/logo.png', height: 130),
         ),
-        centerTitle: MediaQuery.of(context).size.width <= 600,
+        centerTitle: isMobile,
       ),
       body: SafeArea(
         top: false,
         child: _isLoading
-            ? const Center(child: CircularProgressIndicator()) // Exibe indicador de carregamento
-            : SingleChildScrollView(
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
+          child: isMobile
+              ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const InfoWidget(),
               const SizedBox(height: 16),
               _buildMetricCards(
                 context,
-                MediaQuery.of(context).size.width > 600,
+                false,
                 _data["temperature"],
                 _data["humidity"],
                 _data["capacity"],
               ),
               const SizedBox(height: 16),
-              MapWidget(location: _location),
+              Expanded(child: MapWidget(location: _location)),
             ],
+          )
+              : SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const InfoWidget(),
+                const SizedBox(height: 16),
+                _buildMetricCards(
+                  context,
+                  true,
+                  _data["temperature"],
+                  _data["humidity"],
+                  _data["capacity"],
+                ),
+                const SizedBox(height: 16),
+                MapWidget(location: _location),
+              ],
+            ),
           ),
         ),
       ),

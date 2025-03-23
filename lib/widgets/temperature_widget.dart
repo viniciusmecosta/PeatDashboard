@@ -28,8 +28,8 @@ class TemperatureWidget extends StatelessWidget {
     final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
     final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
     final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
-    final textColor = isDarkMode ? Colors.white : Colors.black; // Adjust text color based on the theme
-    final iconColor = isDarkMode ? Colors.white : Colors.black; // Adjust icon color based on the theme
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -62,7 +62,7 @@ class TemperatureWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.location_on, color: iconColor, size: 20), // Adjusted icon color
+          Icon(Icons.location_on, color: iconColor, size: 20),
           const SizedBox(width: 8),
           Text(
             'Peat IFCE - Bloco Central',

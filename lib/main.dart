@@ -5,11 +5,10 @@ import 'package:peatdashboard/screens/dashboard_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env').catchError((e) {
-    print('Erro ao carregar .env: $e');
-  });
+  await dotenv.load(fileName: 'assets/.env');
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

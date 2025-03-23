@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^6.2.4
   http: ^1.0.0
   flutter_dotenv: ^5.0.2
+  sleek_circular_slider: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +33,4 @@ flutter:
   assets:
     - assets/logo.png
     - assets/comedouro_icon.png
+    - assets/.env
