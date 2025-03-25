@@ -16,15 +16,6 @@ class MetricCapacityWidget extends StatelessWidget {
     required this.chartColor,
   });
 
-  String _formatDate(String dateString) {
-    try {
-      final dateTime = DateTime.parse(dateString);
-      return DateFormat('HH:mm dd/MM/yyyy').format(dateTime);
-    } catch (_) {
-      return 'Data inválida';
-    }
-  }
-
   double _parseValue(String value) {
     try {
       return double.parse(value.replaceAll(RegExp(r'[^0-9.]'), '')).clamp(0, 100);
@@ -36,7 +27,7 @@ class MetricCapacityWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final formattedDate = _formatDate(subtitle);
+    final formattedDate = subtitle;
     final double numericValue = _parseValue(value);
 
     Color valueTextColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
