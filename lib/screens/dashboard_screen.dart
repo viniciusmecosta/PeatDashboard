@@ -51,8 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Widget _buildMetricCards(
-      BuildContext context, bool isLargeScreen, SensorData temperature, SensorData humidity, SensorLevel capacity) {
+  Widget _buildMetricCards(BuildContext context, bool isLargeScreen, SensorData temperature, SensorData humidity, SensorLevel capacity) {
     final cardColor = Theme.of(context).colorScheme.primary;
 
     final capacityCard = GestureDetector(
@@ -86,22 +85,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
 
     return isLargeScreen
-        ? Row(children: [
-      Expanded(child: capacityCard),
-      const SizedBox(width: 16),
-      Expanded(child: temperatureCard),
-      const SizedBox(width: 16),
-      Expanded(child: humidityCard),
-    ])
-        : Column(children: [
-      SizedBox(width: double.infinity, child: capacityCard),
-      const SizedBox(height: 16),
-      Row(children: [
-        Expanded(child: temperatureCard),
-        const SizedBox(width: 16),
-        Expanded(child: humidityCard),
-      ]),
-    ]);
+        ? Column(
+      children: [
+        Row(children: [Expanded(child: capacityCard)]),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(child: temperatureCard),
+            const SizedBox(width: 16),
+            Expanded(child: humidityCard),
+          ],
+        ),
+      ],
+    )
+        : Column(
+      children: [
+        SizedBox(width: double.infinity, child: capacityCard),
+        const SizedBox(height: 16),
+        Row(children: [
+          Expanded(child: temperatureCard),
+          const SizedBox(width: 16),
+          Expanded(child: humidityCard),
+        ]),
+      ],
+    );
   }
 
   @override
@@ -115,11 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
         toolbarHeight: 80,
-        title: Container(
-          padding: const EdgeInsets.only(top: 20),
-          alignment: isMobile ? Alignment.center : Alignment.centerLeft,
-          child: Image.asset('assets/logo.png', height: 115),
-        ),
+        title: Image.asset('assets/logo.png', height: 115),
         centerTitle: isMobile,
       ),
       body: SafeArea(
@@ -145,26 +148,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Expanded(child: MapWidget(location: _location)),
             ],
           )
-              : SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const InfoWidget(),
-                const SizedBox(height: 16),
-                _buildMetricCards(
-                  context,
-                  true,
-                  _data["temperature"],
-                  _data["humidity"],
-                  _data["capacity"],
-                ),
-                const SizedBox(height: 16),
-                MapWidget(location: _location),
-              ],
-            ),
+              : Column(
+            children: [
+              const InfoWidget(),
+              const SizedBox(height: 16),
+              _buildMetricCards(
+                context,
+                true,
+                _data["temperature"],
+                _data["humidity"],
+                _data["capacity"],
+              ),
+              const SizedBox(height: 16),
+              Expanded(child: MapWidget(location: _location)),
+            ],
           ),
         ),
       ),
     );
   }
 }
+

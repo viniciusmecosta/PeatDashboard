@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/services/api_service.dart';
+import '../widgets/capacity_info_widget.dart';
 import '../widgets/capacity_widget.dart';
 
 class CapacityScreen extends StatefulWidget {
@@ -12,6 +13,7 @@ class CapacityScreen extends StatefulWidget {
 }
 
 class _CapacityScreenState extends State<CapacityScreen> {
+  SensorLevel _sensorLevel = SensorLevel(id: 0, date: "0", capacity: 0.0);
   List<SensorLevel> _sensorLevelList = [];
   List<SensorLevel> _filteredData = [];
   String _selectedPeriod = "Hoje";
@@ -20,6 +22,7 @@ class _CapacityScreenState extends State<CapacityScreen> {
   @override
   void initState() {
     super.initState();
+    _fetchCapacityData();
     _fetchDataForSelectedPeriod();
   }
 
@@ -68,6 +71,20 @@ class _CapacityScreenState extends State<CapacityScreen> {
     }
   }
 
+  Future<void> _fetchCapacityData() async {
+    setState(() => _isLoading = true);
+    try {
+      final data = await ApiService.fetchCapacity();
+      setState(() {
+        _sensorLevel = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar dados')));
+    }
+  }
+
   List<String> _getAvailablePeriods(BuildContext context) {
     final periods = ["Hoje", "Ontem", "Últimos 7 dias"];
     if (MediaQuery.of(context).size.width > 800) {
@@ -86,6 +103,8 @@ class _CapacityScreenState extends State<CapacityScreen> {
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final dropdownColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
 
+    double percentage = _sensorLevel.capacity;
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -103,34 +122,58 @@ class _CapacityScreenState extends State<CapacityScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              DropdownButton<String>(
-                value: _selectedPeriod,
-                dropdownColor: dropdownColor,
-                style: TextStyle(color: textColor),
-                items: _getAvailablePeriods(context).map((period) {
-                  return DropdownMenuItem(
-                    value: period,
-                    child: Text(
-                      period,
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    color: dropdownColor,
+                    borderRadius: BorderRadius.circular(22.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedPeriod,
+                      dropdownColor: dropdownColor,
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: textColor,
+                      ),
                       style: TextStyle(color: textColor),
+                      items: _getAvailablePeriods(context).map((period) {
+                        return DropdownMenuItem(
+                          value: period,
+                          child: Text(
+                            period,
+                            style: TextStyle(color: textColor),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedPeriod = newValue;
+                            _isLoading = true;
+                          });
+                          _fetchDataForSelectedPeriod();
+                        }
+                      },
                     ),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedPeriod = newValue;
-                      _isLoading = true;
-                    });
-                    _fetchDataForSelectedPeriod();
-                  }
-                },
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: CapacityWidget(sensorLevelList: _filteredData),
               ),
+              const SizedBox(height: 16),
+              CapacityInfoWidget(percentage: percentage),
             ],
           ),
         ),

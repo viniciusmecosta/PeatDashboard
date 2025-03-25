@@ -36,7 +36,7 @@ class MapWidget extends StatelessWidget {
     return GestureDetector(
       onTap: _openGoogleMaps,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(22),
         child: SizedBox(
           height: 170,
           child: Stack(

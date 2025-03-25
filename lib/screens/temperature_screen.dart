@@ -103,28 +103,46 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              DropdownButton<String>(
-                value: _selectedPeriod,
-                dropdownColor: dropdownColor,
-                style: TextStyle(color: textColor),
-                items: _getAvailablePeriods(context).map((period) {
-                  return DropdownMenuItem(
-                    value: period,
-                    child: Text(
-                      period,
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    color: dropdownColor,
+                    borderRadius: BorderRadius.circular(22.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedPeriod,
+                      dropdownColor: dropdownColor,
                       style: TextStyle(color: textColor),
+                      items: _getAvailablePeriods(context).map((period) {
+                        return DropdownMenuItem(
+                          value: period,
+                          child: Text(
+                            period,
+                            style: TextStyle(color: textColor),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedPeriod = newValue;
+                            _isLoading = true;
+                          });
+                          _fetchDataForSelectedPeriod();
+                        }
+                      },
                     ),
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _selectedPeriod = newValue;
-                      _isLoading = true;
-                    });
-                    _fetchDataForSelectedPeriod();
-                  }
-                },
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               SizedBox(

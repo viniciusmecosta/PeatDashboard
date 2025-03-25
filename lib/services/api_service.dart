@@ -77,17 +77,24 @@ class ApiService {
 
   static Future<SensorLevel> fetchCapacity() async {
     try {
-      return await _fetchData("level/last/1", (json) =>
-          SensorLevel(
-            id: json["count"] ?? 0,
-            date: json["date"] ?? "",
-            capacity: (json["level"] ?? 0).toDouble(),
-          )) ??
-          SensorLevel(id: 0, date: "0", capacity: 0);
+      final response = await _fetchData("level/last/1", (json) {
+        return SensorLevel(
+          id: json["count"] ?? 0,
+          date: json["date"] ?? "",
+          capacity: (json["level"] ?? 0).toDouble(),
+        );
+      });
+
+      if (response != null) {
+        return response;
+      } else {
+        return SensorLevel(id: 0, date: "0", capacity: 0);
+      }
     } catch (e) {
       return SensorLevel(id: 0, date: "0", capacity: 0);
     }
   }
+
 
   static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {
     return _fetchListData("sensor_data/avg/$n", (json) =>

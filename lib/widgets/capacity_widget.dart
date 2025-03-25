@@ -9,79 +9,73 @@ class CapacityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-    final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
-    final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
-
     if (sensorLevelList.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
           "Nenhum dado disponível no gráfico",
-          style: TextStyle(color: textColor, fontSize: 16),
+          style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       );
     }
 
-    final levelData = sensorLevelList.map((e) => e.capacity).toList();
+    final capacityData = sensorLevelList.map((e) => e.capacity).toList();
     final dates = sensorLevelList.map((e) => e.date).toList();
-    final lastLevel = levelData.last;
-    final maxLevel = levelData.reduce((a, b) => a > b ? a : b);
-    final upperLimit = ((maxLevel / 20).ceil() * 20).toDouble();
+    final lastCapacity = capacityData.last;
+    final maxCapacity = capacityData.reduce((a, b) => a > b ? a : b);
+    final upperLimit = ((maxCapacity / 20).ceil() * 20).toDouble();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor, width: 1),
+          color: const Color(0xFF18181B),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: Colors.grey.withOpacity(0.1)),
           boxShadow: [
-            BoxShadow(color: shadowColor, blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildChartTitle(context, textColor),
+            _buildChartTitle(),
             const SizedBox(height: 16),
-            _buildCurrentLevel(context, lastLevel, textColor),
+            _buildCurrentCapacity(lastCapacity),
             const SizedBox(height: 16),
-            _buildLineChart(levelData, dates, upperLimit, textColor),
+            _buildLineChart(capacityData, dates, upperLimit),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChartTitle(BuildContext context, Color textColor) {
+  Widget _buildChartTitle() {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.location_on, color: textColor, size: 20),
+          const Icon(Icons.location_on, color: Colors.grey, size: 20),
           const SizedBox(width: 8),
-          Text(
+          const Text(
             'Peat IFCE - Bloco Central',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCurrentLevel(BuildContext context, double lastLevel, Color textColor) {
+  Widget _buildCurrentCapacity(double lastCapacity) {
     return Center(
       child: Text(
-        '${lastLevel.toStringAsFixed(1)}%',
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: textColor, fontSize: 24),
+        '${lastCapacity.toStringAsFixed(1)}%',
+        style: const TextStyle(color: Color(0xFF298F5E), fontSize: 28, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _buildLineChart(List<double> levelData, List<String> dates, double upperLimit, Color textColor) {
+  Widget _buildLineChart(List<double> capacityData, List<String> dates, double upperLimit) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SizedBox(
@@ -98,19 +92,10 @@ class CapacityWidget extends StatelessWidget {
                   showTitles: true,
                   reservedSize: 40,
                   interval: 1,
-                  getTitlesWidget: (value, meta) {
-                    if (value.toInt() >= dates.length || value.toInt() < 0) {
-                      return const SizedBox.shrink();
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        dates[value.toInt()],
-                        style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 10),
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  },
+                  getTitlesWidget: (value, meta) => Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(dates[value.toInt()], style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10), textAlign: TextAlign.center),
+                  ),
                 ),
               ),
               leftTitles: AxisTitles(
@@ -119,7 +104,7 @@ class CapacityWidget extends StatelessWidget {
                   reservedSize: 40,
                   interval: 20,
                   getTitlesWidget: (value, meta) => (value % 20 == 0)
-                      ? Text('${value.toInt()}%', style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 12))
+                      ? Text('${value.toInt()}%', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12))
                       : const SizedBox.shrink(),
                 ),
               ),
@@ -129,7 +114,7 @@ class CapacityWidget extends StatelessWidget {
             borderData: FlBorderData(show: false),
             lineBarsData: [
               LineChartBarData(
-                spots: levelData.asMap().entries.map((entry) => FlSpot(entry.key.toDouble(), entry.value)).toList(),
+                spots: capacityData.asMap().entries.map((entry) => FlSpot(entry.key.toDouble(), entry.value)).toList(),
                 isCurved: true,
                 barWidth: 3,
                 color: const Color(0xFF298F5E),
@@ -141,8 +126,8 @@ class CapacityWidget extends StatelessWidget {
               touchTooltipData: LineTouchTooltipData(
                 getTooltipItems: (List<LineBarSpot> touchedBarSpots) => touchedBarSpots
                     .map((barSpot) => LineTooltipItem(
-                  '${levelData[barSpot.x.toInt()].toStringAsFixed(1)}%',
-                  TextStyle(color: textColor),
+                  '${capacityData[barSpot.x.toInt()].toStringAsFixed(1)}%',
+                  const TextStyle(color: Colors.white),
                 ))
                     .toList(),
               ),
