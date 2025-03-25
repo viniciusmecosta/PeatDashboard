@@ -1,17 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
+import 'package:peatdashboard/services/api_service.dart';
 
-class HumidityWidget extends StatelessWidget {
+
+class HumidityWidget extends StatefulWidget {
   final List<SensorData> sensorDataList;
 
   const HumidityWidget({super.key, required this.sensorDataList});
 
   @override
+  State<HumidityWidget> createState() => _HumidityWidgetState();
+}
+
+class _HumidityWidgetState extends State<HumidityWidget> {
+  double weeklyAverage = 0.0;
+  double monthlyAverage = 0.0;
+  double currentHumidity = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAverages();
+    _loadCurrentTemperatureAndHumidity();
+  }
+
+  Future<void> _loadAverages() async {
+    final weekly = await ApiService.fetchAverageTemperatureAndHumidity(7);
+    final monthly = await ApiService.fetchAverageTemperatureAndHumidity(31);
+
+    setState(() {
+      weeklyAverage = weekly.humidity;
+      monthlyAverage = monthly.humidity;
+    });
+  }
+
+  Future<void> _loadCurrentTemperatureAndHumidity() async {
+    final data = await ApiService.fetchTemperatureAndHumidity();
+    setState(() {
+      currentHumidity = data["humidity"]?.humidity ?? 0.0;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    if (sensorDataList.isEmpty) {
+    if (widget.sensorDataList.isEmpty) {
       return Center(
         child: Text(
           "Nenhum dado disponível no gráfico",
@@ -23,9 +58,8 @@ class HumidityWidget extends StatelessWidget {
       );
     }
 
-    final humidityData = sensorDataList.map((e) => e.humidity).toList();
-    final dates = sensorDataList.map((e) => e.date).toList();
-    final lastHumidity = humidityData.last;
+    final humidityData = widget.sensorDataList.map((e) => e.humidity).toList();
+    final dates = widget.sensorDataList.map((e) => e.date).toList();
     final maxHumidity = humidityData.reduce((a, b) => a > b ? a : b);
     final upperLimit = ((maxHumidity / 20).ceil() * 20).toDouble();
 
@@ -52,7 +86,7 @@ class HumidityWidget extends StatelessWidget {
           children: [
             _buildChartTitle(isDarkMode),
             const SizedBox(height: 16),
-            _buildCurrentHumidity(lastHumidity, isDarkMode),
+            _buildCurrentHumidity(currentHumidity, isDarkMode),
             const SizedBox(height: 16),
             _buildLineChart(humidityData, dates, upperLimit, isDarkMode),
             const SizedBox(height: 16),
@@ -81,10 +115,10 @@ class HumidityWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCurrentHumidity(double lastHumidity, bool isDarkMode) {
+  Widget _buildCurrentHumidity(double currentHumidity, bool isDarkMode) {
     return Center(
       child: Text(
-        '${lastHumidity.toStringAsFixed(1)}%',
+        '${currentHumidity.toStringAsFixed(1)}%',
         style: TextStyle(
           color: isDarkMode ? const Color(0xFF298F5E) : const Color(0xFF298F5E),
           fontSize: 28,
@@ -193,7 +227,7 @@ class HumidityWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "60%",
+                  "${weeklyAverage.toStringAsFixed(1)}%",
                   style: TextStyle(
                     color: isDarkMode ? Colors.grey : Colors.grey.shade600,
                     fontSize: 16,
@@ -219,7 +253,7 @@ class HumidityWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "65%",
+                  "${monthlyAverage.toStringAsFixed(1)}%",
                   style: TextStyle(
                     color: isDarkMode ? Colors.grey : Colors.grey.shade600,
                     fontSize: 16,
@@ -232,7 +266,6 @@ class HumidityWidget extends StatelessWidget {
       ],
     );
   }
-
 
   Widget _buildStatIcon(String letter, bool isDarkMode) {
     return Container(

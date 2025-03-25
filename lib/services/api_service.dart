@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -141,4 +141,29 @@ class ApiService {
         ));
     return data.isEmpty ? [] : data;
   }
+
+  static Future<SensorData> fetchAverageTemperatureAndHumidity(int n) async {
+    final List<SensorData> data = await _fetchListData("sensor_data/avg/$n", (json) =>
+        SensorData(
+          id: json["count"] ?? 0,
+          date: json["date"] ?? "0",
+          temperature: (json["temp"] ?? 0).toDouble(),
+          humidity: (json["humi"] ?? 0).toDouble(),
+        ));
+
+    if (data.isEmpty) {
+      return SensorData(id: 0, date: "00/00", temperature: 0.0, humidity: 0.0);
+    }
+
+    double totalTemp = data.fold(0, (sum, item) => sum + item.temperature);
+    double totalHumi = data.fold(0, (sum, item) => sum + item.humidity);
+
+    return SensorData(
+      id: Random().nextInt(1000),
+      date: DateTime.now().toString(),
+      temperature: totalTemp / data.length,
+      humidity: totalHumi / data.length,
+    );
+  }
+
 }

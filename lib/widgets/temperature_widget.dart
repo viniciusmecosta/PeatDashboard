@@ -1,17 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
+import 'package:peatdashboard/services/api_service.dart';
 
-class TemperatureWidget extends StatelessWidget {
+class TemperatureWidget extends StatefulWidget {
   final List<SensorData> sensorDataList;
 
   const TemperatureWidget({super.key, required this.sensorDataList});
 
   @override
+  State<TemperatureWidget> createState() => _TemperatureWidgetState();
+}
+
+class _TemperatureWidgetState extends State<TemperatureWidget> {
+  double weeklyAverage = 0.0;
+  double monthlyAverage = 0.0;
+  double currentTemperature = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAverages();
+    _loadCurrentTemperature();
+  }
+
+  Future<void> _loadAverages() async {
+    final weekly = await ApiService.fetchAverageTemperatureAndHumidity(7);
+    final monthly = await ApiService.fetchAverageTemperatureAndHumidity(31);
+
+    setState(() {
+      weeklyAverage = weekly.temperature;
+      monthlyAverage = monthly.temperature;
+    });
+  }
+
+  Future<void> _loadCurrentTemperature() async {
+    final data = await ApiService.fetchTemperatureAndHumidity();
+    setState(() {
+      currentTemperature = data["temperature"]?.temperature ?? 0.0;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    if (sensorDataList.isEmpty) {
+    if (widget.sensorDataList.isEmpty) {
       return Center(
         child: Text(
           "Nenhum dado disponível no gráfico",
@@ -23,9 +57,8 @@ class TemperatureWidget extends StatelessWidget {
       );
     }
 
-    final temperatureData = sensorDataList.map((e) => e.temperature).toList();
-    final dates = sensorDataList.map((e) => e.date).toList();
-    final lastTemperature = temperatureData.last;
+    final temperatureData = widget.sensorDataList.map((e) => e.temperature).toList();
+    final dates = widget.sensorDataList.map((e) => e.date).toList();
     final maxTemperature = temperatureData.reduce((a, b) => a > b ? a : b);
     final upperLimit = ((maxTemperature / 20).ceil() * 20).toDouble();
 
@@ -52,7 +85,7 @@ class TemperatureWidget extends StatelessWidget {
           children: [
             _buildChartTitle(isDarkMode),
             const SizedBox(height: 16),
-            _buildCurrentTemperature(lastTemperature, isDarkMode),
+            _buildCurrentTemperature(currentTemperature, isDarkMode),
             const SizedBox(height: 16),
             _buildLineChart(temperatureData, dates, upperLimit, isDarkMode),
             const SizedBox(height: 16),
@@ -81,10 +114,10 @@ class TemperatureWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCurrentTemperature(double lastTemperature, bool isDarkMode) {
+  Widget _buildCurrentTemperature(double currentTemperature, bool isDarkMode) {
     return Center(
       child: Text(
-        '${lastTemperature.toStringAsFixed(1)}°C',
+        '${currentTemperature.toStringAsFixed(1)}°C',
         style: TextStyle(
           color: isDarkMode ? const Color(0xFF298F5E) : const Color(0xFF298F5E),
           fontSize: 28,
@@ -193,7 +226,7 @@ class TemperatureWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "30°C",
+                  "${weeklyAverage.toStringAsFixed(1)}°C",
                   style: TextStyle(
                     color: isDarkMode ? Colors.grey : Colors.grey.shade600,
                     fontSize: 16,
@@ -219,7 +252,7 @@ class TemperatureWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "32°C",
+                  "${monthlyAverage.toStringAsFixed(1)}°C",
                   style: TextStyle(
                     color: isDarkMode ? Colors.grey : Colors.grey.shade600,
                     fontSize: 16,
@@ -257,7 +290,7 @@ class TemperatureWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: isDarkMode ? const Color(0xFF2D9966) : const Color(0xFF2D9966),
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(22),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
