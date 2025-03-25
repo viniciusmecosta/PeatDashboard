@@ -81,7 +81,11 @@ class CapacityInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
+    final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
 
     Color levelColor = _getColorForLevel(percentage);
     String levelDescription = _getLevelDescription(percentage);
@@ -91,15 +95,15 @@ class CapacityInfoWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: theme.cardColor,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: theme.dividerColor.withOpacity(0.1),
+            color: borderColor,
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(0.1),
+              color: shadowColor,
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -116,6 +120,7 @@ class CapacityInfoWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: textColor,
                   ),
                 ),
                 Text(
@@ -123,6 +128,7 @@ class CapacityInfoWidget extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
+                    color: textColor,
                   ),
                 ),
               ],
@@ -162,5 +168,4 @@ class CapacityInfoWidget extends StatelessWidget {
       ),
     );
   }
-
 }

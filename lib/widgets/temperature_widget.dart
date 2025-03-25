@@ -9,11 +9,16 @@ class TemperatureWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     if (sensorDataList.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           "Nenhum dado disponível no gráfico",
-          style: TextStyle(color: Colors.white, fontSize: 16),
+          style: TextStyle(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontSize: 16,
+          ),
         ),
       );
     }
@@ -29,57 +34,67 @@ class TemperatureWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF18181B),
+          color: isDarkMode ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: Colors.grey.withOpacity(0.1)),
+          border: Border.all(
+            color: isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black.withOpacity(0.1),
+          ),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(
+              color: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildChartTitle(),
+            _buildChartTitle(isDarkMode),
             const SizedBox(height: 16),
-            _buildCurrentTemperature(lastTemperature),
+            _buildCurrentTemperature(lastTemperature, isDarkMode),
             const SizedBox(height: 16),
-            _buildLineChart(temperatureData, dates, upperLimit),
+            _buildLineChart(temperatureData, dates, upperLimit, isDarkMode),
             const SizedBox(height: 16),
-            _buildTemperatureStats(),
+            _buildTemperatureStats(isDarkMode),
             const SizedBox(height: 16),
-            _buildLocationInfo(),
+            _buildLocationInfo(isDarkMode),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChartTitle() {
+  Widget _buildChartTitle(bool isDarkMode) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.location_on, color: Colors.white, size: 20),
+          Icon(Icons.location_on, color: isDarkMode ? Colors.white : Colors.black, size: 20),
           const SizedBox(width: 8),
-          const Text(
+          Text(
             'Peat IFCE - Bloco Central',
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCurrentTemperature(double lastTemperature) {
+  Widget _buildCurrentTemperature(double lastTemperature, bool isDarkMode) {
     return Center(
       child: Text(
         '${lastTemperature.toStringAsFixed(1)}°C',
-        style: const TextStyle(color: Color(0xFF298F5E), fontSize: 28, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: isDarkMode ? const Color(0xFF298F5E) : const Color(0xFF298F5E),
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
-  Widget _buildLineChart(List<double> temperatureData, List<String> dates, double upperLimit) {
+  Widget _buildLineChart(List<double> temperatureData, List<String> dates, double upperLimit, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SizedBox(
@@ -98,7 +113,16 @@ class TemperatureWidget extends StatelessWidget {
                   interval: 1,
                   getTitlesWidget: (value, meta) => Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(dates[value.toInt()], style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 10), textAlign: TextAlign.center),
+                    child: Text(
+                      dates[value.toInt()],
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? Colors.white.withOpacity(0.7)
+                            : Colors.black.withOpacity(0.7),
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
@@ -108,7 +132,15 @@ class TemperatureWidget extends StatelessWidget {
                   reservedSize: 40,
                   interval: 20,
                   getTitlesWidget: (value, meta) => (value % 20 == 0)
-                      ? Text('${value.toInt()}°C', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12))
+                      ? Text(
+                    '${value.toInt()}°C',
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? Colors.white.withOpacity(0.7)
+                          : Colors.black.withOpacity(0.7),
+                      fontSize: 12,
+                    ),
+                  )
                       : const SizedBox.shrink(),
                 ),
               ),
@@ -121,7 +153,7 @@ class TemperatureWidget extends StatelessWidget {
                 spots: temperatureData.asMap().entries.map((entry) => FlSpot(entry.key.toDouble(), entry.value)).toList(),
                 isCurved: true,
                 barWidth: 3,
-                color: const Color(0xFF298F5E),
+                color: isDarkMode ? const Color(0xFF298F5E) : const Color(0xFF298F5E),
                 dotData: FlDotData(show: true),
                 belowBarData: BarAreaData(show: true, color: const Color(0xFF298F5E).withOpacity(0.3)),
               ),
@@ -131,7 +163,7 @@ class TemperatureWidget extends StatelessWidget {
                 getTooltipItems: (List<LineBarSpot> touchedBarSpots) => touchedBarSpots
                     .map((barSpot) => LineTooltipItem(
                   '${temperatureData[barSpot.x.toInt()].toStringAsFixed(1)}°C',
-                  const TextStyle(color: Colors.white),
+                  TextStyle(color: isDarkMode ? Colors.white : Colors.black),
                 ))
                     .toList(),
               ),
@@ -142,19 +174,31 @@ class TemperatureWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTemperatureStats() {
+  Widget _buildTemperatureStats(bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            _buildStatIcon("S"),
+            _buildStatIcon("S", isDarkMode),
             const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Média Semanal", style: TextStyle(color: Colors.white, fontSize: 18)),
-                Text("30°C", style: TextStyle(color: Colors.grey, fontSize: 16)),
+              children: [
+                Text(
+                  "Média Semanal",
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  "30°C",
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.grey : Colors.grey.shade600,
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
           ],
@@ -162,13 +206,25 @@ class TemperatureWidget extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           children: [
-            _buildStatIcon("M"),
+            _buildStatIcon("M", isDarkMode),
             const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Média Mensal", style: TextStyle(color: Colors.white, fontSize: 18)),
-                Text("32°C", style: TextStyle(color: Colors.grey, fontSize: 16)),
+              children: [
+                Text(
+                  "Média Mensal",
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  "32°C",
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.grey : Colors.grey.shade600,
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
           ],
@@ -177,30 +233,30 @@ class TemperatureWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatIcon(String letter) {
+  Widget _buildStatIcon(String letter, bool isDarkMode) {
     return Container(
       width: 50,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.grey.shade800,
+        color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
         shape: BoxShape.circle,
       ),
       child: Center(
         child: Text(
           letter,
-          style: const TextStyle(color: Color(0xFF298F5E), fontSize: 26),
+          style: TextStyle(color: const Color(0xFF298F5E), fontSize: 26),
         ),
       ),
     );
   }
 
-  Widget _buildLocationInfo() {
+  Widget _buildLocationInfo(bool isDarkMode) {
     return Container(
       width: double.infinity,
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2D9966),  // Cor de fundo para o texto "Fortaleza"
+        color: isDarkMode ? const Color(0xFF2D9966) : const Color(0xFF2D9966),
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
@@ -208,7 +264,7 @@ class TemperatureWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.wb_sunny, color: const Color(0xFFFFE151), size: 24),  // Cor do sol ajustada para #FFE151
+              Icon(Icons.wb_sunny, color: const Color(0xFFFFE151), size: 24),
               const SizedBox(width: 8),
               const Text(
                 'Fortaleza',
