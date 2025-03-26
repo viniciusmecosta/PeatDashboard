@@ -28,6 +28,10 @@ class MetricHumidityWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final formattedDate = subtitle;
     final double numericValue = _parseValue(value);
+    final isLargeScreen = MediaQuery.of(context).size.width > 600;
+    final size = isLargeScreen ? 250.0 : 150.0;
+    final trackWidth = isLargeScreen ? 20.0 : 13.0;
+    final progressBarWidth = isLargeScreen ? 23.0 : 15.0;
 
     ColorTween progressBarColorTween = ColorTween(
       begin: Color(0xFFB1B1B1),
@@ -42,10 +46,14 @@ class MetricHumidityWidget extends StatelessWidget {
         ? Colors.white54
         : Colors.black87;
 
+    final titleFontSize = isLargeScreen ? 16.0 : 12.0;
+    final dateFontSize = isLargeScreen ? 14.0 : 10.0;
+    final valueFontSize = isLargeScreen ? 30.0 : 20.0;
+
     return Container(
       padding: const EdgeInsets.all(1),
-      height: 200,
-      width: 200,
+      height: size,
+      width: size,
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(22),
@@ -67,22 +75,23 @@ class MetricHumidityWidget extends StatelessWidget {
               title,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
-                fontSize: 14,
+                fontSize: titleFontSize,
               ),
               textAlign: TextAlign.center,
             ),
           ),
+          SizedBox(height: 4),
           Flexible(
             flex: 3,
             child: SizedBox(
-              height: 190,
-              width: 190,
+              height: size,
+              width: size,
               child: SleekCircularSlider(
                 appearance: CircularSliderAppearance(
-                  size: 190,
+                  size: size,
                   angleRange: 290,
                   startAngle: 126,
-                  customWidths: CustomSliderWidths(trackWidth: 13, progressBarWidth: 15),
+                  customWidths: CustomSliderWidths(trackWidth: trackWidth, progressBarWidth: progressBarWidth),
                   customColors: CustomSliderColors(
                     progressBarColor: currentColor,
                     trackColor: theme.dividerColor,
@@ -91,7 +100,7 @@ class MetricHumidityWidget extends StatelessWidget {
                     mainLabelStyle: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: valueTextColor,
-                      fontSize: 28,
+                      fontSize: valueFontSize,
                     ),
                     modifier: (double value) {
                       return '${value.toInt()}%';
@@ -109,7 +118,7 @@ class MetricHumidityWidget extends StatelessWidget {
               formattedDate,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: dateTextColor,
-                fontSize: 12,
+                fontSize: dateFontSize,
               ),
               textAlign: TextAlign.center,
             ),

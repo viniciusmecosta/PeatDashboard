@@ -12,7 +12,6 @@ class HumidityScreen extends StatefulWidget {
 }
 
 class _HumidityScreenState extends State<HumidityScreen> {
-  List<SensorData> _sensorDataList = [];
   List<SensorData> _filteredData = [];
   String _selectedPeriod = "Hoje";
   bool _isLoading = true;
@@ -62,7 +61,6 @@ class _HumidityScreenState extends State<HumidityScreen> {
     if (mounted) {
       setState(() {
         _filteredData = data;
-        _sensorDataList = data;
         _isLoading = false;
       });
     }

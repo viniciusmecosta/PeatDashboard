@@ -87,10 +87,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return isLargeScreen
         ? Column(
       children: [
-        Row(children: [Expanded(child: capacityCard)]),
-        const SizedBox(height: 16),
         Row(
           children: [
+            Expanded(child: capacityCard),
+             const SizedBox(width: 16),
             Expanded(child: temperatureCard),
             const SizedBox(width: 16),
             Expanded(child: humidityCard),

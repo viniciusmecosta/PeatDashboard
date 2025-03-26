@@ -9,7 +9,7 @@ class InfoWidget extends StatelessWidget {
 
     return Container(
       width: isLargeScreen ? MediaQuery.of(context).size.width * 1 : double.infinity,
-      height: isLargeScreen ? 120 : 120,
+      height: isLargeScreen ? 90 : 100,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(

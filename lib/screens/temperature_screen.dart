@@ -12,7 +12,6 @@ class TemperatureScreen extends StatefulWidget {
 }
 
 class _TemperatureScreenState extends State<TemperatureScreen> {
-  List<SensorData> _sensorDataList = [];
   List<SensorData> _filteredData = [];
   String _selectedPeriod = "Hoje";
   bool _isLoading = true;
@@ -62,7 +61,6 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
     if (mounted) {
       setState(() {
         _filteredData = data;
-        _sensorDataList = data;
         _isLoading = false;
       });
     }

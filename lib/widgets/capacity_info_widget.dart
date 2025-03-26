@@ -7,11 +7,11 @@ class CapacityInfoWidget extends StatelessWidget {
 
   Color _getColorForLevel(double percentage) {
     if (percentage > 75) {
-      return Colors.green; // Bom
+      return Colors.green;
     } else if (percentage >= 50) {
-      return Colors.amber; // Médio
+      return Colors.amber;
     } else {
-      return Colors.red; // Ruim
+      return Colors.red;
     }
   }
 
@@ -27,8 +27,8 @@ class CapacityInfoWidget extends StatelessWidget {
 
   List<Widget> _buildIcons(double percentage) {
     int filledIcons = (percentage / 20)
-        .floor(); // Quantidade de ícones cheios para 5 bolas
-    double partialFill = percentage % 20; // Porcentagem da última bola
+        .floor(); 
+    double partialFill = percentage % 20; 
 
     List<Widget> icons = [];
     for (int i = 0; i < 5; i++) {
@@ -49,12 +49,11 @@ class CapacityInfoWidget extends StatelessWidget {
           height: 20,
           decoration: BoxDecoration(
             color: _getColorForLevel(percentage).withOpacity(0.5),
-            // Bola parcialmente preenchida
             shape: BoxShape.circle,
           ),
           child: FractionallySizedBox(
             alignment: Alignment.centerLeft,
-            widthFactor: partialFill / 100, // Define o preenchimento parcial
+            widthFactor: partialFill / 100,
             child: Container(
               decoration: BoxDecoration(
                 color: _getColorForLevel(percentage),

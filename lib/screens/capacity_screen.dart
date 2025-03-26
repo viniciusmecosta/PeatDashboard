@@ -14,7 +14,6 @@ class CapacityScreen extends StatefulWidget {
 
 class _CapacityScreenState extends State<CapacityScreen> {
   SensorLevel _sensorLevel = SensorLevel(id: 0, date: "0", capacity: 0.0);
-  List<SensorLevel> _sensorLevelList = [];
   List<SensorLevel> _filteredData = [];
   String _selectedPeriod = "Hoje";
   bool _isLoading = true;
@@ -65,7 +64,6 @@ class _CapacityScreenState extends State<CapacityScreen> {
     if (mounted) {
       setState(() {
         _filteredData = data;
-        _sensorLevelList = data;
         _isLoading = false;
       });
     }
