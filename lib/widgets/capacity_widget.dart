@@ -100,7 +100,7 @@ class CapacityWidget extends StatelessWidget {
                   reservedSize: 40,
                   interval: 1,
                   getTitlesWidget: (value, meta) => Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                    padding: const EdgeInsets.only(top: 5.0),
                     child: Text(dates[value.toInt()], style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 10), textAlign: TextAlign.center),
                   ),
                 ),

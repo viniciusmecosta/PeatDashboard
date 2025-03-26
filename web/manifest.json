@@ -1,6 +1,6 @@
 {
-    "name": "peatdashboard",
-    "short_name": "peatdashboard",
+    "name": "Peat",
+    "short_name": "Peat",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

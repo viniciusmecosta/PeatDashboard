@@ -117,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final isMobile = MediaQuery.of(context).size.width <= 600;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,

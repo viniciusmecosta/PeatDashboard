@@ -58,7 +58,7 @@ class MapWidget extends StatelessWidget {
                       markers: [
                         Marker(
                           point: location,
-                          builder: (ctx) => const Icon(Icons.location_pin, color: const Color(0xFF298F5E), size: 40),
+                          builder: (ctx) => const Icon(Icons.location_pin, color: Color(0xFF298F5E), size: 40),
                         ),
                       ],
                     ),

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class CapacityInfoWidget extends StatelessWidget {
   final double percentage;
 
-  const CapacityInfoWidget({Key? key, required this.percentage})
-      : super(key: key);
+  const CapacityInfoWidget({super.key, required this.percentage});
 
   Color _getColorForLevel(double percentage) {
     if (percentage > 75) {
