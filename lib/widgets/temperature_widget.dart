@@ -62,6 +62,11 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     final maxTemperature = temperatureData.reduce((a, b) => a > b ? a : b);
     final upperLimit = ((maxTemperature / 20).ceil() * 20).toDouble();
 
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final gap = isMobile
+        ? (temperatureData.length <= 7 ? 1.0 : (temperatureData.length / 7).ceil().toDouble())
+        : 1.0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
@@ -87,7 +92,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
             const SizedBox(height: 16),
             _buildCurrentTemperature(currentTemperature, isDarkMode),
             const SizedBox(height: 16),
-            _buildLineChart(temperatureData, dates, upperLimit, isDarkMode),
+            _buildLineChart(temperatureData, dates, upperLimit, gap, isDarkMode),
             const SizedBox(height: 16),
             _buildTemperatureStats(isDarkMode),
             const SizedBox(height: 16),
@@ -127,7 +132,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     );
   }
 
-  Widget _buildLineChart(List<double> temperatureData, List<String> dates, double upperLimit, bool isDarkMode) {
+  Widget _buildLineChart(List<double> temperatureData, List<String> dates, double upperLimit, double gap, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SizedBox(
@@ -143,7 +148,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                 sideTitles: SideTitles(
                   showTitles: true,
                   reservedSize: 40,
-                  interval: 1,
+                  interval: gap,
                   getTitlesWidget: (value, meta) => Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Text(

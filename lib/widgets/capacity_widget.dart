@@ -14,7 +14,7 @@ class CapacityWidget extends StatelessWidget {
     final textColor = isDarkMode ? Colors.white : Colors.black;
     final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
     final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
-    final chartColor = isDarkMode ? const Color(0xFF298F5E) : const Color(0xFF298F5E); // Ajuste para cores do gráfico
+    final chartColor = isDarkMode ? const Color(0xFF298F5E) : const Color(0xFF298F5E);
 
     if (sensorLevelList.isEmpty) {
       return Center(
@@ -50,7 +50,7 @@ class CapacityWidget extends StatelessWidget {
             const SizedBox(height: 16),
             _buildCurrentCapacity(lastCapacity, chartColor),
             const SizedBox(height: 16),
-            _buildLineChart(capacityData, dates, upperLimit, textColor, chartColor),
+            _buildLineChart(capacityData, dates, upperLimit, textColor, chartColor, context),
           ],
         ),
       ),
@@ -82,7 +82,13 @@ class CapacityWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildLineChart(List<double> capacityData, List<String> dates, double upperLimit, Color textColor, Color chartColor) {
+  Widget _buildLineChart(List<double> capacityData, List<String> dates,
+      double upperLimit, Color textColor, Color chartColor, BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final gap = isMobile
+        ? (capacityData.length <= 7 ? 1.0 : (capacityData.length / 7).ceil().toDouble())
+        : 1.0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SizedBox(
@@ -98,11 +104,20 @@ class CapacityWidget extends StatelessWidget {
                 sideTitles: SideTitles(
                   showTitles: true,
                   reservedSize: 40,
-                  interval: 1,
-                  getTitlesWidget: (value, meta) => Padding(
-                    padding: const EdgeInsets.only(top: 5.0),
-                    child: Text(dates[value.toInt()], style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 10), textAlign: TextAlign.center),
-                  ),
+                  interval: gap,
+                  getTitlesWidget: (value, meta) {
+                    if (value % gap == 0 && value.toInt() < dates.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: Text(
+                          dates[value.toInt()],
+                          style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 10),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
               ),
               leftTitles: AxisTitles(
@@ -110,9 +125,8 @@ class CapacityWidget extends StatelessWidget {
                   showTitles: true,
                   reservedSize: 40,
                   interval: 20,
-                  getTitlesWidget: (value, meta) => (value % 20 == 0)
-                      ? Text('${value.toInt()}%', style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 12))
-                      : const SizedBox.shrink(),
+                  getTitlesWidget: (value, meta) =>
+                  (value % 20 == 0) ? Text('${value.toInt()}%', style: TextStyle(color: textColor.withOpacity(0.7), fontSize: 12)) : const SizedBox.shrink(),
                 ),
               ),
               rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
