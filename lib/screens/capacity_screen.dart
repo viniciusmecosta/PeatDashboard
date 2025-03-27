@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/services/api_service.dart';
+
 import '../widgets/capacity_info_widget.dart';
 import '../widgets/capacity_widget.dart';
 
@@ -13,6 +14,8 @@ class CapacityScreen extends StatefulWidget {
 }
 
 class _CapacityScreenState extends State<CapacityScreen> {
+  final Map<String, List<SensorLevel>> _sensorLevelListByPeriod = {};
+  late double _last = 0.0;
   SensorLevel _sensorLevel = SensorLevel(id: 0, date: "0", capacity: 0.0);
   List<SensorLevel> _filteredData = [];
   String _selectedPeriod = "Hoje";
@@ -21,65 +24,47 @@ class _CapacityScreenState extends State<CapacityScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchCapacityData();
-    _fetchDataForSelectedPeriod();
+    _fetchAllData();
   }
 
-  Future<void> _fetchDataForSelectedPeriod() async {
+  Future<void> _fetchAllData() async {
     setState(() => _isLoading = true);
 
     try {
-      switch (_selectedPeriod) {
-        case "Hoje":
-          await _fetchDataByDate(DateTime.now());
-          break;
-        case "Ontem":
-          await _fetchDataByDate(DateTime.now().subtract(const Duration(days: 1)));
-          break;
-        case "Últimos 7 dias":
-          await _fetchAverageData(7);
-          break;
-        case "Últimos 31 dias":
-          await _fetchAverageData(31);
-          break;
-      }
+      final today = DateTime.now();
+      final yesterday = today.subtract(const Duration(days: 1));
+
+      _sensorLevelListByPeriod["Hoje"] = await _fetchDataByDate(today);
+      _sensorLevelListByPeriod["Ontem"] = await _fetchDataByDate(yesterday);
+      _sensorLevelListByPeriod["Últimos 7 dias"] = await _fetchAverageData(7);
+      _sensorLevelListByPeriod["Últimos 31 dias"] = await _fetchAverageData(31);
+      _sensorLevel = await ApiService.fetchCapacity();
+      _last = _sensorLevelListByPeriod["Hoje"]!.last.capacity;
+
+      _updateFilteredData();
     } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erro ao carregar dados')));
+    } finally {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar dados')));
     }
   }
 
-  Future<void> _fetchDataByDate(DateTime date) async {
+  Future<List<SensorLevel>> _fetchDataByDate(DateTime date) async {
     final formattedDate = DateFormat('ddMMyyyy').format(date);
-    final data = await ApiService.fetchCapacityByDate(formattedDate);
-    _updateFilteredData(data);
+    return await ApiService.fetchCapacityByDate(formattedDate);
   }
 
-  Future<void> _fetchAverageData(int days) async {
-    final data = await ApiService.fetchLastNAvgLevels(days);
-    _updateFilteredData(data);
+  Future<List<SensorLevel>> _fetchAverageData(int days) async {
+    return await ApiService.fetchLastNAvgLevels(days);
   }
 
-  void _updateFilteredData(List<SensorLevel> data) {
+  void _updateFilteredData() {
     if (mounted) {
       setState(() {
-        _filteredData = data;
-        _isLoading = false;
+        _filteredData = _sensorLevelListByPeriod[_selectedPeriod] ?? [];
       });
-    }
-  }
-
-  Future<void> _fetchCapacityData() async {
-    setState(() => _isLoading = true);
-    try {
-      final data = await ApiService.fetchCapacity();
-      setState(() {
-        _sensorLevel = data;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar dados')));
     }
   }
 
@@ -89,7 +74,7 @@ class _CapacityScreenState extends State<CapacityScreen> {
       periods.add("Últimos 31 dias");
     } else if (_selectedPeriod == "Últimos 31 dias") {
       _selectedPeriod = "Últimos 7 dias";
-      _fetchDataForSelectedPeriod();
+      _updateFilteredData();
     }
     return periods;
   }
@@ -108,73 +93,83 @@ class _CapacityScreenState extends State<CapacityScreen> {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         elevation: 0,
-        title: Text(
-          'Volume de Ração',
-          style: TextStyle(color: textColor),
-        ),
+        centerTitle: true,
+        title: Text('Volume de Ração', style: TextStyle(color: textColor)),
       ),
       body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  decoration: BoxDecoration(
-                    color: dropdownColor,
-                    borderRadius: BorderRadius.circular(22.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
+        child:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: dropdownColor,
+                              borderRadius: BorderRadius.circular(22.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _selectedPeriod,
+                                dropdownColor: dropdownColor,
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: textColor,
+                                ),
+                                style: TextStyle(color: textColor),
+                                items:
+                                    _getAvailablePeriods(context).map((period) {
+                                      return DropdownMenuItem(
+                                        value: period,
+                                        child: Text(
+                                          period,
+                                          style: TextStyle(color: textColor),
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      _selectedPeriod = newValue;
+                                      _updateFilteredData();
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
+                      const SizedBox(height: 1),
+                      SizedBox(
+                        width: double.infinity,
+                        child: CapacityWidget(
+                          sensorLevelList: _filteredData,
+                          last: _last,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      CapacityInfoWidget(percentage: percentage),
                     ],
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _selectedPeriod,
-                      dropdownColor: dropdownColor,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: textColor,
-                      ),
-                      style: TextStyle(color: textColor),
-                      items: _getAvailablePeriods(context).map((period) {
-                        return DropdownMenuItem(
-                          value: period,
-                          child: Text(
-                            period,
-                            style: TextStyle(color: textColor),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedPeriod = newValue;
-                            _isLoading = true;
-                          });
-                          _fetchDataForSelectedPeriod();
-                        }
-                      },
-                    ),
-                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: CapacityWidget(sensorLevelList: _filteredData),
-              ),
-              const SizedBox(height: 16),
-              CapacityInfoWidget(percentage: percentage),
-            ],
-          ),
-        ),
       ),
     );
   }

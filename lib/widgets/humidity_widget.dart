@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/services/api_service.dart';
+
+import '../utils/app_colors.dart';
 
 class HumidityWidget extends StatefulWidget {
   final List<SensorData> sensorDataList;
@@ -59,13 +61,14 @@ class _HumidityWidgetState extends State<HumidityWidget> {
 
     final humidityData = widget.sensorDataList.map((e) => e.humidity).toList();
     final dates = widget.sensorDataList.map((e) => e.date).toList();
-    final maxHumidity = humidityData.reduce((a, b) => a > b ? a : b);
-    final upperLimit = ((maxHumidity / 20).ceil() * 20).toDouble();
 
     final isMobile = MediaQuery.of(context).size.width < 600;
-    final gap = isMobile
-        ? (humidityData.length <= 7 ? 1.0 : (humidityData.length / 7).ceil().toDouble())
-        : 1.0;
+    final gap =
+        isMobile
+            ? (humidityData.length <= 7
+                ? 1.0
+                : (humidityData.length / 7).ceil().toDouble())
+            : 1.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -75,11 +78,17 @@ class _HumidityWidgetState extends State<HumidityWidget> {
           color: isDarkMode ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black.withOpacity(0.1),
+            color:
+                isDarkMode
+                    ? Colors.grey.withOpacity(0.1)
+                    : Colors.black.withOpacity(0.1),
           ),
           boxShadow: [
             BoxShadow(
-              color: isDarkMode ? Colors.black.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
+              color:
+                  isDarkMode
+                      ? Colors.black.withOpacity(0.2)
+                      : Colors.grey.withOpacity(0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -92,11 +101,11 @@ class _HumidityWidgetState extends State<HumidityWidget> {
             const SizedBox(height: 16),
             _buildCurrentHumidity(currentHumidity, isDarkMode),
             const SizedBox(height: 16),
-            _buildLineChart(humidityData, dates, upperLimit, gap, isDarkMode),
+            _buildLineChart(context, humidityData, dates, gap, isDarkMode),
             const SizedBox(height: 16),
-            _buildHumidityStats(isDarkMode),
+            _buildHumidityStats(context, isDarkMode),
             const SizedBox(height: 16),
-            _buildLocationInfo(isDarkMode),
+            _buildLocationInfo(),
           ],
         ),
       ),
@@ -108,11 +117,18 @@ class _HumidityWidgetState extends State<HumidityWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.location_on, color: isDarkMode ? Colors.white : Colors.black, size: 20),
+          Icon(
+            Icons.location_on,
+            color: isDarkMode ? Colors.white : Colors.black,
+            size: 20,
+          ),
           const SizedBox(width: 8),
           Text(
             'Peat IFCE - Bloco Central',
-            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontSize: 16),
+            style: TextStyle(
+              color: isDarkMode ? Colors.white : Colors.black,
+              fontSize: 16,
+            ),
           ),
         ],
       ),
@@ -132,7 +148,13 @@ class _HumidityWidgetState extends State<HumidityWidget> {
     );
   }
 
-  Widget _buildLineChart(List<double> humidityData, List<String> dates, double upperLimit, double gap, bool isDarkMode) {
+  Widget _buildLineChart(
+    BuildContext context,
+    List<double> humidityData,
+    List<String> dates,
+    double gap,
+    bool isDarkMode,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: SizedBox(
@@ -140,8 +162,17 @@ class _HumidityWidgetState extends State<HumidityWidget> {
         child: LineChart(
           LineChartData(
             minY: 0,
-            maxY: upperLimit,
-            gridData: FlGridData(show: true, horizontalInterval: 20, drawVerticalLine: false),
+            maxY: 100,
+            gridData: FlGridData(
+              show: true,
+              horizontalInterval: 20,
+              drawVerticalLine: false,
+              getDrawingHorizontalLine:
+                  (value) => FlLine(
+                    color: AppColors.gridColor(context),
+                    strokeWidth: 1,
+                  ),
+            ),
             titlesData: FlTitlesData(
               show: true,
               bottomTitles: AxisTitles(
@@ -149,19 +180,24 @@ class _HumidityWidgetState extends State<HumidityWidget> {
                   showTitles: true,
                   reservedSize: 40,
                   interval: gap,
-                  getTitlesWidget: (value, meta) => Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: Text(
-                      dates[value.toInt()],
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? Colors.white.withOpacity(0.7)
-                            : Colors.black.withOpacity(0.7),
-                        fontSize: 10,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  getTitlesWidget: (value, meta) {
+                    if (value.toInt() < dates.length) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: Text(
+                          dates[value.toInt()],
+                          style: TextStyle(
+                            color: AppColors.textColor(
+                              context,
+                            ).withOpacity(0.7),
+                            fontSize: 10,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
               ),
               leftTitles: AxisTitles(
@@ -169,41 +205,83 @@ class _HumidityWidgetState extends State<HumidityWidget> {
                   showTitles: true,
                   reservedSize: 40,
                   interval: 20,
-                  getTitlesWidget: (value, meta) => (value % 20 == 0)
-                      ? Text(
-                    '${value.toInt()}%',
-                    style: TextStyle(
-                      color: isDarkMode
-                          ? Colors.white.withOpacity(0.7)
-                          : Colors.black.withOpacity(0.7),
-                      fontSize: 12,
-                    ),
-                  )
-                      : const SizedBox.shrink(),
+                  getTitlesWidget:
+                      (value, meta) =>
+                          (value % 20 == 0)
+                              ? Text(
+                                '${value.toInt()}%',
+                                style: TextStyle(
+                                  color:
+                                      isDarkMode
+                                          ? Colors.white.withOpacity(0.7)
+                                          : Colors.black.withOpacity(0.7),
+                                  fontSize: 12,
+                                ),
+                              )
+                              : const SizedBox.shrink(),
                 ),
               ),
-              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles: AxisTitles(
+                sideTitles: SideTitles(showTitles: false),
+              ),
               topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
             ),
-            borderData: FlBorderData(show: false),
+            borderData: FlBorderData(
+              show: true,
+              border: Border(
+                left: BorderSide(color: AppColors.gridColor(context), width: 1),
+                bottom: BorderSide(
+                  color: AppColors.gridColor(context),
+                  width: 1,
+                ),
+              ),
+            ),
             lineBarsData: [
               LineChartBarData(
-                spots: humidityData.asMap().entries.map((entry) => FlSpot(entry.key.toDouble(), entry.value)).toList(),
+                spots:
+                    humidityData
+                        .asMap()
+                        .entries
+                        .map(
+                          (entry) => FlSpot(entry.key.toDouble(), entry.value),
+                        )
+                        .toList(),
                 isCurved: true,
+                curveSmoothness: 0.3,
                 barWidth: 3,
-                color: isDarkMode ? const Color(0xFF298F5E) : const Color(0xFF298F5E),
-                dotData: FlDotData(show: true),
-                belowBarData: BarAreaData(show: true, color: const Color(0xFF298F5E).withOpacity(0.3)),
+                color: Color(0xFF298F5E),
+                dotData: FlDotData(
+                  show: true,
+                  getDotPainter:
+                      (spot, percent, barData, index) => FlDotCirclePainter(
+                        radius: 4,
+                        color: Color(0xFF298F5E),
+                        strokeWidth: 2,
+                      ),
+                ),
+                belowBarData: BarAreaData(
+                  show: true,
+                  color: Color(0xFF298F5E).withOpacity(0.2),
+                  cutOffY: 0,
+                  applyCutOffY: true,
+                ),
               ),
             ],
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
-                getTooltipItems: (List<LineBarSpot> touchedBarSpots) => touchedBarSpots
-                    .map((barSpot) => LineTooltipItem(
-                  '${humidityData[barSpot.x.toInt()].toStringAsFixed(1)}%',
-                  TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-                ))
-                    .toList(),
+                getTooltipItems:
+                    (List<LineBarSpot> touchedBarSpots) =>
+                        touchedBarSpots
+                            .map(
+                              (barSpot) => LineTooltipItem(
+                                '${humidityData[barSpot.x.toInt()].toStringAsFixed(1)}%\n${dates[barSpot.x.toInt()]}',
+                                TextStyle(
+                                  color:
+                                      isDarkMode ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            )
+                            .toList(),
               ),
             ),
           ),
@@ -212,58 +290,56 @@ class _HumidityWidgetState extends State<HumidityWidget> {
     );
   }
 
-  Widget _buildHumidityStats(bool isDarkMode) {
+  Widget _buildHumidityStats(BuildContext context, bool isDarkMode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            _buildStatIcon("S", isDarkMode),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Média Semanal",
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  "${weeklyAverage.toStringAsFixed(1)}%",
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.grey : Colors.grey.shade600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ],
+        _buildStatRow(
+          context,
+          "S",
+          "Média Semanal",
+          "${weeklyAverage.toStringAsFixed(1)}%",
+          isDarkMode,
         ),
         const SizedBox(height: 12),
-        Row(
+        _buildStatRow(
+          context,
+          "M",
+          "Média Mensal",
+          "${monthlyAverage.toStringAsFixed(1)}%",
+          isDarkMode,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatRow(
+    BuildContext context,
+    String iconText,
+    String title,
+    String value,
+    bool isDarkMode,
+  ) {
+    return Row(
+      children: [
+        _buildStatIcon(iconText, isDarkMode),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildStatIcon("M", isDarkMode),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Média Mensal",
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  "${monthlyAverage.toStringAsFixed(1)}%",
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.grey : Colors.grey.shade600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+            Text(
+              title,
+              style: TextStyle(
+                color: AppColors.textColor(context),
+                fontSize: 18,
+              ),
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                color: AppColors.secondaryTextColor(context),
+                fontSize: 16,
+              ),
             ),
           ],
         ),
@@ -276,25 +352,29 @@ class _HumidityWidgetState extends State<HumidityWidget> {
       width: 50,
       height: 50,
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey.shade800 : Colors.grey.shade300,
+        color: AppColors.primary.withOpacity(0.1),
         shape: BoxShape.circle,
       ),
       child: Center(
         child: Text(
           letter,
-          style: TextStyle(color: const Color(0xFF298F5E), fontSize: 26),
+          style: TextStyle(
+            color: AppColors.primary,
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildLocationInfo(bool isDarkMode) {
+  Widget _buildLocationInfo() {
     return Container(
       width: double.infinity,
       height: 50,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF2D9966) : const Color(0xFF2D9966),
+        color: AppColors.primaryDark,
         borderRadius: BorderRadius.circular(25),
       ),
       child: Row(
@@ -302,7 +382,7 @@ class _HumidityWidgetState extends State<HumidityWidget> {
         children: [
           Row(
             children: [
-              Icon(Icons.wb_sunny, color: const Color(0xFFFFE151), size: 24),
+              Icon(Icons.wb_sunny, color: AppColors.accent, size: 24),
               const SizedBox(width: 8),
               const Text(
                 'Fortaleza',

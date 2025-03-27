@@ -17,7 +17,9 @@ class MetricHumidityWidget extends StatelessWidget {
 
   double _parseValue(String value) {
     try {
-      return double.parse(value.replaceAll(RegExp(r'[^0-9.]'), '')).clamp(0, 100);
+      return double.parse(
+        value.replaceAll(RegExp(r'[^0-9.]'), ''),
+      ).clamp(0, 100);
     } catch (_) {
       return 0.0;
     }
@@ -34,17 +36,17 @@ class MetricHumidityWidget extends StatelessWidget {
     final progressBarWidth = isLargeScreen ? 23.0 : 15.0;
 
     ColorTween progressBarColorTween = ColorTween(
-      begin: Color(0xFFB1B1B1),
-      end: Color(0xFF2092AB),
+      begin: const Color(0xFFB1B1B1),
+      end: const Color(0xFF2092AB),
     );
 
     Color currentColor = progressBarColorTween.lerp(numericValue / 100)!;
 
-    Color valueTextColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    Color valueTextColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
 
-    Color dateTextColor = theme.brightness == Brightness.dark
-        ? Colors.white54
-        : Colors.black87;
+    Color dateTextColor =
+        theme.brightness == Brightness.dark ? Colors.white54 : Colors.black87;
 
     final titleFontSize = isLargeScreen ? 16.0 : 12.0;
     final dateFontSize = isLargeScreen ? 14.0 : 10.0;
@@ -80,7 +82,7 @@ class MetricHumidityWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Flexible(
             flex: 3,
             child: SizedBox(
@@ -91,7 +93,10 @@ class MetricHumidityWidget extends StatelessWidget {
                   size: size,
                   angleRange: 290,
                   startAngle: 126,
-                  customWidths: CustomSliderWidths(trackWidth: trackWidth, progressBarWidth: progressBarWidth),
+                  customWidths: CustomSliderWidths(
+                    trackWidth: trackWidth,
+                    progressBarWidth: progressBarWidth,
+                  ),
                   customColors: CustomSliderColors(
                     progressBarColor: currentColor,
                     trackColor: theme.dividerColor,

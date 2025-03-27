@@ -8,7 +8,10 @@ class InfoWidget extends StatelessWidget {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Container(
-      width: isLargeScreen ? MediaQuery.of(context).size.width * 1 : double.infinity,
+      width:
+          isLargeScreen
+              ? MediaQuery.of(context).size.width * 1
+              : double.infinity,
       height: isLargeScreen ? 90 : 100,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -38,9 +41,9 @@ class InfoWidget extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Siga as instruções para utilizar o comedouro da maneira correta.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.white),
                 ),
               ],
             ),
@@ -50,7 +53,11 @@ class InfoWidget extends StatelessWidget {
               Image.asset('assets/comedouro_icon.png', width: 60, height: 75),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.arrow_circle_right_rounded, color: Colors.white, size: 36),
+                icon: const Icon(
+                  Icons.arrow_circle_right_rounded,
+                  color: Colors.white,
+                  size: 36,
+                ),
               ),
             ],
           ),

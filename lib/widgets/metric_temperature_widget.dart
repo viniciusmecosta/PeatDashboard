@@ -17,7 +17,9 @@ class MetricTemperatureWidget extends StatelessWidget {
 
   double _parseValue(String value) {
     try {
-      return double.parse(value.replaceAll(RegExp(r'[^0-9.]'), '')).clamp(20, 40);
+      return double.parse(
+        value.replaceAll(RegExp(r'[^0-9.]'), ''),
+      ).clamp(20, 40);
     } catch (_) {
       return 0.0;
     }
@@ -40,11 +42,11 @@ class MetricTemperatureWidget extends StatelessWidget {
 
     Color currentColor = progressBarColorTween.lerp((numericValue - 20) / 20)!;
 
-    Color valueTextColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    Color valueTextColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
 
-    Color dateTextColor = theme.brightness == Brightness.dark
-        ? Colors.white54
-        : Colors.black87;
+    Color dateTextColor =
+        theme.brightness == Brightness.dark ? Colors.white54 : Colors.black87;
 
     final titleFontSize = isLargeScreen ? 16.0 : 12.0;
     final dateFontSize = isLargeScreen ? 14.0 : 10.0;
@@ -80,7 +82,7 @@ class MetricTemperatureWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Flexible(
             flex: 3,
             child: SizedBox(
@@ -91,7 +93,10 @@ class MetricTemperatureWidget extends StatelessWidget {
                   size: size,
                   angleRange: 290,
                   startAngle: 126,
-                  customWidths: CustomSliderWidths(trackWidth: trackWidth, progressBarWidth: progressBarWidth),
+                  customWidths: CustomSliderWidths(
+                    trackWidth: trackWidth,
+                    progressBarWidth: progressBarWidth,
+                  ),
                   customColors: CustomSliderColors(
                     progressBarColor: currentColor,
                     trackColor: theme.dividerColor,
@@ -100,7 +105,7 @@ class MetricTemperatureWidget extends StatelessWidget {
                     mainLabelStyle: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: valueTextColor,
-                      fontSize: valueFontSize, 
+                      fontSize: valueFontSize,
                     ),
                     modifier: (double value) {
                       return '${value.toInt()}°C';
@@ -118,7 +123,7 @@ class MetricTemperatureWidget extends StatelessWidget {
               formattedDate,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: dateTextColor,
-                fontSize: dateFontSize, 
+                fontSize: dateFontSize,
               ),
               textAlign: TextAlign.center,
             ),

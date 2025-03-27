@@ -9,8 +9,12 @@ class MapWidget extends StatelessWidget {
   const MapWidget({super.key, required this.location});
 
   Future<void> _openGoogleMaps() async {
-    final googleMapsAppUrl = Uri.parse('geo:${location.latitude},${location.longitude}?q=${location.latitude},${location.longitude}');
-    final googleMapsWebUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}');
+    final googleMapsAppUrl = Uri.parse(
+      'geo:${location.latitude},${location.longitude}?q=${location.latitude},${location.longitude}',
+    );
+    final googleMapsWebUrl = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}',
+    );
 
     if (await canLaunchUrl(googleMapsAppUrl)) {
       await launchUrl(googleMapsAppUrl);
@@ -24,9 +28,10 @@ class MapWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final tileUrl = isDarkMode
-        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    final tileUrl =
+        isDarkMode
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
     return GestureDetector(
       onTap: _openGoogleMaps,
@@ -53,7 +58,12 @@ class MapWidget extends StatelessWidget {
                       markers: [
                         Marker(
                           point: location,
-                          builder: (ctx) => const Icon(Icons.location_pin, color: Color(0xFF298F5E), size: 40),
+                          builder:
+                              (ctx) => const Icon(
+                                Icons.location_pin,
+                                color: Color(0xFF298F5E),
+                                size: 40,
+                              ),
                         ),
                       ],
                     ),

@@ -17,10 +17,14 @@ class MyApp extends StatelessWidget {
       title: 'Peat',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF298F5E), brightness: Brightness.light),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF298F5E),
+          brightness: Brightness.light,
+        ),
         useMaterial3: true,
         fontFamily: 'SFProDisplay',
       ),
+
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF298F5E),
@@ -33,7 +37,6 @@ class MyApp extends StatelessWidget {
         cardColor: const Color(0xFF18181B),
         useMaterial3: true,
         fontFamily: 'SFProDisplay',
-
       ),
       themeMode: ThemeMode.system,
       home: const DashboardScreen(),

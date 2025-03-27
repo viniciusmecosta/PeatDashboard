@@ -12,6 +12,12 @@ class TemperatureScreen extends StatefulWidget {
 }
 
 class _TemperatureScreenState extends State<TemperatureScreen> {
+  final Map<String, List<SensorData>> _allData = {
+    "Hoje": [],
+    "Ontem": [],
+    "Últimos 7 dias": [],
+    "Últimos 31 dias": [],
+  };
   List<SensorData> _filteredData = [];
   String _selectedPeriod = "Hoje";
   bool _isLoading = true;
@@ -19,51 +25,43 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchDataForSelectedPeriod();
+    _fetchAllData();
   }
 
-  Future<void> _fetchDataForSelectedPeriod() async {
+  Future<void> _fetchAllData() async {
     setState(() => _isLoading = true);
 
     try {
-      switch (_selectedPeriod) {
-        case "Hoje":
-          await _fetchDataByDate(DateTime.now());
-          break;
-        case "Ontem":
-          await _fetchDataByDate(DateTime.now().subtract(const Duration(days: 1)));
-          break;
-        case "Últimos 7 dias":
-          await _fetchAverageData(7);
-          break;
-        case "Últimos 31 dias":
-          await _fetchAverageData(31);
-          break;
-      }
+      final today = DateFormat('ddMMyyyy').format(DateTime.now());
+      final yesterday = DateFormat(
+        'ddMMyyyy',
+      ).format(DateTime.now().subtract(const Duration(days: 1)));
+
+      _allData["Hoje"] = await ApiService.fetchTemperatureAndHumidityByDate(
+        today,
+      );
+      _allData["Ontem"] = await ApiService.fetchTemperatureAndHumidityByDate(
+        yesterday,
+      );
+      _allData["Últimos 7 dias"] =
+          await ApiService.fetchTemperatureAndHumidityList(7);
+      _allData["Últimos 31 dias"] =
+          await ApiService.fetchTemperatureAndHumidityList(31);
+
+      _updateFilteredData();
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao carregar dados')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erro ao carregar dados')));
     }
   }
 
-  Future<void> _fetchDataByDate(DateTime date) async {
-    final formattedDate = DateFormat('ddMMyyyy').format(date);
-    final data = await ApiService.fetchTemperatureAndHumidityByDate(formattedDate);
-    _updateFilteredData(data);
-  }
-
-  Future<void> _fetchAverageData(int days) async {
-    final data = await ApiService.fetchTemperatureAndHumidityList(days);
-    _updateFilteredData(data);
-  }
-
-  void _updateFilteredData(List<SensorData> data) {
-    if (mounted) {
-      setState(() {
-        _filteredData = data;
-        _isLoading = false;
-      });
-    }
+  void _updateFilteredData() {
+    setState(() {
+      _filteredData = _allData[_selectedPeriod] ?? [];
+      _isLoading = false;
+    });
   }
 
   List<String> _getAvailablePeriods(BuildContext context) {
@@ -72,7 +70,7 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
       periods.add("Últimos 31 dias");
     } else if (_selectedPeriod == "Últimos 31 dias") {
       _selectedPeriod = "Últimos 7 dias";
-      _fetchDataForSelectedPeriod();
+      _updateFilteredData();
     }
     return periods;
   }
@@ -89,67 +87,78 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
       appBar: AppBar(
         backgroundColor: backgroundColor,
         elevation: 0,
-        title: Text(
-          'Temperatura',
-          style: TextStyle(color: textColor),
-        ),
+        centerTitle: true,
+        title: Text('Temperatura', style: TextStyle(color: textColor)),
       ),
       body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  decoration: BoxDecoration(
-                    color: dropdownColor,
-                    borderRadius: BorderRadius.circular(22.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
+        child:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: dropdownColor,
+                              borderRadius: BorderRadius.circular(22.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _selectedPeriod,
+                                dropdownColor: dropdownColor,
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: textColor,
+                                ),
+                                style: TextStyle(color: textColor),
+                                items:
+                                    _getAvailablePeriods(context).map((period) {
+                                      return DropdownMenuItem(
+                                        value: period,
+                                        child: Text(
+                                          period,
+                                          style: TextStyle(color: textColor),
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      _selectedPeriod = newValue;
+                                    });
+                                    _updateFilteredData();
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 1),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TemperatureWidget(sensorDataList: _filteredData),
                       ),
                     ],
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _selectedPeriod,
-                      dropdownColor: dropdownColor,
-                      style: TextStyle(color: textColor),
-                      items: _getAvailablePeriods(context).map((period) {
-                        return DropdownMenuItem(
-                          value: period,
-                          child: Text(
-                            period,
-                            style: TextStyle(color: textColor),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        if (newValue != null) {
-                          setState(() {
-                            _selectedPeriod = newValue;
-                            _isLoading = true;
-                          });
-                          _fetchDataForSelectedPeriod();
-                        }
-                      },
-                    ),
-                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: TemperatureWidget(sensorDataList: _filteredData),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

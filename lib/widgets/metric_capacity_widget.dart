@@ -17,7 +17,9 @@ class MetricCapacityWidget extends StatelessWidget {
 
   double _parseValue(String value) {
     try {
-      return double.parse(value.replaceAll(RegExp(r'[^0-9.]'), '')).clamp(0, 100);
+      return double.parse(
+        value.replaceAll(RegExp(r'[^0-9.]'), ''),
+      ).clamp(0, 100);
     } catch (_) {
       return 0.0;
     }
@@ -36,11 +38,11 @@ class MetricCapacityWidget extends StatelessWidget {
     final dateFontSize = isLargeScreen ? 14.0 : 10.0;
     final valueFontSize = isLargeScreen ? 30.0 : 20.0;
 
-    Color valueTextColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    Color valueTextColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
 
-    Color dateTextColor = theme.brightness == Brightness.dark
-        ? Colors.white54
-        : Colors.black87;
+    Color dateTextColor =
+        theme.brightness == Brightness.dark ? Colors.white54 : Colors.black87;
 
     return Container(
       padding: const EdgeInsets.all(1),
@@ -72,7 +74,7 @@ class MetricCapacityWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Flexible(
             flex: 3,
             child: SizedBox(
@@ -83,8 +85,14 @@ class MetricCapacityWidget extends StatelessWidget {
                   size: size,
                   angleRange: 290,
                   startAngle: 126,
-                  customWidths: CustomSliderWidths(trackWidth: trackWidth, progressBarWidth: progressBarWidth),
-                  customColors: CustomSliderColors(progressBarColor: chartColor, trackColor: theme.dividerColor),
+                  customWidths: CustomSliderWidths(
+                    trackWidth: trackWidth,
+                    progressBarWidth: progressBarWidth,
+                  ),
+                  customColors: CustomSliderColors(
+                    progressBarColor: chartColor,
+                    trackColor: theme.dividerColor,
+                  ),
                   infoProperties: InfoProperties(
                     mainLabelStyle: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -107,7 +115,7 @@ class MetricCapacityWidget extends StatelessWidget {
               formattedDate,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: dateTextColor,
-                fontSize: dateFontSize, 
+                fontSize: dateFontSize,
               ),
               textAlign: TextAlign.center,
             ),

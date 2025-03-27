@@ -26,52 +26,56 @@ class CapacityInfoWidget extends StatelessWidget {
   }
 
   List<Widget> _buildIcons(double percentage) {
-    int filledIcons = (percentage / 20)
-        .floor(); 
-    double partialFill = percentage % 20; 
-
+    int filledIcons = (percentage / 20).floor();
+    double partialFill = percentage % 20;
     List<Widget> icons = [];
     for (int i = 0; i < 5; i++) {
       if (i < filledIcons) {
-        icons.add(Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-          width: 20,
-          height: 20,
-          decoration: BoxDecoration(
-            color: _getColorForLevel(percentage),
-            shape: BoxShape.circle,
+        icons.add(
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: _getColorForLevel(percentage),
+              shape: BoxShape.circle,
+            ),
           ),
-        ));
+        );
       } else if (i == filledIcons && partialFill > 0) {
-        icons.add(Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-          width: 20,
-          height: 20,
-          decoration: BoxDecoration(
-            color: _getColorForLevel(percentage).withOpacity(0.5),
-            shape: BoxShape.circle,
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: partialFill / 100,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _getColorForLevel(percentage),
-                shape: BoxShape.circle,
+        icons.add(
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: _getColorForLevel(percentage).withOpacity(0.5),
+              shape: BoxShape.circle,
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: partialFill / 100,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: _getColorForLevel(percentage),
+                  shape: BoxShape.circle,
+                ),
               ),
             ),
           ),
-        ));
+        );
       } else {
-        icons.add(Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4.0),
-          width: 20,
-          height: 20,
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            shape: BoxShape.circle,
+        icons.add(
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            width: 20,
+            height: 20,
+            decoration: const BoxDecoration(
+              color: Colors.grey,
+              shape: BoxShape.circle,
+            ),
           ),
-        ));
+        );
       }
     }
     return icons;
@@ -82,8 +86,12 @@ class CapacityInfoWidget extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
     final textColor = isDarkMode ? Colors.white : Colors.black;
-    final borderColor = isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
-    final shadowColor = isDarkMode ? Colors.black.withOpacity(0.2) : Colors.black.withOpacity(0.1);
+    final borderColor =
+        isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
+    final shadowColor =
+        isDarkMode
+            ? Colors.black.withOpacity(0.2)
+            : Colors.black.withOpacity(0.1);
 
     Color levelColor = _getColorForLevel(percentage);
     String levelDescription = _getLevelDescription(percentage);
@@ -95,10 +103,7 @@ class CapacityInfoWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-            color: borderColor,
-            width: 1,
-          ),
+          border: Border.all(color: borderColor, width: 1),
           boxShadow: [
             BoxShadow(
               color: shadowColor,
@@ -134,23 +139,23 @@ class CapacityInfoWidget extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                Row(
-                  children: _buildIcons(percentage),
-                ),
+                Row(children: _buildIcons(percentage)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 6.0),
+                        horizontal: 16.0,
+                        vertical: 6.0,
+                      ),
                       decoration: BoxDecoration(
                         color: levelColor,
                         borderRadius: BorderRadius.circular(22.0),
                       ),
                       child: Text(
                         levelDescription,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
