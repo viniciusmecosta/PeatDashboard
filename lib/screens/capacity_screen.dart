@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/services/api_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
-import '../widgets/capacity_info_widget.dart';
-import '../widgets/capacity_widget.dart';
+import 'package:peatdashboard/widgets/capacity_info_widget.dart';
+import 'package:peatdashboard/widgets/capacity_widget.dart';
 
 class CapacityScreen extends StatefulWidget {
   const CapacityScreen({super.key});
@@ -16,7 +16,7 @@ class CapacityScreen extends StatefulWidget {
 class _CapacityScreenState extends State<CapacityScreen> {
   final Map<String, List<SensorLevel>> _sensorLevelListByPeriod = {};
   late double _last = 0.0;
-  SensorLevel _sensorLevel = SensorLevel(id: 0, date: "0", capacity: 0.0);
+  SensorLevel _sensorLevel = SensorLevel(date: "0", capacity: 0.0);
   List<SensorLevel> _filteredData = [];
   String _selectedPeriod = "Hoje";
   bool _isLoading = true;
@@ -82,15 +82,16 @@ class _CapacityScreenState extends State<CapacityScreen> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode
-        ? AppColors.darkBackgroundColor
-        : AppColors.lightBackgroundColor;
-    final textColor = isDarkMode
-        ? AppColors.lightBackgroundColor
-        : AppColors.darkBackgroundColor;
-    final dropdownColor = isDarkMode
-        ? AppColors.darkCardColor
-        : AppColors.lightBackgroundColor;
+    final backgroundColor =
+        isDarkMode
+            ? AppColors.darkBackgroundColor
+            : AppColors.lightBackgroundColor;
+    final textColor =
+        isDarkMode
+            ? AppColors.lightBackgroundColor
+            : AppColors.darkBackgroundColor;
+    final dropdownColor =
+        isDarkMode ? AppColors.darkCardColor : AppColors.lightBackgroundColor;
 
     double percentage = _sensorLevel.capacity;
 
@@ -103,78 +104,79 @@ class _CapacityScreenState extends State<CapacityScreen> {
         title: Text('Volume de Ração', style: TextStyle(color: textColor)),
       ),
       body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                          ),
-                          decoration: BoxDecoration(
-                            color: dropdownColor,
-                            borderRadius: BorderRadius.circular(22.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: AppColors.darkShadowColor,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
+        child:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: dropdownColor,
+                              borderRadius: BorderRadius.circular(22.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: AppColors.darkShadowColor,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _selectedPeriod,
+                                dropdownColor: dropdownColor,
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: textColor,
+                                ),
+                                style: TextStyle(color: textColor),
+                                items:
+                                    _getAvailablePeriods(context).map((period) {
+                                      return DropdownMenuItem(
+                                        value: period,
+                                        child: Text(
+                                          period,
+                                          style: TextStyle(color: textColor),
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (newValue) {
+                                  if (newValue != null) {
+                                    setState(() {
+                                      _selectedPeriod = newValue;
+                                      _updateFilteredData();
+                                    });
+                                  }
+                                },
                               ),
-                            ],
-                          ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              value: _selectedPeriod,
-                              dropdownColor: dropdownColor,
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color: textColor,
-                              ),
-                              style: TextStyle(color: textColor),
-                              items:
-                                  _getAvailablePeriods(context).map((period) {
-                                return DropdownMenuItem(
-                                  value: period,
-                                  child: Text(
-                                    period,
-                                    style: TextStyle(color: textColor),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (newValue) {
-                                if (newValue != null) {
-                                  setState(() {
-                                    _selectedPeriod = newValue;
-                                    _updateFilteredData();
-                                  });
-                                }
-                              },
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 1),
-                    SizedBox(
-                      width: double.infinity,
-                      child: CapacityWidget(
-                        sensorLevelList: _filteredData,
-                        last: _last,
+                      const SizedBox(height: 1),
+                      SizedBox(
+                        width: double.infinity,
+                        child: CapacityWidget(
+                          sensorLevelList: _filteredData,
+                          last: _last,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    CapacityInfoWidget(percentage: percentage),
-                  ],
+                      const SizedBox(height: 16),
+                      CapacityInfoWidget(percentage: percentage),
+                    ],
+                  ),
                 ),
-              ),
       ),
     );
   }

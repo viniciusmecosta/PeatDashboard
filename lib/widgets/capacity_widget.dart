@@ -148,10 +148,8 @@ class CapacityWidget extends StatelessWidget {
               horizontalInterval: 20,
               drawVerticalLine: false,
               getDrawingHorizontalLine:
-                  (value) => FlLine(
-                    color: _getGridColor(context),
-                    strokeWidth: 1,
-                  ),
+                  (value) =>
+                      FlLine(color: _getGridColor(context), strokeWidth: 1),
             ),
             titlesData: FlTitlesData(
               show: true,
@@ -187,12 +185,14 @@ class CapacityWidget extends StatelessWidget {
                       (value, meta) =>
                           (value % 20 == 0)
                               ? Text(
-                                  '${value.toInt()}%',
-                                  style: TextStyle(
-                                    color: _getTextColor(context).withOpacity(0.7),
-                                    fontSize: 12,
-                                  ),
-                                )
+                                '${value.toInt()}%',
+                                style: TextStyle(
+                                  color: _getTextColor(
+                                    context,
+                                  ).withOpacity(0.7),
+                                  fontSize: 12,
+                                ),
+                              )
                               : const SizedBox.shrink(),
                 ),
               ),
@@ -205,10 +205,7 @@ class CapacityWidget extends StatelessWidget {
               show: true,
               border: Border(
                 left: BorderSide(color: _getGridColor(context), width: 1),
-                bottom: BorderSide(
-                  color: _getGridColor(context),
-                  width: 1,
-                ),
+                bottom: BorderSide(color: _getGridColor(context), width: 1),
               ),
             ),
             lineBarsData: [
@@ -217,7 +214,9 @@ class CapacityWidget extends StatelessWidget {
                     capacityData
                         .asMap()
                         .entries
-                        .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
+                        .map(
+                          (entry) => FlSpot(entry.key.toDouble(), entry.value),
+                        )
                         .toList(),
                 isCurved: true,
                 curveSmoothness: 0.3,

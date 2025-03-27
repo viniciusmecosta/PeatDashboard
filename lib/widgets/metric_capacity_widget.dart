@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-
-import '../utils/app_colors.dart';
+import 'package:peatdashboard/utils/app_colors.dart';
 
 class MetricCapacityWidget extends StatelessWidget {
   final String title;
@@ -41,16 +40,20 @@ class MetricCapacityWidget extends StatelessWidget {
     final valueFontSize = isLargeScreen ? 30.0 : 20.0;
 
     final isDarkMode = theme.brightness == Brightness.dark;
-    final backgroundColor = isDarkMode
-        ? AppColors.metricWidgetDarkBackgroundColor
-        : AppColors.lightBackgroundColor;
-    final borderColor = isDarkMode
-        ? AppColors.metricWidgetDarkBorderColor.withOpacity(0.1)
-        : AppColors.lightBorderColor.withOpacity(0.1);
+    final backgroundColor =
+        isDarkMode
+            ? AppColors.metricWidgetDarkBackgroundColor
+            : AppColors.lightBackgroundColor;
+    final borderColor =
+        isDarkMode
+            ? AppColors.metricWidgetDarkBorderColor.withOpacity(0.1)
+            : AppColors.lightBorderColor.withOpacity(0.1);
     final valueTextColor =
-        isDarkMode ? AppColors.lightBackgroundColor : AppColors.darkBackgroundColor; 
+        isDarkMode
+            ? AppColors.lightBackgroundColor
+            : AppColors.darkBackgroundColor;
     final dateTextColor =
-        isDarkMode ? AppColors.lightDateColor : AppColors.darkDateColor; 
+        isDarkMode ? AppColors.lightDateColor : AppColors.darkDateColor;
 
     return Container(
       padding: const EdgeInsets.all(1),
@@ -59,7 +62,7 @@ class MetricCapacityWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: borderColor), 
+        border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor.withOpacity(0.1),

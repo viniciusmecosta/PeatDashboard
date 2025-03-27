@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:peatdashboard/screens/dashboard_screen.dart';
-import 'package:peatdashboard/utils/app_colors.dart'; // Importe o arquivo de cores
+import 'package:peatdashboard/utils/app_colors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

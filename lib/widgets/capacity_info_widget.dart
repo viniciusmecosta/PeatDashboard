@@ -86,18 +86,18 @@ class CapacityInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode
-        ? AppColors.darkCardColor
-        : AppColors.lightBackgroundColor;
-    final textColor = isDarkMode
-        ? AppColors.lightBackgroundColor
-        : AppColors.darkBackgroundColor;
-    final borderColor = isDarkMode
-        ? AppColors.darkBorderColor.withOpacity(0.1)
-        : AppColors.lightBorderColor;
-    final shadowColor = isDarkMode
-        ? AppColors.darkShadowColor
-        : AppColors.lightBorderColor;
+    final backgroundColor =
+        isDarkMode ? AppColors.darkCardColor : AppColors.lightBackgroundColor;
+    final textColor =
+        isDarkMode
+            ? AppColors.lightBackgroundColor
+            : AppColors.darkBackgroundColor;
+    final borderColor =
+        isDarkMode
+            ? AppColors.darkBorderColor.withOpacity(0.1)
+            : AppColors.lightBorderColor;
+    final shadowColor =
+        isDarkMode ? AppColors.darkShadowColor : AppColors.lightBorderColor;
 
     Color levelColor = _getColorForLevel(percentage);
     String levelDescription = _getLevelDescription(percentage);
@@ -152,7 +152,9 @@ class CapacityInfoWidget extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 6.0),
+                        horizontal: 16.0,
+                        vertical: 6.0,
+                      ),
                       decoration: BoxDecoration(
                         color: levelColor,
                         borderRadius: BorderRadius.circular(22.0),

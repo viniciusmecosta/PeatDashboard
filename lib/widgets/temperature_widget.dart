@@ -2,8 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/services/api_service.dart';
-
-import '../utils/app_colors.dart';
+import 'package:peatdashboard/utils/app_colors.dart';
 
 class TemperatureWidget extends StatefulWidget {
   final List<SensorData> sensorDataList;
@@ -46,27 +45,26 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode
-        ? AppColors.darkCardColor
-        : AppColors.lightBackgroundColor;
-    final textColor = isDarkMode
-        ? AppColors.lightBackgroundColor
-        : AppColors.darkBackgroundColor;
-    final borderColor = isDarkMode
-        ? AppColors.darkBorderColor.withOpacity(0.1)
-        : AppColors.lightBorderColor;
-    final shadowColor = isDarkMode
-        ? AppColors.darkShadowColor
-        : AppColors.darkBorderColor;
-    final gridColor = isDarkMode
-        ? AppColors.darkGridColor
-        : AppColors.darkBorderColor;
-    final statIconBackgroundColor = isDarkMode
-        ? AppColors.primary.withOpacity(0.1)
-        : AppColors.primary.withOpacity(0.1);
-    final secondaryTextColor = isDarkMode
-        ? AppColors.darkBorderColor
-        : AppColors.lightSecondaryText;
+    final backgroundColor =
+        isDarkMode ? AppColors.darkCardColor : AppColors.lightBackgroundColor;
+    final textColor =
+        isDarkMode
+            ? AppColors.lightBackgroundColor
+            : AppColors.darkBackgroundColor;
+    final borderColor =
+        isDarkMode
+            ? AppColors.darkBorderColor.withOpacity(0.1)
+            : AppColors.lightBorderColor;
+    final shadowColor =
+        isDarkMode ? AppColors.darkShadowColor : AppColors.darkBorderColor;
+    final gridColor =
+        isDarkMode ? AppColors.darkGridColor : AppColors.darkBorderColor;
+    final statIconBackgroundColor =
+        isDarkMode
+            ? AppColors.primary.withOpacity(0.1)
+            : AppColors.primary.withOpacity(0.1);
+    final secondaryTextColor =
+        isDarkMode ? AppColors.darkBorderColor : AppColors.lightSecondaryText;
 
     if (widget.sensorDataList.isEmpty) {
       return Center(
@@ -112,9 +110,20 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
             const SizedBox(height: 16),
             _buildCurrentTemperature(currentTemperature),
             const SizedBox(height: 16),
-            _buildLineChart(context, temperatureData, dates, gap, textColor, gridColor),
+            _buildLineChart(
+              context,
+              temperatureData,
+              dates,
+              gap,
+              textColor,
+              gridColor,
+            ),
             const SizedBox(height: 16),
-            _buildTemperatureStats(textColor, secondaryTextColor, statIconBackgroundColor),
+            _buildTemperatureStats(
+              textColor,
+              secondaryTextColor,
+              statIconBackgroundColor,
+            ),
             const SizedBox(height: 16),
             _buildLocationInfo(),
           ],
@@ -123,23 +132,16 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     );
   }
 
-   Widget _buildChartTitle(Color textColor) {
+  Widget _buildChartTitle(Color textColor) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.location_on,
-            color: textColor.withOpacity(0.7),
-            size: 20,
-          ),
+          Icon(Icons.location_on, color: textColor.withOpacity(0.7), size: 20),
           const SizedBox(width: 8),
-         Text(
+          Text(
             'Peat IFCE - Bloco Central',
-            style: TextStyle(
-              color: textColor,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: textColor, fontSize: 16),
           ),
         ],
       ),
@@ -180,10 +182,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
               horizontalInterval: 4,
               drawVerticalLine: false,
               getDrawingHorizontalLine:
-                  (value) => FlLine(
-                    color: gridColor,
-                    strokeWidth: 1,
-                  ),
+                  (value) => FlLine(color: gridColor, strokeWidth: 1),
             ),
             titlesData: FlTitlesData(
               show: true,
@@ -241,10 +240,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
               show: true,
               border: Border(
                 left: BorderSide(color: gridColor, width: 1),
-                bottom: BorderSide(
-                  color: gridColor,
-                  width: 1,
-                ),
+                bottom: BorderSide(color: gridColor, width: 1),
               ),
             ),
             lineBarsData: [
@@ -253,7 +249,9 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                     temperatureData
                         .asMap()
                         .entries
-                        .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
+                        .map(
+                          (entry) => FlSpot(entry.key.toDouble(), entry.value),
+                        )
                         .toList(),
                 isCurved: true,
                 curveSmoothness: 0.3,
@@ -284,10 +282,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                             .map(
                               (barSpot) => LineTooltipItem(
                                 '${temperatureData[barSpot.x.toInt()].toStringAsFixed(1)}°C\n${dates[barSpot.x.toInt()]}',
-                                TextStyle(
-                                  color: textColor,
-                                  fontSize: 14,
-                                ),
+                                TextStyle(color: textColor, fontSize: 14),
                               ),
                             )
                             .toList(),
@@ -299,7 +294,11 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     );
   }
 
-  Widget _buildTemperatureStats(Color textColor, Color secondaryTextColor, Color iconBackgroundColor) {
+  Widget _buildTemperatureStats(
+    Color textColor,
+    Color secondaryTextColor,
+    Color iconBackgroundColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -339,19 +338,10 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 18,
-              ),
-            ),
+            Text(title, style: TextStyle(color: textColor, fontSize: 18)),
             Text(
               value,
-              style: TextStyle(
-                color: secondaryTextColor,
-                fontSize: 16,
-              ),
+              style: TextStyle(color: secondaryTextColor, fontSize: 16),
             ),
           ],
         ),
@@ -363,10 +353,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     return Container(
       width: 50,
       height: 50,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
       child: Center(
         child: Text(
           letter,
@@ -398,15 +385,25 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
               const SizedBox(width: 8),
               const Text(
                 'Fortaleza',
-                style: TextStyle(color: AppColors.lightBackgroundColor, fontSize: 18),
+                style: TextStyle(
+                  color: AppColors.lightBackgroundColor,
+                  fontSize: 18,
+                ),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.location_on, color: AppColors.lightBackgroundColor, size: 20),
+              const Icon(
+                Icons.location_on,
+                color: AppColors.lightBackgroundColor,
+                size: 20,
+              ),
             ],
           ),
           Text(
             '${currentTemperature.toStringAsFixed(1)}°C',
-            style: const TextStyle(color: AppColors.lightBackgroundColor, fontSize: 18),
+            style: const TextStyle(
+              color: AppColors.lightBackgroundColor,
+              fontSize: 18,
+            ),
           ),
         ],
       ),

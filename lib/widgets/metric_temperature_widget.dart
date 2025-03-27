@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-
-import '../utils/app_colors.dart';
+import 'package:peatdashboard/utils/app_colors.dart';
 
 class MetricTemperatureWidget extends StatelessWidget {
   final String title;
@@ -37,7 +36,7 @@ class MetricTemperatureWidget extends StatelessWidget {
     final trackWidth = isLargeScreen ? 20.0 : 13.0;
     final progressBarWidth = isLargeScreen ? 23.0 : 15.0;
 
-    ColorTween progressBarColorTween =ColorTween(
+    ColorTween progressBarColorTween = ColorTween(
       begin: Color(0xFF69AFCE),
       end: Color(0xFFBE7200),
     );
@@ -45,14 +44,18 @@ class MetricTemperatureWidget extends StatelessWidget {
     Color currentColor = progressBarColorTween.lerp((numericValue - 20) / 20)!;
 
     final isDarkMode = theme.brightness == Brightness.dark;
-    final backgroundColor = isDarkMode
-        ? AppColors.metricWidgetDarkBackgroundColor
-        : AppColors.lightBackgroundColor;
-    final borderColor = isDarkMode
-        ? AppColors.metricWidgetDarkBorderColor.withOpacity(0.1)
-        : AppColors.lightBorderColor.withOpacity(0.1);
+    final backgroundColor =
+        isDarkMode
+            ? AppColors.metricWidgetDarkBackgroundColor
+            : AppColors.lightBackgroundColor;
+    final borderColor =
+        isDarkMode
+            ? AppColors.metricWidgetDarkBorderColor.withOpacity(0.1)
+            : AppColors.lightBorderColor.withOpacity(0.1);
     final valueTextColor =
-        isDarkMode ? AppColors.lightBackgroundColor : AppColors.darkBackgroundColor;
+        isDarkMode
+            ? AppColors.lightBackgroundColor
+            : AppColors.darkBackgroundColor;
     final dateTextColor =
         isDarkMode ? AppColors.lightDateColor : AppColors.darkDateColor;
     final titleFontSize = isLargeScreen ? 16.0 : 12.0;

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:peatdashboard/models/sensor_data.dart';
@@ -43,7 +41,6 @@ class ApiService {
     final sensorData = await _fetchData(
       "sensor_data/last/1",
       (json) => SensorData(
-        id: json["count"] ?? 0,
         date: json["date"] ?? "",
         temperature: (json["temp"] ?? 0).toDouble(),
         humidity: (json["humi"] ?? 0).toDouble(),
@@ -54,13 +51,8 @@ class ApiService {
       return {"temperature": sensorData, "humidity": sensorData};
     } else {
       return {
-        "temperature": SensorData(
-          id: 0,
-          date: "0",
-          temperature: 0,
-          humidity: 0,
-        ),
-        "humidity": SensorData(id: 0, date: "0", temperature: 0, humidity: 0),
+        "temperature": SensorData(date: "0", temperature: 0, humidity: 0),
+        "humidity": SensorData(date: "0", temperature: 0, humidity: 0),
       };
     }
   }
@@ -69,7 +61,6 @@ class ApiService {
     return _fetchListData(
       "sensor_data/avg/$n",
       (json) => SensorData(
-        id: json["count"] ?? 0,
         date: json["date"] ?? "0",
         temperature: (json["temp"] ?? 0).toDouble(),
         humidity: (json["humi"] ?? 0).toDouble(),
@@ -81,7 +72,6 @@ class ApiService {
     try {
       final response = await _fetchData("level/last/1", (json) {
         return SensorLevel(
-          id: json["count"] ?? 0,
           date: json["date"] ?? "",
           capacity: (json["level"] ?? 0).toDouble(),
         );
@@ -90,10 +80,10 @@ class ApiService {
       if (response != null) {
         return response;
       } else {
-        return SensorLevel(id: 0, date: "0", capacity: 0);
+        return SensorLevel(date: "0", capacity: 0);
       }
     } catch (e) {
-      return SensorLevel(id: 0, date: "0", capacity: 0);
+      return SensorLevel(date: "0", capacity: 0);
     }
   }
 
@@ -101,7 +91,6 @@ class ApiService {
     return _fetchListData(
       "sensor_data/avg/$n",
       (json) => SensorData(
-        id: json["count"] ?? 0,
         date: json["date"] ?? "00/00",
         temperature: (json["temp"] ?? 0).toDouble(),
         humidity: (json["humi"] ?? 0).toDouble(),
@@ -116,7 +105,6 @@ class ApiService {
         ? data
             .map(
               (json) => SensorLevel(
-                id: json["count"] ?? 0,
                 date: json["date"] ?? "0",
                 capacity: (json["level"] ?? 0).toDouble(),
               ),
@@ -133,7 +121,6 @@ class ApiService {
     final data = await _fetchListData(
       "sensor_data/date/$date",
       (json) => SensorData(
-        id: json["count"] ?? 0,
         date: json["date"] ?? "0",
         temperature: (json["temp"] ?? 0).toDouble(),
         humidity: (json["humi"] ?? 0).toDouble(),
@@ -146,7 +133,6 @@ class ApiService {
     final data = await _fetchListData(
       "level/date/$date",
       (json) => SensorLevel(
-        id: json["count"] ?? 0,
         date: json["date"] ?? "0",
         capacity: (json["level"] ?? 0).toDouble(),
       ),
@@ -158,7 +144,6 @@ class ApiService {
     final List<SensorData> data = await _fetchListData(
       "sensor_data/avg/$n",
       (json) => SensorData(
-        id: json["count"] ?? 0,
         date: json["date"] ?? "0",
         temperature: (json["temp"] ?? 0).toDouble(),
         humidity: (json["humi"] ?? 0).toDouble(),
@@ -166,14 +151,13 @@ class ApiService {
     );
 
     if (data.isEmpty) {
-      return SensorData(id: 0, date: "00/00", temperature: 0.0, humidity: 0.0);
+      return SensorData(date: "00/00", temperature: 0.0, humidity: 0.0);
     }
 
     double totalTemp = data.fold(0, (sum, item) => sum + item.temperature);
     double totalHumi = data.fold(0, (sum, item) => sum + item.humidity);
 
     return SensorData(
-      id: Random().nextInt(1000),
       date: DateTime.now().toString(),
       temperature: totalTemp / data.length,
       humidity: totalHumi / data.length,

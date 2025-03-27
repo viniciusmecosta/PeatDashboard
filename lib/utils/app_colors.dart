@@ -30,8 +30,8 @@ class AppColors {
   static const Color infoWidgetGradientEnd = Color(0xFF20B86F);
   static const Color metricWidgetDarkBackgroundColor = Color(0xFF1E1E1E);
   static const Color metricWidgetDarkBorderColor = Colors.white12;
-   static const Color transparent = Colors.transparent;
+  static const Color transparent = Colors.transparent;
 
-    static const Color lightDateColor = Colors.white54;
-        static const Color darkDateColor = Colors.black87;
-  }
+  static const Color lightDateColor = Colors.white54;
+  static const Color darkDateColor = Colors.black87;
+}

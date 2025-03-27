@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../utils/app_colors.dart';
+import 'package:peatdashboard/utils/app_colors.dart';
 
 class InfoWidget extends StatelessWidget {
   const InfoWidget({super.key});
@@ -18,7 +17,10 @@ class InfoWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [AppColors.infoWidgetGradientStart, AppColors.infoWidgetGradientEnd],
+          colors: [
+            AppColors.infoWidgetGradientStart,
+            AppColors.infoWidgetGradientEnd,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -36,16 +38,16 @@ class InfoWidget extends StatelessWidget {
                 Text(
                   'APRENDENDO A USAR O PEAT',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.lightBackgroundColor,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.lightBackgroundColor,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Siga as instruções para utilizar o comedouro da maneira correta.',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: AppColors.lightBackgroundColor),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.lightBackgroundColor,
+                  ),
                 ),
               ],
             ),

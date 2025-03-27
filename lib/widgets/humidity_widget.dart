@@ -45,27 +45,26 @@ class _HumidityWidgetState extends State<HumidityWidget> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode
-        ? AppColors.darkCardColor
-        : AppColors.lightBackgroundColor;
-    final textColor = isDarkMode
-        ? AppColors.lightBackgroundColor
-        : AppColors.darkBackgroundColor;
-    final borderColor = isDarkMode
-        ? AppColors.darkBorderColor.withOpacity(0.1)
-        : AppColors.lightBorderColor;
-    final shadowColor = isDarkMode
-        ? AppColors.darkShadowColor
-        : AppColors.darkBorderColor;
-    final gridColor = isDarkMode
-        ? AppColors.darkGridColor
-        : AppColors.darkBorderColor;
-    final statIconBackgroundColor = isDarkMode
-        ? AppColors.primary.withOpacity(0.1)
-        : AppColors.primary.withOpacity(0.1);
-    final secondaryTextColor = isDarkMode
-        ? AppColors.darkBorderColor
-        : AppColors.lightSecondaryText;
+    final backgroundColor =
+        isDarkMode ? AppColors.darkCardColor : AppColors.lightBackgroundColor;
+    final textColor =
+        isDarkMode
+            ? AppColors.lightBackgroundColor
+            : AppColors.darkBackgroundColor;
+    final borderColor =
+        isDarkMode
+            ? AppColors.darkBorderColor.withOpacity(0.1)
+            : AppColors.lightBorderColor;
+    final shadowColor =
+        isDarkMode ? AppColors.darkShadowColor : AppColors.darkBorderColor;
+    final gridColor =
+        isDarkMode ? AppColors.darkGridColor : AppColors.darkBorderColor;
+    final statIconBackgroundColor =
+        isDarkMode
+            ? AppColors.primary.withOpacity(0.1)
+            : AppColors.primary.withOpacity(0.1);
+    final secondaryTextColor =
+        isDarkMode ? AppColors.darkBorderColor : AppColors.lightSecondaryText;
 
     if (widget.sensorDataList.isEmpty) {
       return Center(
@@ -80,11 +79,12 @@ class _HumidityWidgetState extends State<HumidityWidget> {
     final dates = widget.sensorDataList.map((e) => e.date).toList();
 
     final isMobile = MediaQuery.of(context).size.width < 600;
-    final gap = isMobile
-        ? (humidityData.length <= 7
-            ? 1.0
-            : (humidityData.length / 7).ceil().toDouble())
-        : 1.0;
+    final gap =
+        isMobile
+            ? (humidityData.length <= 7
+                ? 1.0
+                : (humidityData.length / 7).ceil().toDouble())
+            : 1.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -109,9 +109,20 @@ class _HumidityWidgetState extends State<HumidityWidget> {
             const SizedBox(height: 16),
             _buildCurrentHumidity(currentHumidity),
             const SizedBox(height: 16),
-            _buildLineChart(context, humidityData, dates, gap, textColor, gridColor),
+            _buildLineChart(
+              context,
+              humidityData,
+              dates,
+              gap,
+              textColor,
+              gridColor,
+            ),
             const SizedBox(height: 16),
-            _buildHumidityStats(textColor, secondaryTextColor, statIconBackgroundColor),
+            _buildHumidityStats(
+              textColor,
+              secondaryTextColor,
+              statIconBackgroundColor,
+            ),
             const SizedBox(height: 16),
             _buildLocationInfo(),
           ],
@@ -125,18 +136,11 @@ class _HumidityWidgetState extends State<HumidityWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.location_on,
-            color: textColor.withOpacity(0.7),
-            size: 20,
-          ),
+          Icon(Icons.location_on, color: textColor.withOpacity(0.7), size: 20),
           const SizedBox(width: 8),
-         Text(
+          Text(
             'Peat IFCE - Bloco Central',
-            style: TextStyle(
-              color: textColor,
-              fontSize: 16,
-            ),
+            style: TextStyle(color: textColor, fontSize: 16),
           ),
         ],
       ),
@@ -177,10 +181,7 @@ class _HumidityWidgetState extends State<HumidityWidget> {
               horizontalInterval: 20,
               drawVerticalLine: false,
               getDrawingHorizontalLine:
-                  (value) => FlLine(
-                    color: gridColor,
-                    strokeWidth: 1,
-                  ),
+                  (value) => FlLine(color: gridColor, strokeWidth: 1),
             ),
             titlesData: FlTitlesData(
               show: true,
@@ -216,12 +217,12 @@ class _HumidityWidgetState extends State<HumidityWidget> {
                       (value, meta) =>
                           (value % 20 == 0)
                               ? Text(
-                                  '${value.toInt()}%',
-                                  style: TextStyle(
-                                    color: textColor.withOpacity(0.7),
-                                    fontSize: 12,
-                                  ),
-                                )
+                                '${value.toInt()}%',
+                                style: TextStyle(
+                                  color: textColor.withOpacity(0.7),
+                                  fontSize: 12,
+                                ),
+                              )
                               : const SizedBox.shrink(),
                 ),
               ),
@@ -234,19 +235,19 @@ class _HumidityWidgetState extends State<HumidityWidget> {
               show: true,
               border: Border(
                 left: BorderSide(color: gridColor, width: 1),
-                bottom: BorderSide(
-                  color: gridColor,
-                  width: 1,
-                ),
+                bottom: BorderSide(color: gridColor, width: 1),
               ),
             ),
             lineBarsData: [
               LineChartBarData(
-                spots: humidityData
-                    .asMap()
-                    .entries
-                    .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
-                    .toList(),
+                spots:
+                    humidityData
+                        .asMap()
+                        .entries
+                        .map(
+                          (entry) => FlSpot(entry.key.toDouble(), entry.value),
+                        )
+                        .toList(),
                 isCurved: true,
                 curveSmoothness: 0.3,
                 barWidth: 3,
@@ -276,10 +277,7 @@ class _HumidityWidgetState extends State<HumidityWidget> {
                             .map(
                               (barSpot) => LineTooltipItem(
                                 '${humidityData[barSpot.x.toInt()].toStringAsFixed(1)}%\n${dates[barSpot.x.toInt()]}',
-                                TextStyle(
-                                  color: textColor,
-                                  fontSize: 14,
-                                ),
+                                TextStyle(color: textColor, fontSize: 14),
                               ),
                             )
                             .toList(),
@@ -291,7 +289,11 @@ class _HumidityWidgetState extends State<HumidityWidget> {
     );
   }
 
-  Widget _buildHumidityStats(Color textColor, Color secondaryTextColor, Color iconBackgroundColor) {
+  Widget _buildHumidityStats(
+    Color textColor,
+    Color secondaryTextColor,
+    Color iconBackgroundColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -331,19 +333,10 @@ class _HumidityWidgetState extends State<HumidityWidget> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 18,
-              ),
-            ),
+            Text(title, style: TextStyle(color: textColor, fontSize: 18)),
             Text(
               value,
-              style: TextStyle(
-                color: secondaryTextColor,
-                fontSize: 16,
-              ),
+              style: TextStyle(color: secondaryTextColor, fontSize: 16),
             ),
           ],
         ),
@@ -355,10 +348,7 @@ class _HumidityWidgetState extends State<HumidityWidget> {
     return Container(
       width: 50,
       height: 50,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
       child: Center(
         child: Text(
           letter,
@@ -390,15 +380,25 @@ class _HumidityWidgetState extends State<HumidityWidget> {
               const SizedBox(width: 8),
               const Text(
                 'Fortaleza',
-                style: TextStyle(color: AppColors.lightBackgroundColor, fontSize: 18),
+                style: TextStyle(
+                  color: AppColors.lightBackgroundColor,
+                  fontSize: 18,
+                ),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.location_on, color: AppColors.lightBackgroundColor, size: 20),
+              const Icon(
+                Icons.location_on,
+                color: AppColors.lightBackgroundColor,
+                size: 20,
+              ),
             ],
           ),
           Text(
             '${currentHumidity.toStringAsFixed(0)}%',
-            style: const TextStyle(color: AppColors.lightBackgroundColor, fontSize: 18),
+            style: const TextStyle(
+              color: AppColors.lightBackgroundColor,
+              fontSize: 18,
+            ),
           ),
         ],
       ),
