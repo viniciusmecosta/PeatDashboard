@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../utils/app_colors.dart';
+
 class MapWidget extends StatelessWidget {
   final LatLng location;
 
@@ -61,7 +63,7 @@ class MapWidget extends StatelessWidget {
                           builder:
                               (ctx) => const Icon(
                                 Icons.location_pin,
-                                color: Color(0xFF298F5E),
+                                color: AppColors.primary,
                                 size: 40,
                               ),
                         ),
@@ -72,7 +74,7 @@ class MapWidget extends StatelessWidget {
               ),
               Positioned.fill(
                 child: Material(
-                  color: Colors.transparent,
+                  color: AppColors.transparent,
                   child: InkWell(onTap: _openGoogleMaps),
                 ),
               ),

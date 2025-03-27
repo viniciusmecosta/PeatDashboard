@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:peatdashboard/screens/dashboard_screen.dart';
+import 'package:peatdashboard/utils/app_colors.dart'; // Importe o arquivo de cores
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,23 +19,22 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF298F5E),
+          seedColor: AppColors.primary,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
         fontFamily: 'SFProDisplay',
       ),
-
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF298F5E),
+          seedColor: AppColors.primary,
           brightness: Brightness.dark,
-          surface: const Color(0xFF09090B),
-          background: const Color(0xFF09090B),
-          primary: const Color(0xFF298F5E),
+          surface: AppColors.darkSurface,
+          background: AppColors.darkSurface,
+          primary: AppColors.primary,
         ),
-        scaffoldBackgroundColor: const Color(0xFF090909),
-        cardColor: const Color(0xFF18181B),
+        scaffoldBackgroundColor: AppColors.darkScaffoldBackground,
+        cardColor: AppColors.darkCardColor,
         useMaterial3: true,
         fontFamily: 'SFProDisplay',
       ),

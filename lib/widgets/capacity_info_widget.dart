@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peatdashboard/utils/app_colors.dart';
 
 class CapacityInfoWidget extends StatelessWidget {
   final double percentage;
@@ -7,11 +8,11 @@ class CapacityInfoWidget extends StatelessWidget {
 
   Color _getColorForLevel(double percentage) {
     if (percentage > 75) {
-      return Colors.green;
+      return AppColors.capacityInfoGoodColor;
     } else if (percentage >= 50) {
-      return Colors.amber;
+      return AppColors.capacityInfoMediumColor;
     } else {
-      return Colors.red;
+      return AppColors.capacityInfoBadColor;
     }
   }
 
@@ -29,6 +30,7 @@ class CapacityInfoWidget extends StatelessWidget {
     int filledIcons = (percentage / 20).floor();
     double partialFill = percentage % 20;
     List<Widget> icons = [];
+    Color levelColor = _getColorForLevel(percentage);
     for (int i = 0; i < 5; i++) {
       if (i < filledIcons) {
         icons.add(
@@ -37,7 +39,7 @@ class CapacityInfoWidget extends StatelessWidget {
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-              color: _getColorForLevel(percentage),
+              color: levelColor,
               shape: BoxShape.circle,
             ),
           ),
@@ -49,7 +51,7 @@ class CapacityInfoWidget extends StatelessWidget {
             width: 20,
             height: 20,
             decoration: BoxDecoration(
-              color: _getColorForLevel(percentage).withOpacity(0.5),
+              color: levelColor.withOpacity(0.5),
               shape: BoxShape.circle,
             ),
             child: FractionallySizedBox(
@@ -57,7 +59,7 @@ class CapacityInfoWidget extends StatelessWidget {
               widthFactor: partialFill / 100,
               child: Container(
                 decoration: BoxDecoration(
-                  color: _getColorForLevel(percentage),
+                  color: levelColor,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -71,7 +73,7 @@ class CapacityInfoWidget extends StatelessWidget {
             width: 20,
             height: 20,
             decoration: const BoxDecoration(
-              color: Colors.grey,
+              color: AppColors.darkBorderColor,
               shape: BoxShape.circle,
             ),
           ),
@@ -84,14 +86,18 @@ class CapacityInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDarkMode ? const Color(0xFF18181B) : Colors.white;
-    final textColor = isDarkMode ? Colors.white : Colors.black;
-    final borderColor =
-        isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.black12;
-    final shadowColor =
-        isDarkMode
-            ? Colors.black.withOpacity(0.2)
-            : Colors.black.withOpacity(0.1);
+    final backgroundColor = isDarkMode
+        ? AppColors.darkCardColor
+        : AppColors.lightBackgroundColor;
+    final textColor = isDarkMode
+        ? AppColors.lightBackgroundColor
+        : AppColors.darkBackgroundColor;
+    final borderColor = isDarkMode
+        ? AppColors.darkBorderColor.withOpacity(0.1)
+        : AppColors.lightBorderColor;
+    final shadowColor = isDarkMode
+        ? AppColors.darkShadowColor
+        : AppColors.lightBorderColor;
 
     Color levelColor = _getColorForLevel(percentage);
     String levelDescription = _getLevelDescription(percentage);
@@ -146,9 +152,7 @@ class CapacityInfoWidget extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 6.0,
-                      ),
+                          horizontal: 16.0, vertical: 6.0),
                       decoration: BoxDecoration(
                         color: levelColor,
                         borderRadius: BorderRadius.circular(22.0),
@@ -158,7 +162,7 @@ class CapacityInfoWidget extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.lightBackgroundColor,
                         ),
                       ),
                     ),

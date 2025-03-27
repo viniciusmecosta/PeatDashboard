@@ -45,11 +45,34 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode
+        ? AppColors.darkCardColor
+        : AppColors.lightBackgroundColor;
+    final textColor = isDarkMode
+        ? AppColors.lightBackgroundColor
+        : AppColors.darkBackgroundColor;
+    final borderColor = isDarkMode
+        ? AppColors.darkBorderColor.withOpacity(0.1)
+        : AppColors.lightBorderColor;
+    final shadowColor = isDarkMode
+        ? AppColors.darkShadowColor
+        : AppColors.darkBorderColor;
+    final gridColor = isDarkMode
+        ? AppColors.darkGridColor
+        : AppColors.darkBorderColor;
+    final statIconBackgroundColor = isDarkMode
+        ? AppColors.primary.withOpacity(0.1)
+        : AppColors.primary.withOpacity(0.1);
+    final secondaryTextColor = isDarkMode
+        ? AppColors.darkBorderColor
+        : AppColors.lightSecondaryText;
+
     if (widget.sensorDataList.isEmpty) {
       return Center(
         child: Text(
           "Nenhum dado disponível no gráfico",
-          style: TextStyle(color: AppColors.textColor(context), fontSize: 16),
+          style: TextStyle(color: textColor, fontSize: 16),
         ),
       );
     }
@@ -71,12 +94,12 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.backgroundColor(context),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.borderColor(context)),
+          border: Border.all(color: borderColor),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadowColor(context),
+              color: shadowColor,
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -85,13 +108,13 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildChartTitle(context),
+            _buildChartTitle(textColor),
             const SizedBox(height: 16),
             _buildCurrentTemperature(currentTemperature),
             const SizedBox(height: 16),
-            _buildLineChart(context, temperatureData, dates, gap),
+            _buildLineChart(context, temperatureData, dates, gap, textColor, gridColor),
             const SizedBox(height: 16),
-            _buildTemperatureStats(context),
+            _buildTemperatureStats(textColor, secondaryTextColor, statIconBackgroundColor),
             const SizedBox(height: 16),
             _buildLocationInfo(),
           ],
@@ -100,20 +123,23 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     );
   }
 
-  Widget _buildChartTitle(BuildContext context) {
+   Widget _buildChartTitle(Color textColor) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.location_on,
-            color: AppColors.textColor(context),
+            color: textColor.withOpacity(0.7),
             size: 20,
           ),
           const SizedBox(width: 8),
-          Text(
+         Text(
             'Peat IFCE - Bloco Central',
-            style: TextStyle(color: AppColors.textColor(context), fontSize: 16),
+            style: TextStyle(
+              color: textColor,
+              fontSize: 16,
+            ),
           ),
         ],
       ),
@@ -124,7 +150,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     return Center(
       child: Text(
         '${currentTemp.toStringAsFixed(1)}°C',
-        style: TextStyle(
+        style: const TextStyle(
           color: AppColors.primary,
           fontSize: 28,
           fontWeight: FontWeight.bold,
@@ -138,6 +164,8 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     List<double> temperatureData,
     List<String> dates,
     double gap,
+    Color textColor,
+    Color gridColor,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -153,7 +181,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
               drawVerticalLine: false,
               getDrawingHorizontalLine:
                   (value) => FlLine(
-                    color: AppColors.gridColor(context),
+                    color: gridColor,
                     strokeWidth: 1,
                   ),
             ),
@@ -171,9 +199,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                         child: Text(
                           dates[value.toInt()],
                           style: TextStyle(
-                            color: AppColors.textColor(
-                              context,
-                            ).withOpacity(0.7),
+                            color: textColor.withOpacity(0.7),
                             fontSize: 10,
                           ),
                           textAlign: TextAlign.center,
@@ -196,9 +222,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                         child: Text(
                           '${value.toInt()}°C',
                           style: TextStyle(
-                            color: AppColors.textColor(
-                              context,
-                            ).withOpacity(0.7),
+                            color: textColor.withOpacity(0.7),
                             fontSize: 12,
                           ),
                         ),
@@ -216,9 +240,9 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
             borderData: FlBorderData(
               show: true,
               border: Border(
-                left: BorderSide(color: AppColors.gridColor(context), width: 1),
+                left: BorderSide(color: gridColor, width: 1),
                 bottom: BorderSide(
-                  color: AppColors.gridColor(context),
+                  color: gridColor,
                   width: 1,
                 ),
               ),
@@ -229,9 +253,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                     temperatureData
                         .asMap()
                         .entries
-                        .map(
-                          (entry) => FlSpot(entry.key.toDouble(), entry.value),
-                        )
+                        .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
                         .toList(),
                 isCurved: true,
                 curveSmoothness: 0.3,
@@ -263,7 +285,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                               (barSpot) => LineTooltipItem(
                                 '${temperatureData[barSpot.x.toInt()].toStringAsFixed(1)}°C\n${dates[barSpot.x.toInt()]}',
                                 TextStyle(
-                                  color: AppColors.textColor(context),
+                                  color: textColor,
                                   fontSize: 14,
                                 ),
                               ),
@@ -277,36 +299,42 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     );
   }
 
-  Widget _buildTemperatureStats(BuildContext context) {
+  Widget _buildTemperatureStats(Color textColor, Color secondaryTextColor, Color iconBackgroundColor) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildStatRow(
-          context,
           "S",
           "Média Semanal",
-          "${weeklyAverage.toStringAsFixed(1)}°C",
+          "${weeklyAverage.toStringAsFixed(1)}%",
+          textColor,
+          secondaryTextColor,
+          iconBackgroundColor,
         ),
         const SizedBox(height: 12),
         _buildStatRow(
-          context,
           "M",
           "Média Mensal",
-          "${monthlyAverage.toStringAsFixed(1)}°C",
+          "${monthlyAverage.toStringAsFixed(1)}%",
+          textColor,
+          secondaryTextColor,
+          iconBackgroundColor,
         ),
       ],
     );
   }
 
   Widget _buildStatRow(
-    BuildContext context,
     String iconText,
     String title,
     String value,
+    Color textColor,
+    Color secondaryTextColor,
+    Color iconBackgroundColor,
   ) {
     return Row(
       children: [
-        _buildStatIcon(iconText),
+        _buildStatIcon(iconText, iconBackgroundColor),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,14 +342,14 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
             Text(
               title,
               style: TextStyle(
-                color: AppColors.textColor(context),
+                color: textColor,
                 fontSize: 18,
               ),
             ),
             Text(
               value,
               style: TextStyle(
-                color: AppColors.secondaryTextColor(context),
+                color: secondaryTextColor,
                 fontSize: 16,
               ),
             ),
@@ -331,18 +359,18 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
     );
   }
 
-  Widget _buildStatIcon(String letter) {
+  Widget _buildStatIcon(String letter, Color backgroundColor) {
     return Container(
       width: 50,
       height: 50,
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: backgroundColor,
         shape: BoxShape.circle,
       ),
       child: Center(
         child: Text(
           letter,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppColors.primary,
             fontSize: 26,
             fontWeight: FontWeight.bold,
@@ -370,15 +398,15 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
               const SizedBox(width: 8),
               const Text(
                 'Fortaleza',
-                style: TextStyle(color: Colors.white, fontSize: 18),
+                style: TextStyle(color: AppColors.lightBackgroundColor, fontSize: 18),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.location_on, color: Colors.white, size: 20),
+              const Icon(Icons.location_on, color: AppColors.lightBackgroundColor, size: 20),
             ],
           ),
-          const Text(
-            '30.5°C',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+          Text(
+            '${currentTemperature.toStringAsFixed(1)}°C',
+            style: const TextStyle(color: AppColors.lightBackgroundColor, fontSize: 18),
           ),
         ],
       ),

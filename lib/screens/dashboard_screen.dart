@@ -6,6 +6,7 @@ import 'package:peatdashboard/screens/capacity_screen.dart';
 import 'package:peatdashboard/screens/humidity_screen.dart';
 import 'package:peatdashboard/screens/temperature_screen.dart';
 import 'package:peatdashboard/services/api_service.dart';
+import 'package:peatdashboard/utils/app_colors.dart'; 
 import 'package:peatdashboard/widgets/info_widget.dart';
 import 'package:peatdashboard/widgets/map_widget.dart';
 import 'package:peatdashboard/widgets/metric_capacity_widget.dart';
@@ -62,11 +63,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final cardColor = Theme.of(context).colorScheme.primary;
 
     final capacityCard = GestureDetector(
-      onTap:
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CapacityScreen()),
-          ),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CapacityScreen()),
+      ),
       child: MetricCapacityWidget(
         title: 'Volume de Ração',
         value: '${capacity.capacity.toInt()}%',
@@ -76,11 +76,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
 
     final temperatureCard = GestureDetector(
-      onTap:
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const TemperatureScreen()),
-          ),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TemperatureScreen()),
+      ),
       child: MetricTemperatureWidget(
         title: 'Temperatura',
         value: '${temperature.temperature.toInt()}°C',
@@ -90,11 +89,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
 
     final humidityCard = GestureDetector(
-      onTap:
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const HumidityScreen()),
-          ),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HumidityScreen()),
+      ),
       child: MetricHumidityWidget(
         title: 'Umidade',
         value: '${humidity.humidity.toInt()}%',
@@ -105,42 +103,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return isLargeScreen
         ? Column(
-          children: [
-            Row(
-              children: [
-                Expanded(child: capacityCard),
-                const SizedBox(width: 16),
-                Expanded(child: temperatureCard),
-                const SizedBox(width: 16),
-                Expanded(child: humidityCard),
-              ],
-            ),
-          ],
-        )
+            children: [
+              Row(
+                children: [
+                  Expanded(child: capacityCard),
+                  const SizedBox(width: 16),
+                  Expanded(child: temperatureCard),
+                  const SizedBox(width: 16),
+                  Expanded(child: humidityCard),
+                ],
+              ),
+            ],
+          )
         : Column(
-          children: [
-            SizedBox(width: double.infinity, child: capacityCard),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: temperatureCard),
-                const SizedBox(width: 16),
-                Expanded(child: humidityCard),
-              ],
-            ),
-          ],
-        );
+            children: [
+              SizedBox(width: double.infinity, child: capacityCard),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(child: temperatureCard),
+                  const SizedBox(width: 16),
+                  Expanded(child: humidityCard),
+                ],
+              ),
+            ],
+          );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isMobile = MediaQuery.of(context).size.width <= 600;
+    final backgroundColor = theme.brightness == Brightness.dark
+        ? AppColors.darkSurface
+        : AppColors.lightBackgroundColor;
+    final appBarBackgroundColor = theme.brightness == Brightness.dark
+        ? AppColors.darkSurface
+        : AppColors.lightBackgroundColor;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.surface,
+        backgroundColor: appBarBackgroundColor,
         elevation: 0,
         toolbarHeight: 80,
         title: Image.asset('assets/logo.png', height: 115),
@@ -148,45 +152,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: SafeArea(
         top: false,
-        child:
-            _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Padding(
-                  padding: const EdgeInsets.all(16),
-                  child:
-                      isMobile
-                          ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const InfoWidget(),
-                              const SizedBox(height: 16),
-                              _buildMetricCards(
-                                context,
-                                false,
-                                _data["temperature"],
-                                _data["humidity"],
-                                _data["capacity"],
-                              ),
-                              const SizedBox(height: 16),
-                              Expanded(child: MapWidget(location: _location)),
-                            ],
-                          )
-                          : Column(
-                            children: [
-                              const InfoWidget(),
-                              const SizedBox(height: 16),
-                              _buildMetricCards(
-                                context,
-                                true,
-                                _data["temperature"],
-                                _data["humidity"],
-                                _data["capacity"],
-                              ),
-                              const SizedBox(height: 16),
-                              Expanded(child: MapWidget(location: _location)),
-                            ],
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16),
+                child: isMobile
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const InfoWidget(),
+                          const SizedBox(height: 16),
+                          _buildMetricCards(
+                            context,
+                            false,
+                            _data["temperature"],
+                            _data["humidity"],
+                            _data["capacity"],
                           ),
-                ),
+                          const SizedBox(height: 16),
+                          Expanded(child: MapWidget(location: _location)),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          const InfoWidget(),
+                          const SizedBox(height: 16),
+                          _buildMetricCards(
+                            context,
+                            true,
+                            _data["temperature"],
+                            _data["humidity"],
+                            _data["capacity"],
+                          ),
+                          const SizedBox(height: 16),
+                          Expanded(child: MapWidget(location: _location)),
+                        ],
+                      ),
+              ),
       ),
     );
   }

@@ -1,8 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
-
-import '../utils/app_colors.dart';
+import 'package:peatdashboard/utils/app_colors.dart';
 
 class CapacityWidget extends StatelessWidget {
   final List<SensorLevel> sensorLevelList;
@@ -14,13 +13,43 @@ class CapacityWidget extends StatelessWidget {
     required this.last,
   });
 
+  Color _getBackgroundColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkCardColor
+        : AppColors.lightBackgroundColor;
+  }
+
+  Color _getBorderColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkBorderColor.withOpacity(0.1)
+        : AppColors.lightBorderColor;
+  }
+
+  Color _getShadowColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkShadowColor
+        : AppColors.lightBorderColor;
+  }
+
+  Color _getTextColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? AppColors.lightBackgroundColor
+        : AppColors.darkBackgroundColor;
+  }
+
+  Color _getGridColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? AppColors.darkGridColor
+        : AppColors.darkBorderColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (sensorLevelList.isEmpty) {
       return Center(
         child: Text(
           "Nenhum dado disponível no gráfico",
-          style: TextStyle(color: AppColors.textColor(context), fontSize: 16),
+          style: TextStyle(color: _getTextColor(context), fontSize: 16),
         ),
       );
     }
@@ -42,12 +71,12 @@ class CapacityWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.backgroundColor(context),
+          color: _getBackgroundColor(context),
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.borderColor(context), width: 1),
+          border: Border.all(color: _getBorderColor(context), width: 1),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadowColor(context),
+              color: _getShadowColor(context),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -74,13 +103,13 @@ class CapacityWidget extends StatelessWidget {
         children: [
           Icon(
             Icons.location_on,
-            color: AppColors.textColor(context).withOpacity(0.7),
+            color: _getTextColor(context).withOpacity(0.7),
             size: 20,
           ),
           const SizedBox(width: 8),
           Text(
             'Peat IFCE - Bloco Central',
-            style: TextStyle(color: AppColors.textColor(context), fontSize: 16),
+            style: TextStyle(color: _getTextColor(context), fontSize: 16),
           ),
         ],
       ),
@@ -91,7 +120,7 @@ class CapacityWidget extends StatelessWidget {
     return Center(
       child: Text(
         '${last.toStringAsFixed(1)}%',
-        style: TextStyle(
+        style: const TextStyle(
           color: AppColors.primary,
           fontSize: 28,
           fontWeight: FontWeight.bold,
@@ -120,7 +149,7 @@ class CapacityWidget extends StatelessWidget {
               drawVerticalLine: false,
               getDrawingHorizontalLine:
                   (value) => FlLine(
-                    color: AppColors.gridColor(context),
+                    color: _getGridColor(context),
                     strokeWidth: 1,
                   ),
             ),
@@ -138,9 +167,7 @@ class CapacityWidget extends StatelessWidget {
                         child: Text(
                           dates[value.toInt()],
                           style: TextStyle(
-                            color: AppColors.textColor(
-                              context,
-                            ).withOpacity(0.7),
+                            color: _getTextColor(context).withOpacity(0.7),
                             fontSize: 10,
                           ),
                           textAlign: TextAlign.center,
@@ -160,14 +187,12 @@ class CapacityWidget extends StatelessWidget {
                       (value, meta) =>
                           (value % 20 == 0)
                               ? Text(
-                                '${value.toInt()}%',
-                                style: TextStyle(
-                                  color: AppColors.textColor(
-                                    context,
-                                  ).withOpacity(0.7),
-                                  fontSize: 12,
-                                ),
-                              )
+                                  '${value.toInt()}%',
+                                  style: TextStyle(
+                                    color: _getTextColor(context).withOpacity(0.7),
+                                    fontSize: 12,
+                                  ),
+                                )
                               : const SizedBox.shrink(),
                 ),
               ),
@@ -179,9 +204,9 @@ class CapacityWidget extends StatelessWidget {
             borderData: FlBorderData(
               show: true,
               border: Border(
-                left: BorderSide(color: AppColors.gridColor(context), width: 1),
+                left: BorderSide(color: _getGridColor(context), width: 1),
                 bottom: BorderSide(
-                  color: AppColors.gridColor(context),
+                  color: _getGridColor(context),
                   width: 1,
                 ),
               ),
@@ -192,9 +217,7 @@ class CapacityWidget extends StatelessWidget {
                     capacityData
                         .asMap()
                         .entries
-                        .map(
-                          (entry) => FlSpot(entry.key.toDouble(), entry.value),
-                        )
+                        .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
                         .toList(),
                 isCurved: true,
                 curveSmoothness: 0.3,
@@ -226,7 +249,7 @@ class CapacityWidget extends StatelessWidget {
                               (barSpot) => LineTooltipItem(
                                 '${capacityData[barSpot.x.toInt()].toStringAsFixed(1)}%\n${dates[barSpot.x.toInt()]}',
                                 TextStyle(
-                                  color: AppColors.textColor(context),
+                                  color: _getTextColor(context),
                                   fontSize: 14,
                                 ),
                               ),
