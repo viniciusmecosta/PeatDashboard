@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
-import 'package:peatdashboard/services/api_service.dart';
+import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 import 'package:peatdashboard/widgets/capacity_info_widget.dart';
 import 'package:peatdashboard/widgets/capacity_widget.dart';
@@ -38,7 +38,7 @@ class _CapacityScreenState extends State<CapacityScreen> {
       _sensorLevelListByPeriod["Ontem"] = await _fetchDataByDate(yesterday);
       _sensorLevelListByPeriod["Últimos 7 dias"] = await _fetchAverageData(7);
       _sensorLevelListByPeriod["Últimos 31 dias"] = await _fetchAverageData(31);
-      _sensorLevel = await ApiService.fetchCapacity();
+      _sensorLevel = await PeatDataService.fetchCapacity();
       _last = _sensorLevelListByPeriod["Hoje"]!.last.capacity;
 
       _updateFilteredData();
@@ -53,11 +53,11 @@ class _CapacityScreenState extends State<CapacityScreen> {
 
   Future<List<SensorLevel>> _fetchDataByDate(DateTime date) async {
     final formattedDate = DateFormat('ddMMyyyy').format(date);
-    return await ApiService.fetchCapacityByDate(formattedDate);
+    return await PeatDataService.fetchCapacityByDate(formattedDate);
   }
 
   Future<List<SensorLevel>> _fetchAverageData(int days) async {
-    return await ApiService.fetchLastNAvgLevels(days);
+    return await PeatDataService.fetchLastNAvgLevels(days);
   }
 
   void _updateFilteredData() {

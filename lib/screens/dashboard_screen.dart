@@ -5,7 +5,7 @@ import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/screens/capacity_screen.dart';
 import 'package:peatdashboard/screens/humidity_screen.dart';
 import 'package:peatdashboard/screens/temperature_screen.dart';
-import 'package:peatdashboard/services/api_service.dart';
+import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 import 'package:peatdashboard/widgets/info_widget.dart';
 import 'package:peatdashboard/widgets/map_widget.dart';
@@ -34,8 +34,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadData() async {
     try {
-      final tempHumiData = await ApiService.fetchTemperatureAndHumidity();
-      final capData = await ApiService.fetchCapacity();
+      final tempHumiData = await PeatDataService.fetchTemperatureAndHumidity();
+      final capData = await PeatDataService.fetchCapacity();
       setState(() {
         _data = {
           "temperature": tempHumiData["temperature"],

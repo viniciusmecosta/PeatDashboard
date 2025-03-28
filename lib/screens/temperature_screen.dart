@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
-import 'package:peatdashboard/services/api_service.dart';
+import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 import 'package:peatdashboard/widgets/temperature_widget.dart';
 
@@ -38,16 +38,16 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
         'ddMMyyyy',
       ).format(DateTime.now().subtract(const Duration(days: 1)));
 
-      _allData["Hoje"] = await ApiService.fetchTemperatureAndHumidityByDate(
+      _allData["Hoje"] = await PeatDataService.fetchTemperatureAndHumidityByDate(
         today,
       );
-      _allData["Ontem"] = await ApiService.fetchTemperatureAndHumidityByDate(
+      _allData["Ontem"] = await PeatDataService.fetchTemperatureAndHumidityByDate(
         yesterday,
       );
       _allData["Últimos 7 dias"] =
-          await ApiService.fetchTemperatureAndHumidityList(7);
+          await PeatDataService.fetchTemperatureAndHumidityList(7);
       _allData["Últimos 31 dias"] =
-          await ApiService.fetchTemperatureAndHumidityList(31);
+          await PeatDataService.fetchTemperatureAndHumidityList(31);
 
       _updateFilteredData();
     } catch (e) {

@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
-import 'package:peatdashboard/services/api_service.dart';
+import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 
 class TemperatureWidget extends StatefulWidget {
@@ -26,8 +26,8 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
   }
 
   Future<void> _loadAverages() async {
-    final weekly = await ApiService.fetchAverageTemperatureAndHumidity(7);
-    final monthly = await ApiService.fetchAverageTemperatureAndHumidity(31);
+    final weekly = await PeatDataService.fetchAverageTemperatureAndHumidity(7);
+    final monthly = await PeatDataService.fetchAverageTemperatureAndHumidity(31);
 
     setState(() {
       weeklyAverage = weekly.temperature;
@@ -36,7 +36,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
   }
 
   Future<void> _loadCurrentTemperature() async {
-    final data = await ApiService.fetchTemperatureAndHumidity();
+    final data = await PeatDataService.fetchTemperatureAndHumidity();
     setState(() {
       currentTemperature = data["temperature"]?.temperature ?? 0.0;
     });

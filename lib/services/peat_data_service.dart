@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 
-class ApiService {
+class PeatDataService {
   static String? get baseUrl => dotenv.env['BASE_URL'];
 
   static Future<T?> _fetchData<T>(
