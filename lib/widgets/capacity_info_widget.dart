@@ -27,36 +27,23 @@ class CapacityInfoWidget extends StatelessWidget {
   }
 
   List<Widget> _buildIcons(double percentage) {
-    int filledIcons = (percentage / 20).floor();
-    double partialFill = percentage % 20;
     List<Widget> icons = [];
     Color levelColor = _getColorForLevel(percentage);
     for (int i = 0; i < 5; i++) {
-      if (i < filledIcons) {
+      double fillPercentage = (percentage - (i * 20)).clamp(0, 20);
+      if (fillPercentage > 0) {
         icons.add(
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
             width: 20,
             height: 20,
-            decoration: BoxDecoration(
-              color: levelColor,
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
-            ),
-          ),
-        );
-      } else if (i == filledIcons && partialFill > 0) {
-        icons.add(
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4.0),
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: levelColor.withOpacity(0.5),
-              shape: BoxShape.circle,
+              color: AppColors.darkBorderColor,
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
-              widthFactor: partialFill / 100,
+              widthFactor: fillPercentage / 20.0,
               child: Container(
                 decoration: BoxDecoration(
                   color: levelColor,
@@ -89,13 +76,9 @@ class CapacityInfoWidget extends StatelessWidget {
     final backgroundColor =
         isDarkMode ? AppColors.darkCardColor : AppColors.lightBackgroundColor;
     final textColor =
-        isDarkMode
-            ? AppColors.lightBackgroundColor
-            : AppColors.darkBackgroundColor;
+        isDarkMode ? AppColors.lightBackgroundColor : AppColors.darkBackgroundColor;
     final borderColor =
-        isDarkMode
-            ? AppColors.darkBorderColor.withOpacity(0.1)
-            : AppColors.lightBorderColor;
+        isDarkMode ? AppColors.darkBorderColor.withOpacity(0.1) : AppColors.lightBorderColor;
     final shadowColor =
         isDarkMode ? AppColors.darkShadowColor : AppColors.lightBorderColor;
 
