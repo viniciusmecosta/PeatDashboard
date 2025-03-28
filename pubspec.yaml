@@ -46,7 +46,7 @@ flutter:
     - assets/PeatDeviceLight.png
     - assets/logo.png
     - assets/comedouro_icon.png
-    - assets/.env
+    - .env
     - assets/fonts/SFPRODISPLAYBLACKITALIC.OTF
     - assets/fonts/SFPRODISPLAYREGULAR.OTF
     - assets/fonts/SFPRODISPLAYBOLD.OTF
