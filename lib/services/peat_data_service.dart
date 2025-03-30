@@ -6,7 +6,7 @@ import 'package:peatdashboard/models/sensor_level.dart';
 
 class PeatDataService {
   static String? get baseUrl => dotenv.env['BASE_URL'];
-  static String get _appEndpoint => '';
+  static String get _appEndpoint => '/app';
 
   static Future<T?> _fetchSingle<T>(
     String endpoint,
