@@ -10,7 +10,10 @@ class InfoWidget extends StatelessWidget {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return Container(
-      width: isLargeScreen ? MediaQuery.of(context).size.width * 1 : double.infinity,
+      width:
+          isLargeScreen
+              ? MediaQuery.of(context).size.width * 1
+              : double.infinity,
       height: isLargeScreen ? 90 : 100,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(

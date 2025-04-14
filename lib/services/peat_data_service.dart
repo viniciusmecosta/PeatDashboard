@@ -13,7 +13,9 @@ class PeatDataService {
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl$_appEndpoint/$endpoint"));
+      final response = await http.get(
+        Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
+      );
       if (response.statusCode == 200) {
         final dynamic body = jsonDecode(response.body);
         if (body is List && body.isNotEmpty) {
@@ -35,12 +37,16 @@ class PeatDataService {
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl$_appEndpoint/$endpoint"));
+      final response = await http.get(
+        Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data.map((item) => fromJson(item)).toList().reversed.toList();
       } else {
-        print('Failed to fetch list from $endpoint: Status code ${response.statusCode}');
+        print(
+          'Failed to fetch list from $endpoint: Status code ${response.statusCode}',
+        );
       }
     } catch (e) {
       print('Error fetching list from $endpoint: $e');
@@ -103,15 +109,19 @@ class PeatDataService {
 
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl$_appEndpoint/level/avg/$n"));
+      final response = await http.get(
+        Uri.parse("$baseUrl$_appEndpoint/level/avg/$n"),
+      );
       if (response.statusCode == 200) {
         final dynamic body = jsonDecode(response.body);
         if (body is List) {
           return body
-              .map((json) => SensorLevel(
-                    date: json["date"] as String? ?? "0",
-                    capacity: (json["level"] as num? ?? 0).toDouble(),
-                  ))
+              .map(
+                (json) => SensorLevel(
+                  date: json["date"] as String? ?? "0",
+                  capacity: (json["level"] as num? ?? 0).toDouble(),
+                ),
+              )
               .toList()
               .reversed
               .toList();
@@ -120,7 +130,9 @@ class PeatDataService {
           return [];
         }
       } else {
-        print('Failed to fetch level/avg/$n: Status code ${response.statusCode}');
+        print(
+          'Failed to fetch level/avg/$n: Status code ${response.statusCode}',
+        );
         return [];
       }
     } catch (e) {
@@ -174,6 +186,7 @@ extension SensorDataExtension on SensorData {
   static SensorData empty() {
     return SensorData(date: "0", temperature: 0, humidity: 0);
   }
+
   static SensorData emptyWithDate(String date) {
     return SensorData(date: date, temperature: 0, humidity: 0);
   }

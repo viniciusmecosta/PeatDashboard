@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peatdashboard/utils/parse_value.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 
@@ -16,21 +17,11 @@ class MetricTemperatureWidget extends StatelessWidget {
     required this.chartColor,
   });
 
-  double _parseValue(String value) {
-    try {
-      return double.parse(
-        value.replaceAll(RegExp(r'[^0-9.]'), ''),
-      ).clamp(20, 40);
-    } catch (_) {
-      return 0.0;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final formattedDate = subtitle;
-    final double numericValue = _parseValue(value);
+    final double numericValue = parseValue(value);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
     final size = isLargeScreen ? 250.0 : 150.0;
     final trackWidth = isLargeScreen ? 20.0 : 13.0;

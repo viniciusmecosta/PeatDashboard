@@ -5,7 +5,7 @@ class HowPeatWorksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double iconSize = 30;  // Padronizando o tamanho do ícone
+    const double iconSize = 30;
     const Color highlightColor = Color(0xFFFFE8C7);
 
     return Scaffold(
@@ -18,7 +18,7 @@ class HowPeatWorksScreen extends StatelessWidget {
           icon: const Icon(
             Icons.arrow_back,
             color: Colors.white,
-            size: iconSize,  // Tamanho padronizado
+            size: iconSize,
           ),
         ),
       ),
@@ -41,10 +41,7 @@ class HowPeatWorksScreen extends StatelessWidget {
               const SizedBox(height: 30),
               Text(
                 'O Peat conta com uma gama de tecnologias para garantir a automatização e qualidade do alimento para os animais. Para garantir a segurança do abastecimento, o sistema de abertura do reservatório é totalmente controlado.',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 20),
               ),
               const SizedBox(height: 30),
               Row(
@@ -125,15 +122,16 @@ class HowPeatWorksScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       6,
-                          (index) => Container(
+                      (index) => Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         width: 12,
                         height: 12,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: index <= 1
-                              ? Colors.white
-                              : Colors.white.withOpacity(0.5),
+                          color:
+                              index <= 1
+                                  ? Colors.white
+                                  : Colors.white.withOpacity(0.5),
                         ),
                       ),
                     ),

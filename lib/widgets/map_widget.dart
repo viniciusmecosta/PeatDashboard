@@ -34,6 +34,21 @@ class MapWidget extends StatelessWidget {
             ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
             : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    double calculateZoom() {
+      if (screenWidth < 300 || screenHeight < 200) {
+        return 14.0;
+      } else if (screenWidth < 600 || screenHeight < 400) {
+        return 15.0;
+      } else {
+        return 16.0;
+      }
+    }
+
+    final zoom = calculateZoom();
+
     return GestureDetector(
       onTap: _openGoogleMaps,
       child: ClipRRect(
@@ -46,7 +61,7 @@ class MapWidget extends StatelessWidget {
                 child: FlutterMap(
                   options: MapOptions(
                     center: location,
-                    zoom: 16.0,
+                    zoom: zoom,
                     interactiveFlags: InteractiveFlag.none,
                   ),
                   nonRotatedChildren: [

@@ -76,9 +76,13 @@ class CapacityInfoWidget extends StatelessWidget {
     final backgroundColor =
         isDarkMode ? AppColors.darkCardColor : AppColors.lightBackgroundColor;
     final textColor =
-        isDarkMode ? AppColors.lightBackgroundColor : AppColors.darkBackgroundColor;
+        isDarkMode
+            ? AppColors.lightBackgroundColor
+            : AppColors.darkBackgroundColor;
     final borderColor =
-        isDarkMode ? AppColors.darkBorderColor.withOpacity(0.1) : AppColors.lightBorderColor;
+        isDarkMode
+            ? AppColors.darkBorderColor.withOpacity(0.1)
+            : AppColors.lightBorderColor;
     final shadowColor =
         isDarkMode ? AppColors.darkShadowColor : AppColors.lightBorderColor;
 

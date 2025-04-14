@@ -38,12 +38,10 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
         'ddMMyyyy',
       ).format(DateTime.now().subtract(const Duration(days: 1)));
 
-      _allData["Hoje"] = await PeatDataService.fetchTemperatureAndHumidityByDate(
-        today,
-      );
-      _allData["Ontem"] = await PeatDataService.fetchTemperatureAndHumidityByDate(
-        yesterday,
-      );
+      _allData["Hoje"] =
+          await PeatDataService.fetchTemperatureAndHumidityByDate(today);
+      _allData["Ontem"] =
+          await PeatDataService.fetchTemperatureAndHumidityByDate(yesterday);
       _allData["Últimos 7 dias"] =
           await PeatDataService.fetchTemperatureAndHumidityList(7);
       _allData["Últimos 31 dias"] =

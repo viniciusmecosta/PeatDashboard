@@ -27,7 +27,9 @@ class _HumidityWidgetState extends State<HumidityWidget> {
 
   Future<void> _loadAverages() async {
     final weekly = await PeatDataService.fetchAverageTemperatureAndHumidity(7);
-    final monthly = await PeatDataService.fetchAverageTemperatureAndHumidity(31);
+    final monthly = await PeatDataService.fetchAverageTemperatureAndHumidity(
+      31,
+    );
 
     setState(() {
       weeklyAverage = weekly.humidity;

@@ -13,11 +13,7 @@ class WelcomeScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-            size: 30,  // Tamanho padronizado do ícone
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
         ),
       ),
       body: LayoutBuilder(
@@ -32,7 +28,9 @@ class WelcomeScreen extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: isLargeScreen ? 48 : 24),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isLargeScreen ? 48 : 24,
+                ),
                 child: Column(
                   children: [
                     const SizedBox(height: 40),
@@ -46,24 +44,22 @@ class WelcomeScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     const Spacer(),
-                    Image.asset(
-                      'assets/PeatDeviceLight.png',
-                      width: imageSize,
-                    ),
+                    Image.asset('assets/PeatDeviceLight.png', width: imageSize),
                     const SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
                         6,
-                            (index) => Container(
+                        (index) => Container(
                           margin: const EdgeInsets.symmetric(horizontal: 5),
                           width: indicatorSize,
                           height: indicatorSize,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: index == 0
-                                ? Colors.white
-                                : Colors.white.withOpacity(0.5),
+                            color:
+                                index == 0
+                                    ? Colors.white
+                                    : Colors.white.withOpacity(0.5),
                           ),
                         ),
                       ),
@@ -72,10 +68,7 @@ class WelcomeScreen extends StatelessWidget {
                     Text(
                       'Alimentador inteligente e automatizado\npara pets: uma inovação que otimiza a\nforma como cuidamos dos animais.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: textSize,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontSize: textSize, color: Colors.white),
                     ),
                     const Spacer(),
                     Padding(
@@ -100,7 +93,8 @@ class WelcomeScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const HowPeatWorksScreen(),
+                                  builder:
+                                      (context) => const HowPeatWorksScreen(),
                                 ),
                               );
                             },
