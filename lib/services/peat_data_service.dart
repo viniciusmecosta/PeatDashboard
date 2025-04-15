@@ -6,28 +6,25 @@ import 'package:peatdashboard/models/sensor_level.dart';
 
 class PeatDataService {
   static String? get baseUrl => dotenv.env['BASE_URL'];
+  static String? get apiToken => dotenv.env['API_TOKEN'];
   static String get _appEndpoint => '/app';
 
   static Future<T?> _fetchSingle<T>(
     String endpoint,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    try {
-      final response = await http.get(
-        Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
-      );
-      if (response.statusCode == 200) {
-        final dynamic body = jsonDecode(response.body);
-        if (body is List && body.isNotEmpty) {
-          return fromJson(body.first);
-        } else if (body is Map<String, dynamic>) {
-          return fromJson(body);
-        }
-      } else {
-        print('Failed to fetch $endpoint: Status code ${response.statusCode}');
+    final response = await http.get(
+      Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
+      headers: {'Authorization': 'Bearer $apiToken'},
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = jsonDecode(response.body);
+      if (body is List && body.isNotEmpty) {
+        return fromJson(body.first);
+      } else if (body is Map<String, dynamic>) {
+        return fromJson(body);
       }
-    } catch (e) {
-      print('Error fetching $endpoint: $e');
+    } else {
     }
     return null;
   }
@@ -36,22 +33,16 @@ class PeatDataService {
     String endpoint,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    try {
-      final response = await http.get(
-        Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
-      );
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((item) => fromJson(item)).toList().reversed.toList();
-      } else {
-        print(
-          'Failed to fetch list from $endpoint: Status code ${response.statusCode}',
-        );
-      }
-    } catch (e) {
-      print('Error fetching list from $endpoint: $e');
+    final response = await http.get(
+      Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
+      headers: {'Authorization': 'Bearer $apiToken'},
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((item) => fromJson(item)).toList().reversed.toList();
+    } else {
+      return [];
     }
-    return [];
   }
 
   static Future<Map<String, SensorData>> fetchTemperatureAndHumidity() async {
@@ -108,35 +99,27 @@ class PeatDataService {
   }
 
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
-    try {
-      final response = await http.get(
-        Uri.parse("$baseUrl$_appEndpoint/level/avg/$n"),
-      );
-      if (response.statusCode == 200) {
-        final dynamic body = jsonDecode(response.body);
-        if (body is List) {
-          return body
-              .map(
-                (json) => SensorLevel(
-                  date: json["date"] as String? ?? "0",
-                  capacity: (json["level"] as num? ?? 0).toDouble(),
-                ),
-              )
-              .toList()
-              .reversed
-              .toList();
-        } else {
-          print('Unexpected response format for level/avg/$n: $body');
-          return [];
-        }
+    final response = await http.get(
+      Uri.parse("$baseUrl$_appEndpoint/level/avg/$n"),
+      headers: {'Authorization': 'Bearer $apiToken'},
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = jsonDecode(response.body);
+      if (body is List) {
+        return body
+            .map(
+              (json) => SensorLevel(
+                date: json["date"] as String? ?? "0",
+                capacity: (json["level"] as num? ?? 0).toDouble(),
+              ),
+            )
+            .toList()
+            .reversed
+            .toList();
       } else {
-        print(
-          'Failed to fetch level/avg/$n: Status code ${response.statusCode}',
-        );
         return [];
       }
-    } catch (e) {
-      print('Error fetching level/avg/$n: $e');
+    } else {
       return [];
     }
   }
