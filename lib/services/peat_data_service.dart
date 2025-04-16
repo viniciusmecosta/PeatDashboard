@@ -24,8 +24,7 @@ class PeatDataService {
       } else if (body is Map<String, dynamic>) {
         return fromJson(body);
       }
-    } else {
-    }
+    } else {}
     return null;
   }
 
