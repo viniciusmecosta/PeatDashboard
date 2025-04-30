@@ -55,10 +55,7 @@ class InfoWidget extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-              );
+              //Navigator.push(context,MaterialPageRoute(builder: (context) => const WelcomeScreen()),);
             },
             child: Row(
               children: [
