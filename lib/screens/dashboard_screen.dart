@@ -12,6 +12,7 @@ import 'package:peatdashboard/widgets/map_widget.dart';
 import 'package:peatdashboard/widgets/metric_capacity_widget.dart';
 import 'package:peatdashboard/widgets/metric_humidity_widget.dart';
 import 'package:peatdashboard/widgets/metric_temperature_widget.dart';
+import 'package:peatdashboard/widgets/notify_card_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -103,33 +104,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
 
-    return isLargeScreen
-        ? Column(
-          children: [
-            Row(
-              children: [
-                Expanded(child: capacityCard),
-                const SizedBox(width: 16),
-                Expanded(child: temperatureCard),
-                const SizedBox(width: 16),
-                Expanded(child: humidityCard),
-              ],
-            ),
-          ],
-        )
-        : Column(
-          children: [
-            SizedBox(width: double.infinity, child: capacityCard),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: temperatureCard),
-                const SizedBox(width: 16),
-                Expanded(child: humidityCard),
-              ],
-            ),
-          ],
-        );
+    final notifyCard = NotifyIconCardWidget(
+      onTap: () {
+        //Navigator.push(context,MaterialPageRoute(builder: (context) => const NotificationScreen()), );
+      },
+    );
+
+    if (isLargeScreen) {
+      return Row(
+        children: [
+          Expanded(child: capacityCard),
+          const SizedBox(width: 16),
+          Expanded(child: temperatureCard),
+          const SizedBox(width: 16),
+          Expanded(child: humidityCard),
+          const SizedBox(width: 16),
+          Expanded(child: notifyCard),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          Row(
+            children: [
+              Expanded(child: capacityCard),
+              const SizedBox(width: 16),
+              Expanded(child: temperatureCard),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: humidityCard),
+              const SizedBox(width: 16),
+              Expanded(child: notifyCard),
+            ],
+          ),
+        ],
+      );
+    }
   }
 
   @override
@@ -140,10 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         theme.brightness == Brightness.dark
             ? AppColors.darkSurface
             : AppColors.lightBackgroundColor;
-    final appBarBackgroundColor =
-        theme.brightness == Brightness.dark
-            ? AppColors.darkSurface
-            : AppColors.lightBackgroundColor;
+    final appBarBackgroundColor = backgroundColor;
 
     return Scaffold(
       backgroundColor: backgroundColor,

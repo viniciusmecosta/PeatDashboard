@@ -7,24 +7,28 @@ import 'package:peatdashboard/models/sensor_level.dart';
 class PeatDataService {
   static String? get baseUrl => dotenv.env['BASE_URL'];
   static String? get apiToken => dotenv.env['API_TOKEN'];
-  static String get _appEndpoint => '/app';
 
   static Future<T?> _fetchSingle<T>(
     String endpoint,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final response = await http.get(
-      Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
-      headers: {'Authorization': 'Bearer $apiToken'},
-    );
-    if (response.statusCode == 200) {
-      final dynamic body = jsonDecode(response.body);
-      if (body is List && body.isNotEmpty) {
-        return fromJson(body.first);
-      } else if (body is Map<String, dynamic>) {
-        return fromJson(body);
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/$endpoint"),
+        headers: {'Authorization': 'Bearer $apiToken'},
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic body = jsonDecode(response.body);
+        if (body is List && body.isNotEmpty) {
+          return fromJson(body.first);
+        } else if (body is Map<String, dynamic>) {
+          return fromJson(body);
+        }
       }
-    } else {}
+    } catch (e) {
+      // Silent fail handled by fallback
+    }
     return null;
   }
 
@@ -32,25 +36,29 @@ class PeatDataService {
     String endpoint,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final response = await http.get(
-      Uri.parse("$baseUrl$_appEndpoint/$endpoint"),
-      headers: {'Authorization': 'Bearer $apiToken'},
-    );
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((item) => fromJson(item)).toList().reversed.toList();
-    } else {
-      return [];
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/$endpoint"),
+        headers: {'Authorization': 'Bearer $apiToken'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((item) => fromJson(item)).toList().reversed.toList();
+      }
+    } catch (e) {
+      // Silent fail handled by fallback
     }
+    return [];
   }
 
   static Future<Map<String, SensorData>> fetchTemperatureAndHumidity() async {
     final sensorData = await _fetchSingle(
       "sensor_data/last/1",
       (json) => SensorData(
-        date: json["date"] as String? ?? "",
-        temperature: (json["temp"] as num? ?? 0).toDouble(),
-        humidity: (json["humi"] as num? ?? 0).toDouble(),
+        date: json["date"] as String? ?? "n/d",
+        temperature: (json["temp"] as num? ?? 20).toDouble(),
+        humidity: (json["humi"] as num? ?? 20).toDouble(),
       ),
     );
 
@@ -68,9 +76,9 @@ class PeatDataService {
     return _fetchList(
       "sensor_data/avg/$n",
       (json) => SensorData(
-        date: json["date"] as String? ?? "0",
-        temperature: (json["temp"] as num? ?? 0).toDouble(),
-        humidity: (json["humi"] as num? ?? 0).toDouble(),
+        date: json["date"] as String? ?? "n/d",
+        temperature: (json["temp"] as num? ?? 20).toDouble(),
+        humidity: (json["humi"] as num? ?? 20).toDouble(),
       ),
     );
   }
@@ -79,8 +87,8 @@ class PeatDataService {
     final sensorLevel = await _fetchSingle(
       "level/last/1",
       (json) => SensorLevel(
-        date: json["date"] as String? ?? "",
-        capacity: (json["level"] as num? ?? 0).toDouble(),
+        date: json["date"] as String? ?? "n/d",
+        capacity: (json["level"] as num? ?? 20).toDouble(),
       ),
     );
     return sensorLevel ?? SensorLevelExtension.empty();
@@ -90,37 +98,36 @@ class PeatDataService {
     return _fetchList(
       "sensor_data/avg/$n",
       (json) => SensorData(
-        date: json["date"] as String? ?? "00/00",
-        temperature: (json["temp"] as num? ?? 0).toDouble(),
-        humidity: (json["humi"] as num? ?? 0).toDouble(),
+        date: json["date"] as String? ?? "n/d",
+        temperature: (json["temp"] as num? ?? 20).toDouble(),
+        humidity: (json["humi"] as num? ?? 20).toDouble(),
       ),
     );
   }
 
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
     final response = await http.get(
-      Uri.parse("$baseUrl$_appEndpoint/level/avg/$n"),
+      Uri.parse("$baseUrl/level/avg/$n"),
       headers: {'Authorization': 'Bearer $apiToken'},
     );
+
     if (response.statusCode == 200) {
       final dynamic body = jsonDecode(response.body);
       if (body is List) {
         return body
             .map(
               (json) => SensorLevel(
-                date: json["date"] as String? ?? "0",
-                capacity: (json["level"] as num? ?? 0).toDouble(),
+                date: json["date"] as String? ?? "n/d",
+                capacity: (json["level"] as num? ?? 20).toDouble(),
               ),
             )
             .toList()
             .reversed
             .toList();
-      } else {
-        return [];
       }
-    } else {
-      return [];
     }
+
+    return [];
   }
 
   static Future<List<SensorData>> fetchTemperatureAndHumidityByDate(
@@ -129,9 +136,9 @@ class PeatDataService {
     return _fetchList(
       "sensor_data/date/$date",
       (json) => SensorData(
-        date: json["date"] as String? ?? "0",
-        temperature: (json["temp"] as num? ?? 0).toDouble(),
-        humidity: (json["humi"] as num? ?? 0).toDouble(),
+        date: json["date"] as String? ?? "n/d",
+        temperature: (json["temp"] as num? ?? 20).toDouble(),
+        humidity: (json["humi"] as num? ?? 20).toDouble(),
       ),
     );
   }
@@ -140,8 +147,8 @@ class PeatDataService {
     return _fetchList(
       "level/date/$date",
       (json) => SensorLevel(
-        date: json["date"] as String? ?? "0",
-        capacity: (json["level"] as num? ?? 0).toDouble(),
+        date: json["date"] as String? ?? "n/d",
+        capacity: (json["level"] as num? ?? 20).toDouble(),
       ),
     );
   }
@@ -166,16 +173,16 @@ class PeatDataService {
 
 extension SensorDataExtension on SensorData {
   static SensorData empty() {
-    return SensorData(date: "0", temperature: 0, humidity: 0);
+    return SensorData(date: "n/d", temperature: 20, humidity: 10);
   }
 
   static SensorData emptyWithDate(String date) {
-    return SensorData(date: date, temperature: 0, humidity: 0);
+    return SensorData(date: date, temperature: 20, humidity: 10);
   }
 }
 
 extension SensorLevelExtension on SensorLevel {
   static SensorLevel empty() {
-    return SensorLevel(date: "0", capacity: 0);
+    return SensorLevel(date: "n/d", capacity: 10);
   }
 }
