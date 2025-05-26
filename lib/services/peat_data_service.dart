@@ -54,7 +54,7 @@ class PeatDataService {
 
   static Future<Map<String, SensorData>> fetchTemperatureAndHumidity() async {
     final sensorData = await _fetchSingle(
-      "sensor_data/last/1",
+      "temp-humi/last/1",
       (json) => SensorData(
         date: json["date"] as String? ?? "n/d",
         temperature: (json["temp"] as num? ?? 20).toDouble(),
@@ -74,7 +74,7 @@ class PeatDataService {
 
   static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
     return _fetchList(
-      "sensor_data/avg/$n",
+      "temp-humi/avg/$n",
       (json) => SensorData(
         date: json["date"] as String? ?? "n/d",
         temperature: (json["temp"] as num? ?? 20).toDouble(),
@@ -96,7 +96,7 @@ class PeatDataService {
 
   static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {
     return _fetchList(
-      "sensor_data/avg/$n",
+      "temp-humi/avg/$n",
       (json) => SensorData(
         date: json["date"] as String? ?? "n/d",
         temperature: (json["temp"] as num? ?? 20).toDouble(),
@@ -134,7 +134,7 @@ class PeatDataService {
     String date,
   ) async {
     return _fetchList(
-      "sensor_data/date/$date",
+      "temp-humi/date/$date",
       (json) => SensorData(
         date: json["date"] as String? ?? "n/d",
         temperature: (json["temp"] as num? ?? 20).toDouble(),
