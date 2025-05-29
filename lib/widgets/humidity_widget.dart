@@ -58,7 +58,7 @@ class _HumidityWidgetState extends State<HumidityWidget> {
             ? AppColors.darkBorderColor.withOpacity(0.1)
             : AppColors.lightBorderColor;
     final shadowColor =
-        isDarkMode ? AppColors.darkShadowColor : AppColors.darkBorderColor;
+        isDarkMode ? AppColors.darkShadowColor : AppColors.lightBorderColor;
     final gridColor =
         isDarkMode ? AppColors.darkGridColor : AppColors.darkBorderColor;
     final statIconBackgroundColor =

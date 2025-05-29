@@ -58,7 +58,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
             ? AppColors.darkBorderColor.withOpacity(0.1)
             : AppColors.lightBorderColor;
     final shadowColor =
-        isDarkMode ? AppColors.darkShadowColor : AppColors.darkBorderColor;
+        isDarkMode ? AppColors.darkShadowColor : AppColors.lightBorderColor;
     final gridColor =
         isDarkMode ? AppColors.darkGridColor : AppColors.darkBorderColor;
     final statIconBackgroundColor =
@@ -96,7 +96,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: borderColor),
+          border: Border.all(color: borderColor, width: 1),
           boxShadow: [
             BoxShadow(
               color: shadowColor,
@@ -307,7 +307,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
         _buildStatRow(
           "S",
           "Média Semanal",
-          "${weeklyAverage.toStringAsFixed(1)}%",
+          "${weeklyAverage.toStringAsFixed(1)}°C",
           textColor,
           secondaryTextColor,
           iconBackgroundColor,
@@ -316,7 +316,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
         _buildStatRow(
           "M",
           "Média Mensal",
-          "${monthlyAverage.toStringAsFixed(1)}%",
+          "${monthlyAverage.toStringAsFixed(1)}°C",
           textColor,
           secondaryTextColor,
           iconBackgroundColor,
@@ -383,7 +383,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
         children: [
           Row(
             children: [
-              Icon(Icons.wb_sunny, color: AppColors.accent, size: 24),
+              const Icon(Icons.wb_sunny, color: AppColors.accent, size: 24),
               const SizedBox(width: 8),
               const Text(
                 'Fortaleza',
