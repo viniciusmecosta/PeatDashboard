@@ -8,47 +8,53 @@ class PeatDataService {
   static String? get baseUrl => dotenv.env['BASE_URL'];
   static String? get apiToken => dotenv.env['API_TOKEN'];
 
+  static Uri _buildUri(String path, Map<String, String> params) {
+    return Uri.parse("$baseUrl/$path").replace(queryParameters: params);
+  }
+
   static Future<T?> _fetchSingle<T>(
-    String endpoint,
+    String path,
+    Map<String, String> params,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     try {
       final response = await http.get(
-        Uri.parse("$baseUrl/$endpoint"),
+        _buildUri(path, params),
         headers: {'Authorization': 'Bearer $apiToken'},
       );
 
       if (response.statusCode == 200) {
         final dynamic body = jsonDecode(response.body);
         if (body is List && body.isNotEmpty) {
-          return fromJson(body.first);
+          return fromJson(body.first as Map<String, dynamic>);
         } else if (body is Map<String, dynamic>) {
           return fromJson(body);
         }
       }
-    } catch (e) {
-      // Silent fail handled by fallback
-    }
+    } catch (e) {}
     return null;
   }
 
   static Future<List<T>> _fetchList<T>(
-    String endpoint,
+    String path,
+    Map<String, String> params,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
     try {
       final response = await http.get(
-        Uri.parse("$baseUrl/$endpoint"),
+        _buildUri(path, params),
         headers: {'Authorization': 'Bearer $apiToken'},
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.map((item) => fromJson(item)).toList().reversed.toList();
+        return data
+            .map((item) => fromJson(item as Map<String, dynamic>))
+            .toList()
+            .reversed
+            .toList();
       }
-    } catch (e) {
-      // Silent fail handled by fallback
-    }
+    } catch (e) {}
     return [];
   }
 
@@ -56,7 +62,8 @@ class PeatDataService {
     String feederId,
   ) async {
     final sensorData = await _fetchSingle(
-      "temp-humi/last/1",
+      "temp-humi",
+      {'last': '1'},
       (json) => SensorData(
         date: json["date"] as String? ?? "n/d",
         temperature: (json["temp"] as num? ?? 20).toDouble(),
@@ -94,20 +101,10 @@ class PeatDataService {
     }
   }
 
-  static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
-    return _fetchList(
-      "temp-humi/avg/$n",
-      (json) => SensorData(
-        date: json["date"] as String? ?? "n/d",
-        temperature: (json["temp"] as num? ?? 20).toDouble(),
-        humidity: (json["humi"] as num? ?? 20).toDouble(),
-      ),
-    );
-  }
-
   static Future<SensorLevel> fetchCapacity(String feederId) async {
     final sensorLevel = await _fetchSingle(
-      "level/last/1",
+      "level",
+      {'last': '1'},
       (json) => SensorLevel(
         date: json["date"] as String? ?? "n/d",
         capacity: (json["level"] as num? ?? 20).toDouble(),
@@ -134,9 +131,22 @@ class PeatDataService {
     return SensorLevelExtension.empty();
   }
 
+  static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
+    return _fetchList(
+      "temp-humi",
+      {'avg': n.toString()},
+      (json) => SensorData(
+        date: json["date"] as String? ?? "n/d",
+        temperature: (json["temp"] as num? ?? 20).toDouble(),
+        humidity: (json["humi"] as num? ?? 20).toDouble(),
+      ),
+    );
+  }
+
   static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {
     return _fetchList(
-      "temp-humi/avg/$n",
+      "temp-humi",
+      {'avg': n.toString()},
       (json) => SensorData(
         date: json["date"] as String? ?? "n/d",
         temperature: (json["temp"] as num? ?? 20).toDouble(),
@@ -146,35 +156,22 @@ class PeatDataService {
   }
 
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
-    final response = await http.get(
-      Uri.parse("$baseUrl/level/avg/$n"),
-      headers: {'Authorization': 'Bearer $apiToken'},
+    return _fetchList(
+      "level",
+      {'avg': n.toString()},
+      (json) => SensorLevel(
+        date: json["date"] as String? ?? "n/d",
+        capacity: (json["level"] as num? ?? 20).toDouble(),
+      ),
     );
-
-    if (response.statusCode == 200) {
-      final dynamic body = jsonDecode(response.body);
-      if (body is List) {
-        return body
-            .map(
-              (json) => SensorLevel(
-                date: json["date"] as String? ?? "n/d",
-                capacity: (json["level"] as num? ?? 20).toDouble(),
-              ),
-            )
-            .toList()
-            .reversed
-            .toList();
-      }
-    }
-
-    return [];
   }
 
   static Future<List<SensorData>> fetchTemperatureAndHumidityByDate(
     String date,
   ) async {
     return _fetchList(
-      "temp-humi/date/$date",
+      "temp-humi",
+      {'date': date},
       (json) => SensorData(
         date: json["date"] as String? ?? "n/d",
         temperature: (json["temp"] as num? ?? 20).toDouble(),
@@ -185,7 +182,8 @@ class PeatDataService {
 
   static Future<List<SensorLevel>> fetchCapacityByDate(String date) async {
     return _fetchList(
-      "level/date/$date",
+      "level",
+      {'date': date},
       (json) => SensorLevel(
         date: json["date"] as String? ?? "n/d",
         capacity: (json["level"] as num? ?? 20).toDouble(),
