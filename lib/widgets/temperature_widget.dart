@@ -38,7 +38,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
   }
 
   Future<void> _loadCurrentTemperature() async {
-    final data = await PeatDataService.fetchTemperatureAndHumidity();
+    final data = await PeatDataService.fetchTemperatureAndHumidity("1");
     setState(() {
       currentTemperature = data["temperature"]?.temperature ?? 0.0;
     });

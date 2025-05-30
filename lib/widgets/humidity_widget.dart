@@ -38,7 +38,7 @@ class _HumidityWidgetState extends State<HumidityWidget> {
   }
 
   Future<void> _loadCurrentTemperatureAndHumidity() async {
-    final data = await PeatDataService.fetchTemperatureAndHumidity();
+    final data = await PeatDataService.fetchTemperatureAndHumidity("1");
     setState(() {
       currentHumidity = data["humidity"]?.humidity ?? 0.0;
     });

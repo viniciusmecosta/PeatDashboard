@@ -38,7 +38,7 @@ class _CapacityScreenState extends State<CapacityScreen> {
       _sensorLevelListByPeriod["Ontem"] = await _fetchDataByDate(yesterday);
       _sensorLevelListByPeriod["Últimos 7 dias"] = await _fetchAverageData(7);
       _sensorLevelListByPeriod["Últimos 31 dias"] = await _fetchAverageData(31);
-      _sensorLevel = await PeatDataService.fetchCapacity();
+      _sensorLevel = await PeatDataService.fetchCapacity("1");
       _last = _sensorLevelListByPeriod["Hoje"]!.last.capacity;
 
       _updateFilteredData();

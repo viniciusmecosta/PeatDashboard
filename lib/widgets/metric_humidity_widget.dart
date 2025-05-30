@@ -23,9 +23,13 @@ class MetricHumidityWidget extends StatelessWidget {
     final formattedDate = subtitle;
     final double numericValue = parseValue(value);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final size = isLargeScreen ? 250.0 : 150.0;
-    final trackWidth = isLargeScreen ? 20.0 : 13.0;
-    final progressBarWidth = isLargeScreen ? 23.0 : 15.0;
+
+    final size = isLargeScreen ? 250.0 : 135.0;
+    final trackWidth = isLargeScreen ? 20.0 : 12.0;
+    final progressBarWidth = isLargeScreen ? 23.0 : 14.0;
+    final titleFontSize = isLargeScreen ? 16.0 : 11.0;
+    final dateFontSize = isLargeScreen ? 14.0 : 9.0;
+    final valueFontSize = isLargeScreen ? 30.0 : 18.0;
 
     ColorTween progressBarColorTween = ColorTween(
       begin: const Color(0xFFB1B1B1),
@@ -49,9 +53,6 @@ class MetricHumidityWidget extends StatelessWidget {
             : AppColors.darkBackgroundColor;
     final dateTextColor =
         isDarkMode ? AppColors.lightDateColor : AppColors.darkDateColor;
-    final titleFontSize = isLargeScreen ? 16.0 : 12.0;
-    final dateFontSize = isLargeScreen ? 14.0 : 10.0;
-    final valueFontSize = isLargeScreen ? 30.0 : 20.0;
 
     return Container(
       padding: const EdgeInsets.all(1),

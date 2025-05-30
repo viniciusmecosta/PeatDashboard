@@ -10,7 +10,10 @@ class NotifyIconCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
-    final size = isLargeScreen ? 250.0 : 150.0;
+
+    final size = isLargeScreen ? 250.0 : 135.0;
+    final iconSize = isLargeScreen ? 60.0 : 36.0;
+    final titleFontSize = isLargeScreen ? 16.0 : 11.0;
 
     final isDarkMode = theme.brightness == Brightness.dark;
     final backgroundColor =
@@ -44,12 +47,24 @@ class NotifyIconCardWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: Center(
-          child: Icon(
-            Icons.notifications_none_sharp,
-            color: iconColor,
-            size: isLargeScreen ? 60 : 40,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.notifications_none_sharp,
+              color: iconColor,
+              size: iconSize,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Notificações",
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: titleFontSize,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

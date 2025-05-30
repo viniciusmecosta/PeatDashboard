@@ -52,7 +52,9 @@ class PeatDataService {
     return [];
   }
 
-  static Future<Map<String, SensorData>> fetchTemperatureAndHumidity() async {
+  static Future<Map<String, SensorData>> fetchTemperatureAndHumidity(
+    String feederId,
+  ) async {
     final sensorData = await _fetchSingle(
       "temp-humi/last/1",
       (json) => SensorData(
@@ -63,7 +65,27 @@ class PeatDataService {
     );
 
     if (sensorData != null) {
-      return {"temperature": sensorData, "humidity": sensorData};
+      SensorData modifiedSensorData = sensorData;
+      switch (feederId) {
+        case '2':
+          modifiedSensorData = SensorData(
+            date: sensorData.date,
+            temperature: sensorData.temperature + 1,
+            humidity: sensorData.humidity + 1,
+          );
+          break;
+        case '3':
+          modifiedSensorData = SensorData(
+            date: sensorData.date,
+            temperature: sensorData.temperature - 1,
+            humidity: sensorData.humidity - 1,
+          );
+          break;
+      }
+      return {
+        "temperature": modifiedSensorData,
+        "humidity": modifiedSensorData,
+      };
     } else {
       return {
         "temperature": SensorDataExtension.empty(),
@@ -83,7 +105,7 @@ class PeatDataService {
     );
   }
 
-  static Future<SensorLevel> fetchCapacity() async {
+  static Future<SensorLevel> fetchCapacity(String feederId) async {
     final sensorLevel = await _fetchSingle(
       "level/last/1",
       (json) => SensorLevel(
@@ -91,7 +113,25 @@ class PeatDataService {
         capacity: (json["level"] as num? ?? 20).toDouble(),
       ),
     );
-    return sensorLevel ?? SensorLevelExtension.empty();
+
+    if (sensorLevel != null) {
+      switch (feederId) {
+        case '2':
+          return SensorLevel(
+            date: sensorLevel.date,
+            capacity: sensorLevel.capacity + 1,
+          );
+        case '3':
+          return SensorLevel(
+            date: sensorLevel.date,
+            capacity: sensorLevel.capacity - 1,
+          );
+        default:
+          return sensorLevel;
+      }
+    }
+
+    return SensorLevelExtension.empty();
   }
 
   static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {

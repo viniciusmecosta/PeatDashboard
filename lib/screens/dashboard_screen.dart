@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:peatdashboard/models/feeder.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/screens/capacity_screen.dart';
@@ -25,18 +26,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Map<String, dynamic> _data = {};
   bool _isLoading = true;
 
-  final LatLng _location = const LatLng(-3.7442, -38.5361);
+  Feeder? _selectedFeeder;
+
+  final List<Feeder> _feeders = [
+    Feeder(
+      id: "1",
+      name: 'Comedouro IFCE',
+      location: const LatLng(-3.744340487400293, -38.53604795635519),
+    ),
+    Feeder(
+      id: "2",
+      name: 'Comedouro UECE',
+      location: const LatLng(-3.788079524593659, -38.553419371763795),
+    ),
+    Feeder(
+      id: "3",
+      name: 'Comedouro UNIFOR',
+      location: const LatLng(-3.768765932570104, -38.47806435259981),
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (_feeders.isNotEmpty) {
+      _selectedFeeder = _feeders.first;
+      _loadData();
+    }
   }
 
   Future<void> _loadData() async {
+    if (_selectedFeeder == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      final tempHumiData = await PeatDataService.fetchTemperatureAndHumidity();
-      final capData = await PeatDataService.fetchCapacity();
+      final feederId = _selectedFeeder!.id;
+      final tempHumiData = await PeatDataService.fetchTemperatureAndHumidity(
+        feederId,
+      );
+      final capData = await PeatDataService.fetchCapacity(feederId);
       setState(() {
         _data = {
           "temperature": tempHumiData["temperature"],
@@ -47,10 +78,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao carregar dados: ${e.toString()}')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao carregar dados: ${e.toString()}')),
+        );
+      }
     }
+  }
+
+  Widget _buildFeederSelector() {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    final backgroundColor =
+        isDarkMode
+            ? AppColors.metricWidgetDarkBackgroundColor
+            : AppColors.lightBackgroundColor;
+
+    final borderColor =
+        isDarkMode
+            ? AppColors.metricWidgetDarkBorderColor.withOpacity(0.1)
+            : AppColors.lightBorderColor.withOpacity(0.1);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: borderColor),
+      ),
+      child: DropdownButton<Feeder>(
+        value: _selectedFeeder,
+        isExpanded: true,
+        underline: const SizedBox.shrink(),
+        dropdownColor: backgroundColor,
+        icon: Icon(
+          Icons.arrow_drop_down_rounded,
+          color: theme.colorScheme.primary,
+        ),
+        onChanged: (Feeder? newValue) {
+          if (newValue != null) {
+            setState(() {
+              _selectedFeeder = newValue;
+            });
+            _loadData();
+          }
+        },
+        items:
+            _feeders.map<DropdownMenuItem<Feeder>>((Feeder feeder) {
+              return DropdownMenuItem<Feeder>(
+                value: feeder,
+                child: Text(feeder.name),
+              );
+            }).toList(),
+      ),
+    );
   }
 
   Widget _buildMetricCards(
@@ -114,11 +196,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return Row(
         children: [
           Expanded(child: capacityCard),
-          const SizedBox(width: 16),
+          const SizedBox(width: 8),
           Expanded(child: temperatureCard),
-          const SizedBox(width: 16),
+          const SizedBox(width: 8),
           Expanded(child: humidityCard),
-          const SizedBox(width: 16),
+          const SizedBox(width: 8),
           Expanded(child: notifyCard),
         ],
       );
@@ -128,15 +210,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             children: [
               Expanded(child: capacityCard),
-              const SizedBox(width: 16),
+              const SizedBox(width: 8),
               Expanded(child: temperatureCard),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(child: humidityCard),
-              const SizedBox(width: 16),
+              const SizedBox(width: 8),
               Expanded(child: notifyCard),
             ],
           ),
@@ -160,24 +242,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         backgroundColor: appBarBackgroundColor,
         elevation: 0,
-        toolbarHeight: 80,
+        toolbarHeight: 60,
         title: Image.asset('assets/logo.png', height: 115),
         centerTitle: isMobile,
       ),
       body: SafeArea(
         top: false,
         child:
-            _isLoading
+            _isLoading || _selectedFeeder == null
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child:
                       isMobile
                           ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const InfoWidget(),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 8),
+                              _buildFeederSelector(),
+                              const SizedBox(height: 8),
                               _buildMetricCards(
                                 context,
                                 false,
@@ -185,14 +269,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 _data["humidity"],
                                 _data["capacity"],
                               ),
-                              const SizedBox(height: 16),
-                              Expanded(child: MapWidget(location: _location)),
+                              const SizedBox(height: 8),
+                              Expanded(
+                                child: MapWidget(
+                                  location: _selectedFeeder!.location,
+                                ),
+                              ),
                             ],
                           )
                           : Column(
                             children: [
                               const InfoWidget(),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 8),
+                              _buildFeederSelector(),
+                              const SizedBox(height: 8),
                               _buildMetricCards(
                                 context,
                                 true,
@@ -200,8 +290,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 _data["humidity"],
                                 _data["capacity"],
                               ),
-                              const SizedBox(height: 16),
-                              Expanded(child: MapWidget(location: _location)),
+                              const SizedBox(height: 8),
+                              Expanded(
+                                child: MapWidget(
+                                  location: _selectedFeeder!.location,
+                                ),
+                              ),
                             ],
                           ),
                 ),
