@@ -143,6 +143,18 @@ class PeatDataService {
     );
   }
 
+  static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {
+    return _fetchList(
+      "temp-humi",
+      {'avg': n.toString()},
+      (json) => SensorData(
+        date: json["date"] as String? ?? "n/d",
+        temperature: (json["temp"] as num? ?? 20).toDouble(),
+        humidity: (json["humi"] as num? ?? 20).toDouble(),
+      ),
+    );
+  }
+
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
     return _fetchList(
       "level",
@@ -219,6 +231,7 @@ class PeatDataService {
     final digitsOnly = number.replaceAll(RegExp(r'\D'), '');
     return _postData('phone', {'name': name, 'number': digitsOnly});
   }
+
 }
 
 extension SensorDataExtension on SensorData {

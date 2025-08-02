@@ -5,6 +5,7 @@ import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/screens/capacity_screen.dart';
 import 'package:peatdashboard/screens/humidity_screen.dart';
+import 'package:peatdashboard/screens/notification_form_screen.dart';
 import 'package:peatdashboard/screens/temperature_screen.dart';
 import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
@@ -188,7 +189,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     final notifyCard = NotifyIconCardWidget(
       onTap: () {
-        //Navigator.push(context,MaterialPageRoute(builder: (context) => const NotificationScreen()), );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NotificationFormScreen(),
+          ),
+        );
       },
     );
 
