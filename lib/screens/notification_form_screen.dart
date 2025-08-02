@@ -56,8 +56,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
         _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Preencha o email ou o telefone para cadastrar.'),
-        ),
+            content: Text('Preencha o email ou o telefone para cadastrar.')),
       );
       return;
     }
@@ -99,9 +98,9 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
     } finally {
       setState(() => _isLoading = false);
       if (errorMessage != null && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(errorMessage!)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage!)),
+        );
       }
     }
   }
@@ -127,13 +126,12 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
           });
         }
       },
-      items:
-          _feeders.map<DropdownMenuItem<Feeder>>((Feeder feeder) {
-            return DropdownMenuItem<Feeder>(
-              value: feeder,
-              child: Text(feeder.name),
-            );
-          }).toList(),
+      items: _feeders.map<DropdownMenuItem<Feeder>>((Feeder feeder) {
+        return DropdownMenuItem<Feeder>(
+          value: feeder,
+          child: Text(feeder.name),
+        );
+      }).toList(),
     );
   }
 
@@ -184,9 +182,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor =
-        isDarkMode
-            ? AppColors.darkBackgroundColor
-            : AppColors.lightBackgroundColor;
+        isDarkMode ? AppColors.darkBackgroundColor : AppColors.lightBackgroundColor;
     final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return Scaffold(
@@ -195,7 +191,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
         backgroundColor: backgroundColor,
         elevation: 0,
         centerTitle: true,
-        title: Text('Seja um Colaborador', style: TextStyle(color: textColor)),
+        title: Text('Monitorar Comedouro', style: TextStyle(color: textColor)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: textColor),
           onPressed: () => Navigator.of(context).pop(),
@@ -269,29 +265,22 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
                   ElevatedButton(
                     onPressed: _isLoading ? null : _submitForm,
                     style: ElevatedButton.styleFrom(
-                      // Aumentando o padding vertical para deixar o botão mais alto
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          12,
-                        ), // Borda mais arredondada
+                        borderRadius: BorderRadius.circular(12), 
                       ),
                     ),
-                    child:
-                        _isLoading
-                            ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ),
-                            )
-                            : const Text(
-                              'Cadastrar',
-                              style: TextStyle(
-                                fontSize: 16,
-                              ), // Aumentando a fonte
-                            ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child:
+                                CircularProgressIndicator(color: Colors.white),
+                          )
+                        : const Text(
+                            'Cadastrar',
+                            style: TextStyle(fontSize: 16), 
+                          ),
                   ),
                 ],
               ),
