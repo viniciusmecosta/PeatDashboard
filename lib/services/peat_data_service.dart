@@ -143,18 +143,6 @@ class PeatDataService {
     );
   }
 
-  static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {
-    return _fetchList(
-      "temp-humi",
-      {'avg': n.toString()},
-      (json) => SensorData(
-        date: json["date"] as String? ?? "n/d",
-        temperature: (json["temp"] as num? ?? 20).toDouble(),
-        humidity: (json["humi"] as num? ?? 20).toDouble(),
-      ),
-    );
-  }
-
   static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
     return _fetchList(
       "level",
@@ -207,6 +195,30 @@ class PeatDataService {
       humidity: totalHumi / data.length,
     );
   }
+
+  static Future<http.Response> _postData(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
+    final url = Uri.parse("$baseUrl/$path");
+    return await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $apiToken',
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(body),
+    );
+  }
+
+  static Future<http.Response> addEmail(String name, String email) async {
+    return _postData('email', {'name': name, 'email': email});
+  }
+
+  static Future<http.Response> addPhone(String name, String number) async {
+    final digitsOnly = number.replaceAll(RegExp(r'\D'), '');
+    return _postData('phone', {'name': name, 'number': digitsOnly});
+  }
 }
 
 extension SensorDataExtension on SensorData {
@@ -223,4 +235,6 @@ extension SensorLevelExtension on SensorLevel {
   static SensorLevel empty() {
     return SensorLevel(date: "n/d", capacity: 10);
   }
+  
+  
 }
