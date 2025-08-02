@@ -56,7 +56,8 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
         _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Preencha o email ou o telefone para cadastrar.')),
+          content: Text('Preencha o email ou o telefone para cadastrar.'),
+        ),
       );
       return;
     }
@@ -98,9 +99,9 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
     } finally {
       setState(() => _isLoading = false);
       if (errorMessage != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage!)));
       }
     }
   }
@@ -126,12 +127,13 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
           });
         }
       },
-      items: _feeders.map<DropdownMenuItem<Feeder>>((Feeder feeder) {
-        return DropdownMenuItem<Feeder>(
-          value: feeder,
-          child: Text(feeder.name),
-        );
-      }).toList(),
+      items:
+          _feeders.map<DropdownMenuItem<Feeder>>((Feeder feeder) {
+            return DropdownMenuItem<Feeder>(
+              value: feeder,
+              child: Text(feeder.name),
+            );
+          }).toList(),
     );
   }
 
@@ -139,7 +141,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
     final textColor = Theme.of(context).textTheme.bodySmall?.color;
     return Container(
       padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.only(top: 24.0),
+      margin: const EdgeInsets.only(bottom: 24.0),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
@@ -159,7 +161,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                'Seja um Anjo da Guarda PEAT!',
+                'Seja um Colaborador PEAT!',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -170,7 +172,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Ao se cadastrar, você se torna parte essencial do nosso projeto de cuidado com os gatinhos em situação de abandono.\n\nNós te avisaremos por e-mail sempre que a ração do comedouro estiver acabando (abaixo de 20%), para que juntos a gente garanta que eles nunca fiquem sem alimento.',
+            'Ao se cadastrar, você ajuda a garantir que os gatinhos nunca fiquem sem alimento. Nós te avisaremos por e-mail quando a ração do comedouro estiver acabando (abaixo de 20%).',
             style: TextStyle(color: textColor, height: 1.5, fontSize: 14),
           ),
         ],
@@ -182,7 +184,9 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor =
-        isDarkMode ? AppColors.darkBackgroundColor : AppColors.lightBackgroundColor;
+        isDarkMode
+            ? AppColors.darkBackgroundColor
+            : AppColors.lightBackgroundColor;
     final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return Scaffold(
@@ -191,7 +195,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
         backgroundColor: backgroundColor,
         elevation: 0,
         centerTitle: true,
-        title: Text('Monitorar Comedouro', style: TextStyle(color: textColor)),
+        title: Text('Seja um Colaborador', style: TextStyle(color: textColor)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: textColor),
           onPressed: () => Navigator.of(context).pop(),
@@ -199,81 +203,100 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildFeederSelector(),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Seu Nome',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Seu nome é importante para nós!';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Seu Melhor Email',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value != null &&
-                      value.isNotEmpty &&
-                      (!value.contains('@') || !value.contains('.'))) {
-                    return 'Por favor, insira um email válido.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Seu Telefone (Opcional)',
-                  hintText: '(XX) X XXXX-XXXX',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  PhoneInputFormatter(),
-                ],
-                validator: (value) {
-                  if (value != null &&
-                      value.isNotEmpty &&
-                      value.replaceAll(RegExp(r'\D'), '').length != 11) {
-                    return 'O telefone deve ter 11 dígitos.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _submitForm,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+        child: Column(
+          children: [
+            _buildInfoText(context),
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildFeederSelector(),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Seu Nome',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Seu nome é importante para nós!';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('QUERO AJUDAR!'),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Seu Email',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value != null &&
+                          value.isNotEmpty &&
+                          (!value.contains('@') || !value.contains('.'))) {
+                        return 'Por favor, insira um email válido.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _phoneController,
+                    decoration: const InputDecoration(
+                      labelText: 'Seu Telefone (Opcional)',
+                      hintText: '(XX) X XXXX-XXXX',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      PhoneInputFormatter(),
+                    ],
+                    validator: (value) {
+                      if (value != null &&
+                          value.isNotEmpty &&
+                          value.replaceAll(RegExp(r'\D'), '').length != 11) {
+                        return 'O telefone deve ter 11 dígitos.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      // Aumentando o padding vertical para deixar o botão mais alto
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          12,
+                        ), // Borda mais arredondada
+                      ),
+                    ),
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                            : const Text(
+                              'Cadastrar',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ), // Aumentando a fonte
+                            ),
+                  ),
+                ],
               ),
-              _buildInfoText(context),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

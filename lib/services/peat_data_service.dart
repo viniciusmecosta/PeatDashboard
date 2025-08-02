@@ -231,7 +231,6 @@ class PeatDataService {
     final digitsOnly = number.replaceAll(RegExp(r'\D'), '');
     return _postData('phone', {'name': name, 'number': digitsOnly});
   }
-
 }
 
 extension SensorDataExtension on SensorData {
@@ -248,6 +247,4 @@ extension SensorLevelExtension on SensorLevel {
   static SensorLevel empty() {
     return SensorLevel(date: "n/d", capacity: 10);
   }
-  
-  
 }
