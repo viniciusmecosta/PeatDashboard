@@ -11,24 +11,30 @@ class WelcomeScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30),
+        ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final bool isTallScreen = constraints.maxHeight > 700;
+          final double screenHeight = constraints.maxHeight;
 
           return Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 500),
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Spacer(),
                       Text(
                         'Bem-vindo ao Peat!',
                         style: TextStyle(
-                          fontSize: isTallScreen ? 36 : 32,
+                          fontSize: screenHeight * 0.045,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -37,21 +43,24 @@ class WelcomeScreen extends StatelessWidget {
                       const Spacer(),
                       Image.asset(
                         'assets/PeatDeviceLight.png',
-                        height:
-                            constraints.maxHeight * (isTallScreen ? 0.35 : 0.3),
+                        height: screenHeight * 0.30,
                       ),
-                      const SizedBox(height: 40),
+                      SizedBox(height: screenHeight * 0.04),
                       Text(
                         'Alimentador inteligente e automatizado para pets: uma inovação que otimiza a forma como cuidamos dos animais.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: isTallScreen ? 20 : 18,
+                          fontSize: screenHeight * 0.022,
                           color: Colors.white,
                           height: 1.5,
                         ),
                       ),
                       const Spacer(flex: 2),
-                      _buildBottomNavigation(context, pageIndex: 0),
+                      _buildBottomNavigation(
+                        context,
+                        pageIndex: 0,
+                        screenHeight: screenHeight,
+                      ),
                     ],
                   ),
                 ),
@@ -66,10 +75,15 @@ class WelcomeScreen extends StatelessWidget {
   Widget _buildBottomNavigation(
     BuildContext context, {
     required int pageIndex,
+    required double screenHeight,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.only(
+        bottom: screenHeight * 0.02,
+        top: screenHeight * 0.02,
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -77,8 +91,8 @@ class WelcomeScreen extends StatelessWidget {
               3,
               (index) => Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 12,
-                height: 12,
+                width: 10,
+                height: 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color:
@@ -89,10 +103,11 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: screenHeight * 0.03),
           SizedBox(
-            height: 70,
+            height: screenHeight * 0.08,
             child: Stack(
+              alignment: Alignment.center,
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
@@ -106,33 +121,31 @@ class WelcomeScreen extends StatelessWidget {
                         (Route<dynamic> route) => false,
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'Pular',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: screenHeight * 0.021,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.center,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PeatWorksScreen(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.arrow_circle_right_rounded,
-                      color: Colors.white,
-                      size: 70,
-                    ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PeatWorksScreen(),
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.arrow_circle_right_rounded,
+                    color: Colors.white,
+                    size: screenHeight * 0.08,
                   ),
+                  padding: EdgeInsets.zero,
                 ),
               ],
             ),

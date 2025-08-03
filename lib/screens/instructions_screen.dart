@@ -22,7 +22,8 @@ class InstructionsScreen extends StatelessWidget {
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final bool isTallScreen = constraints.maxHeight > 700;
+          final double screenHeight = constraints.maxHeight;
+          final double screenWidth = constraints.maxWidth;
 
           return Center(
             child: ConstrainedBox(
@@ -30,13 +31,13 @@ class InstructionsScreen extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned(
-                    left: -constraints.maxWidth * 0.3,
-                    top: constraints.maxHeight * 0.15,
+                    left: -screenWidth * 0.3,
+                    top: screenHeight * 0.15,
                     child: Opacity(
                       opacity: 0.1,
                       child: Image.asset(
                         'assets/gato_esquerda.png',
-                        height: constraints.maxHeight * 0.4,
+                        height: screenHeight * 0.35,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -56,25 +57,25 @@ class InstructionsScreen extends StatelessWidget {
                                     style: TextStyle(
                                       color: highlightColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: isTallScreen ? 38 : 34,
+                                      fontSize: screenHeight * 0.038,
                                       height: 1.2,
                                     ),
                                   ),
-                                  const SizedBox(height: 30),
+                                  SizedBox(height: screenHeight * 0.03),
                                   Text(
                                     'O Peat foi projetado neste primeiro momento como um alimentador a base de ração para gatos, portanto:',
                                     style: TextStyle(
                                       color: primaryTextColor,
-                                      fontSize: isTallScreen ? 20 : 18,
+                                      fontSize: screenHeight * 0.022,
                                       height: 1.5,
                                     ),
                                   ),
-                                  const SizedBox(height: 40),
+                                  SizedBox(height: screenHeight * 0.04),
                                   Text.rich(
                                     TextSpan(
                                       style: TextStyle(
                                         color: primaryTextColor,
-                                        fontSize: isTallScreen ? 32 : 28,
+                                        fontSize: screenHeight * 0.032,
                                         height: 1.4,
                                       ),
                                       children: [
@@ -99,16 +100,16 @@ class InstructionsScreen extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 20),
+                                  SizedBox(height: screenHeight * 0.02),
                                   Text(
                                     'Apenas rações dos tipos secas podem ser utilizadas, descartando assim possibilidade de abastecimento com sachês a base de molhos ou outros derivados úmidos.',
                                     style: TextStyle(
                                       color: primaryTextColor,
-                                      fontSize: isTallScreen ? 20 : 18,
+                                      fontSize: screenHeight * 0.022,
                                       height: 1.5,
                                     ),
                                   ),
-                                  SizedBox(height: isTallScreen ? 40 : 20),
+                                  SizedBox(height: screenHeight * 0.03),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -117,14 +118,14 @@ class InstructionsScreen extends StatelessWidget {
                                         image: const AssetImage(
                                           'assets/gato_esquerda.png',
                                         ),
-                                        height: constraints.maxHeight * 0.09,
+                                        height: screenHeight * 0.08,
                                       ),
                                       const SizedBox(width: 16),
                                       Image(
                                         image: const AssetImage(
                                           'assets/gato_direita.png',
                                         ),
-                                        height: constraints.maxHeight * 0.18,
+                                        height: screenHeight * 0.16,
                                       ),
                                     ],
                                   ),
@@ -132,7 +133,11 @@ class InstructionsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          _buildBottomNavigation(context, pageIndex: 2),
+                          _buildBottomNavigation(
+                            context,
+                            pageIndex: 2,
+                            screenHeight: screenHeight,
+                          ),
                         ],
                       ),
                     ),
@@ -149,10 +154,12 @@ class InstructionsScreen extends StatelessWidget {
   Widget _buildBottomNavigation(
     BuildContext context, {
     required int pageIndex,
+    required double screenHeight,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 20),
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -160,8 +167,8 @@ class InstructionsScreen extends StatelessWidget {
               3,
               (index) => Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 12,
-                height: 12,
+                width: 10,
+                height: 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color:
@@ -172,9 +179,9 @@ class InstructionsScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: screenHeight * 0.03),
           SizedBox(
-            height: 70,
+            height: screenHeight * 0.08,
             child: Center(
               child: IconButton(
                 onPressed: () {
@@ -186,11 +193,12 @@ class InstructionsScreen extends StatelessWidget {
                     (Route<dynamic> route) => false,
                   );
                 },
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_circle_right_rounded,
                   color: Colors.white,
-                  size: 70,
+                  size: screenHeight * 0.08,
                 ),
+                padding: EdgeInsets.zero,
               ),
             ),
           ),

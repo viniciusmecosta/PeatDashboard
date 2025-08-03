@@ -22,7 +22,7 @@ class PeatWorksScreen extends StatelessWidget {
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final bool isTallScreen = constraints.maxHeight > 700;
+          final double screenHeight = constraints.maxHeight;
 
           return Center(
             child: ConstrainedBox(
@@ -42,21 +42,21 @@ class PeatWorksScreen extends StatelessWidget {
                                 style: TextStyle(
                                   color: highlightColor,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: isTallScreen ? 32 : 28,
+                                  fontSize: screenHeight * 0.036,
                                 ),
                               ),
-                              const SizedBox(height: 30),
+                              SizedBox(height: screenHeight * 0.03),
                               Text(
                                 'O Peat conta com uma gama de tecnologias para garantir a automatização e qualidade do alimento para os animais.',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: isTallScreen ? 20 : 18,
+                                  fontSize: screenHeight * 0.022,
                                   height: 1.5,
                                 ),
                               ),
-                              const SizedBox(height: 30),
+                              SizedBox(height: screenHeight * 0.03),
                               Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Expanded(
                                     flex: 3,
@@ -69,19 +69,25 @@ class PeatWorksScreen extends StatelessWidget {
                                           style: TextStyle(
                                             color: highlightColor,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: isTallScreen ? 19 : 17,
+                                            fontSize: screenHeight * 0.021,
                                           ),
                                         ),
-                                        const SizedBox(height: 20),
+                                        SizedBox(height: screenHeight * 0.02),
                                         _buildSensorInfo(
                                           'Identificar a presença do animal',
+                                          screenHeight,
                                         ),
-                                        _buildSensorInfo('Aferir temperatura'),
+                                        _buildSensorInfo(
+                                          'Aferir temperatura',
+                                          screenHeight,
+                                        ),
                                         _buildSensorInfo(
                                           'Aferir umidade relativa do ar',
+                                          screenHeight,
                                         ),
                                         _buildSensorInfo(
                                           'Aferir quantidade de ração',
+                                          screenHeight,
                                         ),
                                       ],
                                     ),
@@ -91,9 +97,7 @@ class PeatWorksScreen extends StatelessWidget {
                                     flex: 2,
                                     child: Image.asset(
                                       'assets/PeatDeviceLight.png',
-                                      height:
-                                          constraints.maxHeight *
-                                          (isTallScreen ? 0.35 : 0.3),
+                                      height: screenHeight * 0.28,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -103,7 +107,11 @@ class PeatWorksScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      _buildBottomNavigation(context, pageIndex: 1),
+                      _buildBottomNavigation(
+                        context,
+                        pageIndex: 1,
+                        screenHeight: screenHeight,
+                      ),
                     ],
                   ),
                 ),
@@ -115,9 +123,9 @@ class PeatWorksScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSensorInfo(String text) {
+  Widget _buildSensorInfo(String text, double screenHeight) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
+      padding: EdgeInsets.only(bottom: screenHeight * 0.015),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -129,9 +137,9 @@ class PeatWorksScreen extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 17,
+                fontSize: screenHeight * 0.02,
                 height: 1.4,
               ),
             ),
@@ -144,10 +152,12 @@ class PeatWorksScreen extends StatelessWidget {
   Widget _buildBottomNavigation(
     BuildContext context, {
     required int pageIndex,
+    required double screenHeight,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 20),
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -155,8 +165,8 @@ class PeatWorksScreen extends StatelessWidget {
               3,
               (index) => Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 12,
-                height: 12,
+                width: 10,
+                height: 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color:
@@ -167,10 +177,11 @@ class PeatWorksScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          SizedBox(height: screenHeight * 0.03),
           SizedBox(
-            height: 70,
+            height: screenHeight * 0.08,
             child: Stack(
+              alignment: Alignment.center,
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
@@ -184,33 +195,31 @@ class PeatWorksScreen extends StatelessWidget {
                         (Route<dynamic> route) => false,
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       'Pular',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: screenHeight * 0.021,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.center,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const InstructionsScreen(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.arrow_circle_right_rounded,
-                      color: Colors.white,
-                      size: 70,
-                    ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const InstructionsScreen(),
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.arrow_circle_right_rounded,
+                    color: Colors.white,
+                    size: screenHeight * 0.08,
                   ),
+                  padding: EdgeInsets.zero,
                 ),
               ],
             ),
