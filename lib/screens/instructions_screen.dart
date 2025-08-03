@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peatdashboard/screens/dashboard_screen.dart';
 
 class InstructionsScreen extends StatelessWidget {
   const InstructionsScreen({super.key});
@@ -19,142 +20,188 @@ class InstructionsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: primaryTextColor, size: 30),
         ),
       ),
-      body: Stack(
-        children: [
-          Positioned(
-            left: -120,
-            top: MediaQuery.of(context).size.height * 0.2,
-            child: Opacity(
-              opacity: 0.1,
-              child: Image.asset(
-                'assets/gato_direita.png',
-                height: MediaQuery.of(context).size.height * 0.5,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final double screenHeight = constraints.maxHeight;
+          final double screenWidth = constraints.maxWidth;
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: Stack(
                 children: [
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Instruções para utilizar o Peat corretamente',
-                    style: TextStyle(
-                      color: highlightColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 34,
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  const Text(
-                    'O Peat foi projetado neste primeiro momento como um alimentador a base de ração para gatos, portanto:',
-                    style: TextStyle(
-                      color: primaryTextColor,
-                      fontSize: 18,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  Text.rich(
-                    TextSpan(
-                      style: const TextStyle(
-                        color: primaryTextColor,
-                        fontSize: 28,
-                        height: 1.4,
+                  Positioned(
+                    left: -screenWidth * 0.3,
+                    top: screenHeight * 0.15,
+                    child: Opacity(
+                      opacity: 0.1,
+                      child: Image.asset(
+                        'assets/gato_esquerda.png',
+                        height: screenHeight * 0.35,
+                        fit: BoxFit.contain,
                       ),
-                      children: [
-                        const TextSpan(text: 'só deve ser reabastecido com '),
-                        TextSpan(
-                          text: 'ração',
-                          style: TextStyle(
-                            color: highlightColor,
-                            fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Instruções para utilizar o Peat corretamente',
+                                    style: TextStyle(
+                                      color: highlightColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: screenHeight * 0.038,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.03),
+                                  Text(
+                                    'O Peat foi projetado neste primeiro momento como um alimentador a base de ração para gatos, portanto:',
+                                    style: TextStyle(
+                                      color: primaryTextColor,
+                                      fontSize: screenHeight * 0.022,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.04),
+                                  Text.rich(
+                                    TextSpan(
+                                      style: TextStyle(
+                                        color: primaryTextColor,
+                                        fontSize: screenHeight * 0.032,
+                                        height: 1.4,
+                                      ),
+                                      children: [
+                                        const TextSpan(
+                                          text: 'Só deve ser reabastecido com ',
+                                        ),
+                                        TextSpan(
+                                          text: 'ração',
+                                          style: TextStyle(
+                                            color: highlightColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const TextSpan(text: ', e para '),
+                                        TextSpan(
+                                          text: 'felinos!',
+                                          style: TextStyle(
+                                            color: highlightColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.02),
+                                  Text(
+                                    'Apenas rações dos tipos secas podem ser utilizadas, descartando assim possibilidade de abastecimento com sachês a base de molhos ou outros derivados úmidos.',
+                                    style: TextStyle(
+                                      color: primaryTextColor,
+                                      fontSize: screenHeight * 0.022,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.03),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Image(
+                                        image: const AssetImage(
+                                          'assets/gato_esquerda.png',
+                                        ),
+                                        height: screenHeight * 0.08,
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Image(
+                                        image: const AssetImage(
+                                          'assets/gato_direita.png',
+                                        ),
+                                        height: screenHeight * 0.16,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                        const TextSpan(text: ', e para '),
-                        TextSpan(
-                          text: 'felinos!',
-                          style: TextStyle(
-                            color: highlightColor,
-                            fontWeight: FontWeight.bold,
+                          _buildBottomNavigation(
+                            context,
+                            pageIndex: 2,
+                            screenHeight: screenHeight,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Apenas rações dos tipos secas podem ser utilizadas, descartando assim possibilidade de abastecimento com sachês a base de molhos ou outros derivados úmidos.',
-                    style: TextStyle(
-                      color: primaryTextColor,
-                      fontSize: 18,
-                      height: 1.5,
-                    ),
-                  ),
-                  const Spacer(),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Image(
-                        image: AssetImage('assets/gato_esquerda.png'),
-                        width: 100,
-                      ),
-                      SizedBox(width: 16),
-                      Image(
-                        image: AssetImage('assets/gato_direita.png'),
-                        width: 150,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  _buildBottomNavigation(context),
                 ],
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildBottomNavigation(BuildContext context) {
+  Widget _buildBottomNavigation(
+    BuildContext context, {
+    required int pageIndex,
+    required double screenHeight,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
+      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              6,
+              3,
               (index) => Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 12,
-                height: 12,
+                width: 10,
+                height: 10,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color:
-                      index <= 5 ? Colors.white : Colors.white.withOpacity(0.5),
+                      index <= pageIndex
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.5),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          Center(
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.arrow_circle_right_rounded,
-                color: Colors.white,
-                size: 50,
+          SizedBox(height: screenHeight * 0.03),
+          SizedBox(
+            height: screenHeight * 0.08,
+            child: Center(
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DashboardScreen(),
+                    ),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+                icon: Icon(
+                  Icons.arrow_circle_right_rounded,
+                  color: Colors.white,
+                  size: screenHeight * 0.08,
+                ),
+                padding: EdgeInsets.zero,
               ),
             ),
           ),
-          const SizedBox(height: 20),
         ],
       ),
     );

@@ -1,6 +1,6 @@
 name: peatdashboard
 description: "Peat"
-publish_to: 'none'
+publish_to: 'Peat-IFCE'
 
 version: 1.0.0+1
 
@@ -46,6 +46,8 @@ flutter:
     - assets/PeatDeviceLight.png
     - assets/logo.png
     - assets/comedouro_icon.png
+    - assets/gato_direita.png
+    - assets/gato_esquerda.png
     - assets/.env
     - assets/fonts/SFPRODISPLAYBLACKITALIC.OTF
     - assets/fonts/SFPRODISPLAYREGULAR.OTF
