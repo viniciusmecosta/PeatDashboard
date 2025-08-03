@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:peatdashboard/models/feeder.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 import 'package:peatdashboard/widgets/temperature_widget.dart';
 
 class TemperatureScreen extends StatefulWidget {
-  const TemperatureScreen({super.key});
+  final Feeder feeder;
+  const TemperatureScreen({super.key, required this.feeder});
 
   @override
   _TemperatureScreenState createState() => _TemperatureScreenState();
@@ -31,6 +33,7 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
 
   Future<void> _fetchAllData() async {
     setState(() => _isLoading = true);
+    final feederId = widget.feeder.id;
 
     try {
       final today = DateFormat('ddMMyyyy').format(DateTime.now());
@@ -39,28 +42,40 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
       ).format(DateTime.now().subtract(const Duration(days: 1)));
 
       _allData["Hoje"] =
-          await PeatDataService.fetchTemperatureAndHumidityByDate(today);
+          await PeatDataService.fetchTemperatureAndHumidityByDate(
+            today,
+            feederId,
+          );
       _allData["Ontem"] =
-          await PeatDataService.fetchTemperatureAndHumidityByDate(yesterday);
+          await PeatDataService.fetchTemperatureAndHumidityByDate(
+            yesterday,
+            feederId,
+          );
       _allData["Últimos 7 dias"] =
-          await PeatDataService.fetchTemperatureAndHumidityList(7);
+          await PeatDataService.fetchTemperatureAndHumidityList(7, feederId);
       _allData["Últimos 31 dias"] =
-          await PeatDataService.fetchTemperatureAndHumidityList(31);
+          await PeatDataService.fetchTemperatureAndHumidityList(31, feederId);
 
       _updateFilteredData();
     } catch (e) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Erro ao carregar dados')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao carregar dados: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   void _updateFilteredData() {
-    setState(() {
-      _filteredData = _allData[_selectedPeriod] ?? [];
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _filteredData = _allData[_selectedPeriod] ?? [];
+      });
+    }
   }
 
   List<String> _getAvailablePeriods(BuildContext context) {
@@ -69,7 +84,7 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
       periods.add("Últimos 31 dias");
     } else if (_selectedPeriod == "Últimos 31 dias") {
       _selectedPeriod = "Últimos 7 dias";
-      _updateFilteredData();
+      Future.microtask(() => _updateFilteredData());
     }
     return periods;
   }
@@ -117,11 +132,14 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                             decoration: BoxDecoration(
                               color: dropdownColor,
                               borderRadius: BorderRadius.circular(22.0),
-                              boxShadow: const [
+                              boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.darkShadowColor,
+                                  color:
+                                      isDarkMode
+                                          ? AppColors.darkShadowColor
+                                          : AppColors.shadow,
                                   blurRadius: 4,
-                                  offset: Offset(0, 2),
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
@@ -148,8 +166,8 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                                   if (newValue != null) {
                                     setState(() {
                                       _selectedPeriod = newValue;
+                                      _updateFilteredData();
                                     });
-                                    _updateFilteredData();
                                   }
                                 },
                               ),
@@ -160,8 +178,12 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                       const SizedBox(height: 1),
                       SizedBox(
                         width: double.infinity,
-                        child: TemperatureWidget(sensorDataList: _filteredData),
+                        child: TemperatureWidget(
+                          sensorDataList: _filteredData,
+                          feeder: widget.feeder,
+                        ),
                       ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

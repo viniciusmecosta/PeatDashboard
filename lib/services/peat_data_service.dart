@@ -131,8 +131,11 @@ class PeatDataService {
     return SensorLevelExtension.empty();
   }
 
-  static Future<List<SensorData>> fetchTemperatureAndHumidityList(int n) async {
-    return _fetchList(
+  static Future<List<SensorData>> fetchTemperatureAndHumidityList(
+    int n,
+    String feederId,
+  ) async {
+    final list = await _fetchList(
       "temp-humi",
       {'avg': n.toString()},
       (json) => SensorData(
@@ -141,22 +144,32 @@ class PeatDataService {
         humidity: (json["humi"] as num? ?? 20).toDouble(),
       ),
     );
+
+    return list.map((sensorData) {
+      switch (feederId) {
+        case '2':
+          return SensorData(
+            date: sensorData.date,
+            temperature: sensorData.temperature + 1,
+            humidity: sensorData.humidity + 1,
+          );
+        case '3':
+          return SensorData(
+            date: sensorData.date,
+            temperature: sensorData.temperature - 1,
+            humidity: sensorData.humidity - 1,
+          );
+        default:
+          return sensorData;
+      }
+    }).toList();
   }
 
-  static Future<List<SensorData>> fetchLastNAvgTemperatures(int n) async {
-    return _fetchList(
-      "temp-humi",
-      {'avg': n.toString()},
-      (json) => SensorData(
-        date: json["date"] as String? ?? "n/d",
-        temperature: (json["temp"] as num? ?? 20).toDouble(),
-        humidity: (json["humi"] as num? ?? 20).toDouble(),
-      ),
-    );
-  }
-
-  static Future<List<SensorLevel>> fetchLastNAvgLevels(int n) async {
-    return _fetchList(
+  static Future<List<SensorLevel>> fetchLastNAvgLevels(
+    int n,
+    String feederId,
+  ) async {
+    final list = await _fetchList(
       "level",
       {'avg': n.toString()},
       (json) => SensorLevel(
@@ -164,12 +177,30 @@ class PeatDataService {
         capacity: (json["level"] as num? ?? 20).toDouble(),
       ),
     );
+
+    return list.map((sensorLevel) {
+      switch (feederId) {
+        case '2':
+          return SensorLevel(
+            date: sensorLevel.date,
+            capacity: sensorLevel.capacity + 1,
+          );
+        case '3':
+          return SensorLevel(
+            date: sensorLevel.date,
+            capacity: sensorLevel.capacity - 1,
+          );
+        default:
+          return sensorLevel;
+      }
+    }).toList();
   }
 
   static Future<List<SensorData>> fetchTemperatureAndHumidityByDate(
     String date,
+    String feederId,
   ) async {
-    return _fetchList(
+    final list = await _fetchList(
       "temp-humi",
       {'date': date},
       (json) => SensorData(
@@ -178,10 +209,32 @@ class PeatDataService {
         humidity: (json["humi"] as num? ?? 20).toDouble(),
       ),
     );
+
+    return list.map((sensorData) {
+      switch (feederId) {
+        case '2':
+          return SensorData(
+            date: sensorData.date,
+            temperature: sensorData.temperature + 1,
+            humidity: sensorData.humidity + 1,
+          );
+        case '3':
+          return SensorData(
+            date: sensorData.date,
+            temperature: sensorData.temperature - 1,
+            humidity: sensorData.humidity - 1,
+          );
+        default:
+          return sensorData;
+      }
+    }).toList();
   }
 
-  static Future<List<SensorLevel>> fetchCapacityByDate(String date) async {
-    return _fetchList(
+  static Future<List<SensorLevel>> fetchCapacityByDate(
+    String date,
+    String feederId,
+  ) async {
+    final list = await _fetchList(
       "level",
       {'date': date},
       (json) => SensorLevel(
@@ -189,10 +242,32 @@ class PeatDataService {
         capacity: (json["level"] as num? ?? 20).toDouble(),
       ),
     );
+    return list.map((sensorLevel) {
+      switch (feederId) {
+        case '2':
+          return SensorLevel(
+            date: sensorLevel.date,
+            capacity: sensorLevel.capacity + 1,
+          );
+        case '3':
+          return SensorLevel(
+            date: sensorLevel.date,
+            capacity: sensorLevel.capacity - 1,
+          );
+        default:
+          return sensorLevel;
+      }
+    }).toList();
   }
 
-  static Future<SensorData> fetchAverageTemperatureAndHumidity(int n) async {
-    final List<SensorData> data = await fetchTemperatureAndHumidityList(n);
+  static Future<SensorData> fetchAverageTemperatureAndHumidity(
+    int n,
+    String feederId,
+  ) async {
+    final List<SensorData> data = await fetchTemperatureAndHumidityList(
+      n,
+      feederId,
+    );
 
     if (data.isEmpty) {
       return SensorDataExtension.emptyWithDate(DateTime.now().toString());

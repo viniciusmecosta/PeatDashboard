@@ -32,17 +32,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<Feeder> _feeders = [
     Feeder(
       id: "1",
-      name: 'Comedouro IFCE',
+      name: 'Comedouro IFCE - Bloco Central',
       location: const LatLng(-3.744340487400293, -38.53604795635519),
     ),
     Feeder(
       id: "2",
-      name: 'Comedouro UECE',
+      name: 'Comedouro UECE - Campus Itaperi',
       location: const LatLng(-3.788079524593659, -38.553419371763795),
     ),
     Feeder(
       id: "3",
-      name: 'Comedouro UNIFOR',
+      name: 'Comedouro UNIFOR - Bloco A',
       location: const LatLng(-3.768765932570104, -38.47806435259981),
     ),
   ];
@@ -149,7 +149,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onTap:
           () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CapacityScreen()),
+            MaterialPageRoute(
+              builder: (context) => CapacityScreen(feeder: _selectedFeeder!),
+            ),
           ),
       child: MetricCapacityWidget(
         title: 'Volume de Ração',
@@ -163,7 +165,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onTap:
           () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const TemperatureScreen()),
+            MaterialPageRoute(
+              builder: (context) => TemperatureScreen(feeder: _selectedFeeder!),
+            ),
           ),
       child: MetricTemperatureWidget(
         title: 'Temperatura',
@@ -177,7 +181,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onTap:
           () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const HumidityScreen()),
+            MaterialPageRoute(
+              builder: (context) => HumidityScreen(feeder: _selectedFeeder!),
+            ),
           ),
       child: MetricHumidityWidget(
         title: 'Umidade',

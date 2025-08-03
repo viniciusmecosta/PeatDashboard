@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:peatdashboard/models/feeder.dart';
 import 'package:peatdashboard/models/sensor_level.dart';
 import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
@@ -7,7 +8,9 @@ import 'package:peatdashboard/widgets/capacity_info_widget.dart';
 import 'package:peatdashboard/widgets/capacity_widget.dart';
 
 class CapacityScreen extends StatefulWidget {
-  const CapacityScreen({super.key});
+  final Feeder feeder;
+
+  const CapacityScreen({super.key, required this.feeder});
 
   @override
   _CapacityScreenState createState() => _CapacityScreenState();
@@ -29,35 +32,62 @@ class _CapacityScreenState extends State<CapacityScreen> {
 
   Future<void> _fetchAllData() async {
     setState(() => _isLoading = true);
+    final feederId = widget.feeder.id;
 
     try {
       final today = DateTime.now();
       final yesterday = today.subtract(const Duration(days: 1));
 
-      _sensorLevelListByPeriod["Hoje"] = await _fetchDataByDate(today);
-      _sensorLevelListByPeriod["Ontem"] = await _fetchDataByDate(yesterday);
-      _sensorLevelListByPeriod["Últimos 7 dias"] = await _fetchAverageData(7);
-      _sensorLevelListByPeriod["Últimos 31 dias"] = await _fetchAverageData(31);
-      _sensorLevel = await PeatDataService.fetchCapacity("1");
-      _last = _sensorLevelListByPeriod["Hoje"]!.last.capacity;
+      _sensorLevelListByPeriod["Hoje"] = await _fetchDataByDate(
+        today,
+        feederId,
+      );
+      _sensorLevelListByPeriod["Ontem"] = await _fetchDataByDate(
+        yesterday,
+        feederId,
+      );
+      _sensorLevelListByPeriod["Últimos 7 dias"] = await _fetchAverageData(
+        7,
+        feederId,
+      );
+      _sensorLevelListByPeriod["Últimos 31 dias"] = await _fetchAverageData(
+        31,
+        feederId,
+      );
+
+      _sensorLevel = await PeatDataService.fetchCapacity(feederId);
+
+      final todayData = _sensorLevelListByPeriod["Hoje"] ?? [];
+      if (todayData.isNotEmpty) {
+        _last = todayData.last.capacity;
+      } else {
+        _last = _sensorLevel.capacity;
+      }
 
       _updateFilteredData();
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Erro ao carregar dados')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao carregar dados: $e')));
+      }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
-  Future<List<SensorLevel>> _fetchDataByDate(DateTime date) async {
+  Future<List<SensorLevel>> _fetchDataByDate(
+    DateTime date,
+    String feederId,
+  ) async {
     final formattedDate = DateFormat('ddMMyyyy').format(date);
-    return await PeatDataService.fetchCapacityByDate(formattedDate);
+    return await PeatDataService.fetchCapacityByDate(formattedDate, feederId);
   }
 
-  Future<List<SensorLevel>> _fetchAverageData(int days) async {
-    return await PeatDataService.fetchLastNAvgLevels(days);
+  Future<List<SensorLevel>> _fetchAverageData(int days, String feederId) async {
+    return await PeatDataService.fetchLastNAvgLevels(days, feederId);
   }
 
   void _updateFilteredData() {
@@ -74,7 +104,7 @@ class _CapacityScreenState extends State<CapacityScreen> {
       periods.add("Últimos 31 dias");
     } else if (_selectedPeriod == "Últimos 31 dias") {
       _selectedPeriod = "Últimos 7 dias";
-      _updateFilteredData();
+      Future.microtask(() => _updateFilteredData());
     }
     return periods;
   }
@@ -170,10 +200,12 @@ class _CapacityScreenState extends State<CapacityScreen> {
                         child: CapacityWidget(
                           sensorLevelList: _filteredData,
                           last: _last,
+                          feederName: widget.feeder.name,
                         ),
                       ),
                       const SizedBox(height: 16),
                       CapacityInfoWidget(percentage: percentage),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

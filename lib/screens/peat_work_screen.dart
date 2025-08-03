@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peatdashboard/screens/instructions_screen.dart';
 
 class HowPeatWorksScreen extends StatelessWidget {
   const HowPeatWorksScreen({super.key});
@@ -143,7 +144,7 @@ class HowPeatWorksScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const HowPeatWorksScreen(),
+                            builder: (context) => const InstructionsScreen(),
                           ),
                         );
                       },

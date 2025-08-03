@@ -6,11 +6,13 @@ import 'package:peatdashboard/utils/app_colors.dart';
 class CapacityWidget extends StatelessWidget {
   final List<SensorLevel> sensorLevelList;
   final double last;
+  final String feederName;
 
   const CapacityWidget({
     super.key,
     required this.sensorLevelList,
     required this.last,
+    required this.feederName,
   });
 
   Color _getBackgroundColor(BuildContext context) {
@@ -108,7 +110,7 @@ class CapacityWidget extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            'Peat IFCE - Bloco Central',
+            feederName,
             style: TextStyle(color: _getTextColor(context), fontSize: 16),
           ),
         ],

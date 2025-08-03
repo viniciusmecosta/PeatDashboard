@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:peatdashboard/models/feeder.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 import 'package:peatdashboard/widgets/humidity_widget.dart';
 
 class HumidityScreen extends StatefulWidget {
-  const HumidityScreen({super.key});
+  final Feeder feeder;
+  const HumidityScreen({super.key, required this.feeder});
 
   @override
   _HumidityScreenState createState() => _HumidityScreenState();
@@ -32,6 +34,7 @@ class _HumidityScreenState extends State<HumidityScreen> {
 
   Future<void> _fetchAllData() async {
     setState(() => _isLoading = true);
+    final feederId = widget.feeder.id;
 
     try {
       final today = DateFormat('ddMMyyyy').format(DateTime.now());
@@ -40,28 +43,40 @@ class _HumidityScreenState extends State<HumidityScreen> {
       ).format(DateTime.now().subtract(const Duration(days: 1)));
 
       _allData["Hoje"] =
-          await PeatDataService.fetchTemperatureAndHumidityByDate(today);
+          await PeatDataService.fetchTemperatureAndHumidityByDate(
+            today,
+            feederId,
+          );
       _allData["Ontem"] =
-          await PeatDataService.fetchTemperatureAndHumidityByDate(yesterday);
+          await PeatDataService.fetchTemperatureAndHumidityByDate(
+            yesterday,
+            feederId,
+          );
       _allData["Últimos 7 dias"] =
-          await PeatDataService.fetchTemperatureAndHumidityList(7);
+          await PeatDataService.fetchTemperatureAndHumidityList(7, feederId);
       _allData["Últimos 31 dias"] =
-          await PeatDataService.fetchTemperatureAndHumidityList(31);
+          await PeatDataService.fetchTemperatureAndHumidityList(31, feederId);
 
       _updateFilteredData();
     } catch (e) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Erro ao carregar dados')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao carregar dados: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   void _updateFilteredData() {
-    setState(() {
-      _filteredData = _allData[_selectedPeriod] ?? [];
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _filteredData = _allData[_selectedPeriod] ?? [];
+      });
+    }
   }
 
   List<String> _getAvailablePeriods(BuildContext context) {
@@ -70,7 +85,7 @@ class _HumidityScreenState extends State<HumidityScreen> {
       periods.add("Últimos 31 dias");
     } else if (_selectedPeriod == "Últimos 31 dias") {
       _selectedPeriod = "Últimos 7 dias";
-      _updateFilteredData();
+      Future.microtask(() => _updateFilteredData());
     }
     return periods;
   }
@@ -149,8 +164,8 @@ class _HumidityScreenState extends State<HumidityScreen> {
                                   if (newValue != null) {
                                     setState(() {
                                       _selectedPeriod = newValue;
+                                      _updateFilteredData();
                                     });
-                                    _updateFilteredData();
                                   }
                                 },
                               ),
@@ -161,8 +176,12 @@ class _HumidityScreenState extends State<HumidityScreen> {
                       const SizedBox(height: 1),
                       SizedBox(
                         width: double.infinity,
-                        child: HumidityWidget(sensorDataList: _filteredData),
+                        child: HumidityWidget(
+                          sensorDataList: _filteredData,
+                          feeder: widget.feeder,
+                        ),
                       ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

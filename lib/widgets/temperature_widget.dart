@@ -1,13 +1,19 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:peatdashboard/models/feeder.dart';
 import 'package:peatdashboard/models/sensor_data.dart';
 import 'package:peatdashboard/services/peat_data_service.dart';
 import 'package:peatdashboard/utils/app_colors.dart';
 
 class TemperatureWidget extends StatefulWidget {
   final List<SensorData> sensorDataList;
+  final Feeder feeder;
 
-  const TemperatureWidget({super.key, required this.sensorDataList});
+  const TemperatureWidget({
+    super.key,
+    required this.sensorDataList,
+    required this.feeder,
+  });
 
   @override
   State<TemperatureWidget> createState() => _TemperatureWidgetState();
@@ -26,22 +32,32 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
   }
 
   Future<void> _loadAverages() async {
-    final weekly = await PeatDataService.fetchAverageTemperatureAndHumidity(7);
+    final weekly = await PeatDataService.fetchAverageTemperatureAndHumidity(
+      7,
+      widget.feeder.id,
+    );
     final monthly = await PeatDataService.fetchAverageTemperatureAndHumidity(
       31,
+      widget.feeder.id,
     );
 
-    setState(() {
-      weeklyAverage = weekly.temperature;
-      monthlyAverage = monthly.temperature;
-    });
+    if (mounted) {
+      setState(() {
+        weeklyAverage = weekly.temperature;
+        monthlyAverage = monthly.temperature;
+      });
+    }
   }
 
   Future<void> _loadCurrentTemperature() async {
-    final data = await PeatDataService.fetchTemperatureAndHumidity("1");
-    setState(() {
-      currentTemperature = data["temperature"]?.temperature ?? 0.0;
-    });
+    final data = await PeatDataService.fetchTemperatureAndHumidity(
+      widget.feeder.id,
+    );
+    if (mounted) {
+      setState(() {
+        currentTemperature = data["temperature"]?.temperature ?? 0.0;
+      });
+    }
   }
 
   @override
@@ -58,7 +74,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
             ? AppColors.darkBorderColor.withOpacity(0.1)
             : AppColors.lightBorderColor;
     final shadowColor =
-        isDarkMode ? AppColors.darkShadowColor : AppColors.lightBorderColor;
+        isDarkMode ? AppColors.darkShadowColor : AppColors.shadow;
     final gridColor =
         isDarkMode ? AppColors.darkGridColor : AppColors.darkBorderColor;
     final statIconBackgroundColor =
@@ -142,7 +158,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
           Icon(Icons.location_on, color: textColor.withOpacity(0.7), size: 20),
           const SizedBox(width: 8),
           Text(
-            'Peat IFCE - Bloco Central',
+            widget.feeder.name,
             style: TextStyle(color: textColor, fontSize: 16),
           ),
         ],
@@ -194,7 +210,7 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
                   reservedSize: 40,
                   interval: gap,
                   getTitlesWidget: (value, meta) {
-                    if (value.toInt() < dates.length) {
+                    if (value.toInt() < dates.length && value % gap == 0) {
                       return Padding(
                         padding: const EdgeInsets.only(top: 5.0),
                         child: Text(
@@ -381,19 +397,19 @@ class _TemperatureWidgetState extends State<TemperatureWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.wb_sunny, color: AppColors.accent, size: 24),
-              const SizedBox(width: 8),
-              const Text(
+              Icon(Icons.wb_sunny, color: AppColors.accent, size: 24),
+              SizedBox(width: 8),
+              Text(
                 'Fortaleza',
                 style: TextStyle(
                   color: AppColors.lightBackgroundColor,
                   fontSize: 18,
                 ),
               ),
-              const SizedBox(width: 4),
-              const Icon(
+              SizedBox(width: 4),
+              Icon(
                 Icons.location_on,
                 color: AppColors.lightBackgroundColor,
                 size: 20,

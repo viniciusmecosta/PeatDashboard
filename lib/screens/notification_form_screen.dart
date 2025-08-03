@@ -56,7 +56,8 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
         _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Preencha o email ou o telefone para cadastrar.')),
+          content: Text('Preencha o email ou o telefone para cadastrar.'),
+        ),
       );
       return;
     }
@@ -98,9 +99,9 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
     } finally {
       setState(() => _isLoading = false);
       if (errorMessage != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage!)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(errorMessage!)));
       }
     }
   }
@@ -126,12 +127,13 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
           });
         }
       },
-      items: _feeders.map<DropdownMenuItem<Feeder>>((Feeder feeder) {
-        return DropdownMenuItem<Feeder>(
-          value: feeder,
-          child: Text(feeder.name),
-        );
-      }).toList(),
+      items:
+          _feeders.map<DropdownMenuItem<Feeder>>((Feeder feeder) {
+            return DropdownMenuItem<Feeder>(
+              value: feeder,
+              child: Text(feeder.name),
+            );
+          }).toList(),
     );
   }
 
@@ -182,7 +184,9 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor =
-        isDarkMode ? AppColors.darkBackgroundColor : AppColors.lightBackgroundColor;
+        isDarkMode
+            ? AppColors.darkBackgroundColor
+            : AppColors.lightBackgroundColor;
     final textColor = isDarkMode ? Colors.white : Colors.black;
 
     return Scaffold(
@@ -267,20 +271,22 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12), 
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child:
-                                CircularProgressIndicator(color: Colors.white),
-                          )
-                        : const Text(
-                            'Cadastrar',
-                            style: TextStyle(fontSize: 16), 
-                          ),
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                            : const Text(
+                              'Cadastrar',
+                              style: TextStyle(fontSize: 16),
+                            ),
                   ),
                 ],
               ),
