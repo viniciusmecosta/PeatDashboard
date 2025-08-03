@@ -132,14 +132,11 @@ class _TemperatureScreenState extends State<TemperatureScreen> {
                             decoration: BoxDecoration(
                               color: dropdownColor,
                               borderRadius: BorderRadius.circular(22.0),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
-                                  color:
-                                      isDarkMode
-                                          ? AppColors.darkShadowColor
-                                          : AppColors.shadow,
+                                  color: AppColors.darkShadowColor,
                                   blurRadius: 4,
-                                  offset: const Offset(0, 2),
+                                  offset: Offset(0, 2),
                                 ),
                               ],
                             ),

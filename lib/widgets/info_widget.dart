@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:peatdashboard/utils/app_colors.dart';
 import 'package:peatdashboard/screens/welcome_screen.dart';
+import 'package:peatdashboard/utils/app_colors.dart';
 
 class InfoWidget extends StatelessWidget {
   const InfoWidget({super.key});
@@ -55,7 +55,10 @@ class InfoWidget extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              //Navigator.push(context,MaterialPageRoute(builder: (context) => const WelcomeScreen()),);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+              );
             },
             child: Row(
               children: [
