@@ -80,8 +80,7 @@ class WelcomeScreen extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(
         bottom: screenHeight * 0.02,
-        top: screenHeight * 0.02,
-      ),
+      ), // Garante o espaçamento inferior
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
