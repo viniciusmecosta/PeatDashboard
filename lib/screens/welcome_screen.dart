@@ -24,34 +24,34 @@ class WelcomeScreen extends StatelessWidget {
         builder: (context, constraints) {
           final double screenHeight = constraints.maxHeight;
 
-          return Stack(
-            children: [
-              Positioned(
-                bottom: 0,
-                left: 10,
-                child: Opacity(
-                  opacity: 0.1,
-                  child: Image.asset(
-                    'assets/gato_esquerda.png',
-                    height: screenHeight * 0.18,
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 0,
+                    left: 10,
+                    child: Opacity(
+                      opacity: 0.1,
+                      child: Image.asset(
+                        'assets/gato_esquerda.png',
+                        height: screenHeight * 0.18,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 10,
-                child: Opacity(
-                  opacity: 0.1,
-                  child: Image.asset(
-                    'assets/gato_direita.png',
-                    height: screenHeight * 0.22,
+                  Positioned(
+                    bottom: 0,
+                    right: 10,
+                    child: Opacity(
+                      opacity: 0.1,
+                      child: Image.asset(
+                        'assets/gato_direita.png',
+                        height: screenHeight * 0.22,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: SafeArea(
+                  SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
                       child: Column(
@@ -109,9 +109,9 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           );
         },
       ),
