@@ -24,124 +24,150 @@ class PeatWorksScreen extends StatelessWidget {
         builder: (context, constraints) {
           final double screenHeight = constraints.maxHeight;
 
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Como o Alimentador Peat Funciona?',
-                                style: TextStyle(
-                                  color: highlightColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: screenHeight * 0.036,
-                                ),
-                              ),
-                              SizedBox(height: screenHeight * 0.03),
-                              Text(
-                                'O Peat conta com uma gama de tecnologias para garantir a automatização e qualidade do alimento para os animais.',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: screenHeight * 0.022,
-                                  height: 1.5,
-                                ),
-                              ),
-                              SizedBox(height: screenHeight * 0.03),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Ele é composto por uma série de sensores para:',
-                                          style: TextStyle(
-                                            color: highlightColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: screenHeight * 0.021,
-                                          ),
-                                        ),
-                                        SizedBox(height: screenHeight * 0.02),
-                                        _buildSensorInfo(
-                                          'Identificar a presença do animal',
-                                          screenHeight,
-                                        ),
-                                        _buildSensorInfo(
-                                          'Aferir temperatura',
-                                          screenHeight,
-                                        ),
-                                        _buildSensorInfo(
-                                          'Aferir umidade relativa do ar',
-                                          screenHeight,
-                                        ),
-                                        _buildSensorInfo(
-                                          'Aferir quantidade de ração',
-                                          screenHeight,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Image.asset(
-                                      'assets/PeatDeviceLight.png',
-                                      height: screenHeight * 0.28,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      _buildBottomNavigation(
-                        context,
-                        pageIndex: 1,
-                        screenHeight: screenHeight,
-                      ),
-                    ],
+          return Stack(
+            children: [
+              Positioned(
+                bottom: 0,
+                left: 10,
+                child: Opacity(
+                  opacity: 0.1,
+                  child: Image.asset(
+                    'assets/gato_esquerda.png',
+                    height: screenHeight * 0.18,
                   ),
                 ),
               ),
-            ),
+              Positioned(
+                bottom: 0,
+                right: 10,
+                child: Opacity(
+                  opacity: 0.1,
+                  child: Image.asset(
+                    'assets/gato_direita.png',
+                    height: screenHeight * 0.22,
+                  ),
+                ),
+              ),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Como o Peat Funciona?',
+                                    style: TextStyle(
+                                      color: highlightColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: screenHeight * 0.038,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(height: screenHeight * 0.02),
+                                  Text(
+                                    'O PEAT integra hardware e software para criar um ecossistema de cuidado animal.',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: screenHeight * 0.022,
+                                      height: 1.5,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(height: screenHeight * 0.03),
+                                  Image.asset(
+                                    'assets/PeatDeviceLight.png',
+                                    height: screenHeight * 0.22,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  SizedBox(height: screenHeight * 0.04),
+                                  _buildComponentInfo(
+                                    icon: Icons.memory,
+                                    title: 'Microcontrolador ESP32',
+                                    subtitle:
+                                        'O cérebro do sistema, que gerencia os sensores e a conectividade Wi-Fi.',
+                                    screenHeight: screenHeight,
+                                  ),
+                                  _buildComponentInfo(
+                                    icon: Icons.sensors,
+                                    title: 'Sensores de Monitoramento',
+                                    subtitle:
+                                        'Sensores de proximidade (SR501), ultrassônico (SR04) e de temperatura e umidade (DHT11).',
+                                    screenHeight: screenHeight,
+                                  ),
+                                  _buildComponentInfo(
+                                    icon:
+                                        Icons.precision_manufacturing_outlined,
+                                    title: 'Atuadores Inteligentes',
+                                    subtitle:
+                                        'Servomotor para liberação precisa do alimento e um sistema de controle de temperatura.',
+                                    screenHeight: screenHeight,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          _buildBottomNavigation(
+                            context,
+                            pageIndex: 1,
+                            screenHeight: screenHeight,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget _buildSensorInfo(String text, double screenHeight) {
+  Widget _buildComponentInfo({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required double screenHeight,
+  }) {
+    const Color highlightColor = Color(0xFFFFE8C7);
+
     return Padding(
-      padding: EdgeInsets.only(bottom: screenHeight * 0.015),
+      padding: EdgeInsets.only(bottom: screenHeight * 0.03),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 4.0),
-            child: Icon(Icons.check_circle, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 10),
+          Icon(icon, color: highlightColor, size: 30),
+          const SizedBox(width: 16),
           Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: screenHeight * 0.02,
-                height: 1.4,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: highlightColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenHeight * 0.022,
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.005),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenHeight * 0.019,
+                    height: 1.3,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

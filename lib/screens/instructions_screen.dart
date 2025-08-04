@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:peatdashboard/screens/dashboard_screen.dart';
+import 'package:peatdashboard/screens/notification_form_screen.dart';
 
 class InstructionsScreen extends StatelessWidget {
   const InstructionsScreen({super.key});
@@ -23,7 +25,6 @@ class InstructionsScreen extends StatelessWidget {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final double screenHeight = constraints.maxHeight;
-          final double screenWidth = constraints.maxWidth;
 
           return Center(
             child: ConstrainedBox(
@@ -31,14 +32,24 @@ class InstructionsScreen extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned(
-                    left: -screenWidth * 0.3,
-                    top: screenHeight * 0.15,
+                    bottom: 0,
+                    left: 10,
                     child: Opacity(
-                      opacity: 0.1,
+                      opacity: 0.15,
                       child: Image.asset(
                         'assets/gato_esquerda.png',
-                        height: screenHeight * 0.35,
-                        fit: BoxFit.contain,
+                        height: screenHeight * 0.18,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 10,
+                    child: Opacity(
+                      opacity: 0.15,
+                      child: Image.asset(
+                        'assets/gato_direita.png',
+                        height: screenHeight * 0.22,
                       ),
                     ),
                   ),
@@ -53,7 +64,7 @@ class InstructionsScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Instruções para utilizar o Peat corretamente',
+                                    'Utilizando o Peat corretamente',
                                     style: TextStyle(
                                       color: highlightColor,
                                       fontWeight: FontWeight.bold,
@@ -61,74 +72,92 @@ class InstructionsScreen extends StatelessWidget {
                                       height: 1.2,
                                     ),
                                   ),
-                                  SizedBox(height: screenHeight * 0.03),
-                                  Text(
-                                    'O Peat foi projetado neste primeiro momento como um alimentador a base de ração para gatos, portanto:',
-                                    style: TextStyle(
-                                      color: primaryTextColor,
-                                      fontSize: screenHeight * 0.022,
-                                      height: 1.5,
-                                    ),
-                                  ),
                                   SizedBox(height: screenHeight * 0.04),
-                                  Text.rich(
-                                    TextSpan(
+                                  _buildInstructionItem(
+                                    icon: Icons.pets,
+                                    title: 'Ração Seca para Felinos',
+                                    descriptionWidget: Text(
+                                      'O comedouro foi projetado para operar exclusivamente com ração seca para gatos. Não utilize sachês ou alimentos úmidos.',
                                       style: TextStyle(
                                         color: primaryTextColor,
-                                        fontSize: screenHeight * 0.032,
+                                        fontSize: screenHeight * 0.02,
                                         height: 1.4,
                                       ),
-                                      children: [
-                                        const TextSpan(
-                                          text: 'Só deve ser reabastecido com ',
-                                        ),
-                                        TextSpan(
-                                          text: 'ração',
-                                          style: TextStyle(
-                                            color: highlightColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const TextSpan(text: ', e para '),
-                                        TextSpan(
-                                          text: 'felinos!',
-                                          style: TextStyle(
-                                            color: highlightColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
                                     ),
+                                    screenHeight: screenHeight,
                                   ),
-                                  SizedBox(height: screenHeight * 0.02),
-                                  Text(
-                                    'Apenas rações dos tipos secas podem ser utilizadas, descartando assim possibilidade de abastecimento com sachês a base de molhos ou outros derivados úmidos.',
-                                    style: TextStyle(
-                                      color: primaryTextColor,
-                                      fontSize: screenHeight * 0.022,
-                                      height: 1.5,
+                                  _buildInstructionItem(
+                                    icon: Icons.autorenew,
+                                    title: 'Como Reabastecer',
+                                    descriptionWidget: Text(
+                                      'Para reabastecer, utilize a tampa articulada na parte superior do dispositivo. Ela dá acesso direto ao silo de armazenamento de forma rápida e higiênica.',
+                                      style: TextStyle(
+                                        color: primaryTextColor,
+                                        fontSize: screenHeight * 0.02,
+                                        height: 1.4,
+                                      ),
                                     ),
+                                    screenHeight: screenHeight,
+                                  ),
+                                  _buildInstructionItem(
+                                    icon: Icons.timer_outlined,
+                                    title: 'Alimentação Controlada',
+                                    descriptionWidget: Text(
+                                      'O PEAT libera porções controladas de ração (~15g) e possui um intervalo de 10 minutos entre as ativações para garantir o bem-estar animal.',
+                                      style: TextStyle(
+                                        color: primaryTextColor,
+                                        fontSize: screenHeight * 0.02,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    screenHeight: screenHeight,
+                                  ),
+                                  _buildInstructionItem(
+                                    icon: Icons.notifications_active_outlined,
+                                    title: 'Alertas Automáticos',
+                                    descriptionWidget: RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                          color: primaryTextColor,
+                                          fontSize: screenHeight * 0.02,
+                                          height: 1.4,
+                                          fontFamily:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.bodyLarge?.fontFamily,
+                                        ),
+                                        children: [
+                                          const TextSpan(
+                                            text:
+                                                'O sistema envia alertas quando o silo atinge um nível crítico. Para ser notificado, ',
+                                          ),
+                                          TextSpan(
+                                            text: 'cadastre-se aqui.',
+                                            style: const TextStyle(
+                                              color: highlightColor,
+                                              fontWeight: FontWeight.bold,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                            recognizer:
+                                                TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder:
+                                                            (context) =>
+                                                                const NotificationFormScreen(),
+                                                      ),
+                                                    );
+                                                  },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    screenHeight: screenHeight,
                                   ),
                                   SizedBox(height: screenHeight * 0.03),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Image(
-                                        image: const AssetImage(
-                                          'assets/gato_esquerda.png',
-                                        ),
-                                        height: screenHeight * 0.08,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Image(
-                                        image: const AssetImage(
-                                          'assets/gato_direita.png',
-                                        ),
-                                        height: screenHeight * 0.16,
-                                      ),
-                                    ],
-                                  ),
                                 ],
                               ),
                             ),
@@ -147,6 +176,43 @@ class InstructionsScreen extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildInstructionItem({
+    required IconData icon,
+    required String title,
+    required Widget descriptionWidget,
+    required double screenHeight,
+  }) {
+    const Color highlightColor = Color(0xFFFFE8C7);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: screenHeight * 0.035),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: highlightColor, size: 30),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: highlightColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenHeight * 0.024,
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.005),
+                descriptionWidget,
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -183,7 +249,6 @@ class InstructionsScreen extends StatelessWidget {
           SizedBox(
             height: screenHeight * 0.08,
             child: Stack(
-              // Usando Stack para padronizar
               alignment: Alignment.center,
               children: [
                 IconButton(

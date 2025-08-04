@@ -247,7 +247,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
                   TextFormField(
                     controller: _phoneController,
                     decoration: const InputDecoration(
-                      labelText: 'Seu Telefone (Opcional)',
+                      labelText: 'Seu Telefone',
                       hintText: '(XX) X XXXX-XXXX',
                       border: OutlineInputBorder(),
                     ),
