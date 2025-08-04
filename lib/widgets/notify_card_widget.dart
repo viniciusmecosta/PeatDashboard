@@ -53,7 +53,7 @@ class NotifyIconCardWidget extends StatelessWidget {
             Icon(Icons.pets, color: iconColor, size: iconSize),
             const SizedBox(height: 12),
             Text(
-              "Receber Alertas", 
+              "Receber Alertas",
               style: theme.textTheme.titleMedium?.copyWith(
                 color: textColor,
                 fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class NotifyIconCardWidget extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              "Seja um colaborador", 
+              "Seja um colaborador",
               style: theme.textTheme.bodySmall?.copyWith(
                 color: textColor.withOpacity(0.7),
                 fontSize: subtitleFontSize,

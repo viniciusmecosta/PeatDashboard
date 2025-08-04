@@ -29,7 +29,7 @@ class PeatWorksScreen extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 500),
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
                   child: Column(
                     children: [
                       Expanded(
@@ -155,7 +155,7 @@ class PeatWorksScreen extends StatelessWidget {
     required double screenHeight,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+      padding: EdgeInsets.only(bottom: screenHeight * 0.02),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

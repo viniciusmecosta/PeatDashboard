@@ -44,7 +44,7 @@ class InstructionsScreen extends StatelessWidget {
                   ),
                   SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
                       child: Column(
                         children: [
                           Expanded(
@@ -157,7 +157,7 @@ class InstructionsScreen extends StatelessWidget {
     required double screenHeight,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+      padding: EdgeInsets.only(bottom: screenHeight * 0.02),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -182,24 +182,28 @@ class InstructionsScreen extends StatelessWidget {
           SizedBox(height: screenHeight * 0.03),
           SizedBox(
             height: screenHeight * 0.08,
-            child: Center(
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DashboardScreen(),
-                    ),
-                    (Route<dynamic> route) => false,
-                  );
-                },
-                icon: Icon(
-                  Icons.arrow_circle_right_rounded,
-                  color: Colors.white,
-                  size: screenHeight * 0.08,
+            child: Stack(
+              // Usando Stack para padronizar
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DashboardScreen(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  },
+                  icon: Icon(
+                    Icons.arrow_circle_right_rounded,
+                    color: Colors.white,
+                    size: screenHeight * 0.08,
+                  ),
+                  padding: EdgeInsets.zero,
                 ),
-                padding: EdgeInsets.zero,
-              ),
+              ],
             ),
           ),
         ],

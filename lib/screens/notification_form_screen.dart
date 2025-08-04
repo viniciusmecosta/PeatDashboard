@@ -101,7 +101,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
       if (errorMessage != null && mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(errorMessage!)));
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     }
   }
@@ -221,7 +221,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Seu nome é importante para nós!';
+                        return 'Por favor, insira seu nome.';
                       }
                       return null;
                     },
@@ -260,7 +260,7 @@ class _NotificationFormScreenState extends State<NotificationFormScreen> {
                       if (value != null &&
                           value.isNotEmpty &&
                           value.replaceAll(RegExp(r'\D'), '').length != 11) {
-                        return 'O telefone deve ter 11 dígitos.';
+                        return 'Por favor, insira um número de telefone válido.';
                       }
                       return null;
                     },
